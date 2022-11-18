@@ -1,0 +1,81 @@
+.authincation {
+  background: var(--rgba-primary-1);
+  display: flex;
+  min-height: 100vh; }
+  .authincation .login-aside {
+    background: #fff;
+    padding-top: 5rem;
+    max-width: 35rem;
+    width: 100%;
+    z-index: 1;
+    position: relative; }
+    .authincation .login-aside:after {
+      content: "";
+      clip-path: polygon(0% 100%, 100% 0%, 0% 0%);
+      width: 8.75rem;
+      height: 100%;
+      position: absolute;
+      right: -8.75rem;
+      z-index: -1;
+      top: 0;
+      background: #fff;
+      box-shadow: 0.125rem 0rem 1.875rem rgba(0, 0, 0, 0.15); }
+    .authincation .login-aside .aside-image {
+      min-height: 28.125rem;
+      margin: auto 0;
+      min-width: 0;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center; }
+  @media only screen and (max-width: 87.5rem) {
+    .authincation .login-aside {
+      max-width: 22.5rem; } }
+  @media only screen and (max-width: 61.9375rem) {
+    .authincation .login-aside {
+      max-width: 100%;
+      padding-top: 0; }
+      .authincation .login-aside:after {
+        content: none; } }
+  @media only screen and (max-width: 35.9375rem) {
+    .authincation .login-aside .aside-image {
+      min-height: 18.75rem; } }
+
+.authincation-content {
+  background: #fff;
+  box-shadow: 0 0 2.1875rem 0 rgba(154, 161, 171, 0.15);
+  border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0 }
+  [data-theme-version="dark"] .authincation-content {
+    background: #202020;
+    box-shadow: none; }
+  .authincation-content.style-1 {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px); }
+    .authincation-content.style-1 .form-control {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0 }
+    .authincation-content.style-1 .user-icon {
+      height: 6.25rem;
+      background: var(--primary);
+      width: 6.25rem;
+      text-align: center;
+      border-radius: 6.25rem;
+      line-height: 6.25rem;
+      margin-left: auto;
+      font-size: 3.75rem;
+      text-align: center;
+      color: white;
+      margin-right: auto;
+      margin-top: -6.25rem;
+      margin-bottom: 1.25rem; }
+  .authincation-content.style-2 {
+    background: transparent;
+    box-shadow: none;
+    max-width: 33.125rem;
+    width: 100%; }
+    .authincation-content.style-2 .form-control {
+      border: 0;
+      border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0;
+      box-shadow: 0rem 0rem 0.9375rem rgba(0, 0, 0, 0.08); }
+    @media only screen and (max-width: 35.9375rem) {
+      .authincation-content.style-2 .auth-form {
+        padding: 1.875rem 0rem; } }
