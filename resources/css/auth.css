@@ -43,7 +43,7 @@
 .authincation-content {
   background: #fff;
   box-shadow: 0 0 2.1875rem 0 rgba(154, 161, 171, 0.15);
-  border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0 }
+  border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px)}
   [data-theme-version="dark"] .authincation-content {
     background: #202020;
     box-shadow: none; }
@@ -52,7 +52,7 @@
     backdrop-filter: blur(20px); }
     .authincation-content.style-1 .form-control {
       background: rgba(255, 255, 255, 0.6);
-      border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0 }
+      border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) }
     .authincation-content.style-1 .user-icon {
       height: 6.25rem;
       background: var(--primary);
@@ -74,7 +74,7 @@
     width: 100%; }
     .authincation-content.style-2 .form-control {
       border: 0;
-      border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0;
+      border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px);
       box-shadow: 0rem 0rem 0.9375rem rgba(0, 0, 0, 0.08); }
     @media only screen and (max-width: 35.9375rem) {
       .authincation-content.style-2 .auth-form {

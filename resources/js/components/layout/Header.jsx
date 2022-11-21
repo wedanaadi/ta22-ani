@@ -38,7 +38,6 @@ const Header = ({ sidebarOpen, setSidebar }) => {
   };
 
   const handleLogout = async () => {
-    console.log(token);
     try {
       const {data} = await axiosJWT.post(`${import.meta.env.VITE_BASE_URL}/logout`,{}, {
         withCredentials:true,
@@ -48,7 +47,6 @@ const Header = ({ sidebarOpen, setSidebar }) => {
       })
       localStorage.clear('isLogin')
       localStorage.clear('auth_user')
-      console.log(data);
       navigasi("/login",{replace:true})
     } catch (error) {
       console.log(error);

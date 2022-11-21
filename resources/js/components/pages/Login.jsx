@@ -3,33 +3,72 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthConsumer from "../../hook/Auth";
 import { useToken } from "../../hook/Token";
-import jwt_decode from 'jwt-decode'
+import jwt_decode from "jwt-decode";
+import { toast, ToastContainer } from "react-toastify";
 
 const Login = () => {
-  const [username, setUsername ] = useState("");
-  const [password, setPassword ] = useState("");
-  const [authed, dispatch] = AuthConsumer()
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [authed, dispatch] = AuthConsumer();
   const navigasi = useNavigate();
-  const {setToken, setExp} = useToken()
+  const { setToken, setExp } = useToken();
+  const [error, setError] = useState([]);
+  const [waiting, setWait] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {data} = await axios.post(`${import.meta.env.VITE_BASE_URL}/login`,{username, password})
-    const me = await axios.get("http://127.0.0.1:8000/api/me",{
-      headers: {
-        Authorization: `Bearer ${data.access_token}`
+    const auth = toast.loading("Authentication...");
+    setWait(true);
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/login`,
+        { username, password }
+      );
+      await axios.get("http://127.0.0.1:8000/api/me", {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      dispatch({ type: "login" });
+      setToken(data.access_token);
+      const decodeToken = jwt_decode(data.access_token);
+      setExp(decodeToken.exp);
+      localStorage.setItem("isLogin", true);
+      setWait(false);
+      toast.update(auth, {
+        render: "Authentication Successfuly",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        navigasi("/");
+      }, 300);
+    } catch (error) {
+      setError([]);
+      setWait(false);
+      if (error.response.status === 422) {
+        toast.update(auth, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light"
+        });
+        setError(error.response.data.error);
+      } else {
+        toast.update(auth, {
+          render: error.response.data.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
       }
-    })
-    dispatch({type:'login'})
-    setToken(data.access_token)
-    const decodeToken = jwt_decode(data.access_token)
-    setExp(decodeToken.exp)
-    localStorage.setItem('isLogin',true)
-    navigasi("/")
+    }
   };
 
   return (
     <div className="vh-100">
+      <ToastContainer />
       <div className="authincation h-100">
         <div className="container h-100">
           <div className="row justify-content-center h-100 align-items-center">
@@ -42,7 +81,7 @@ const Login = () => {
                 <br />
                 Kabupaten Tabanan, Bali
               </h4>
-              <div className="authincation-content py-3 px-5">
+              <div className="authincation-content py-5 px-5">
                 <div className="row no-gutters mb-2">
                   <div className="col-xl-12">
                     <div className="auth-form">
@@ -55,8 +94,13 @@ const Login = () => {
                             type="text"
                             className="form-control"
                             value={username}
-                            onChange={(e)=>setUsername(e.target.value)}
+                            onChange={(e) => setUsername(e.target.value)}
                           />
+                          {error.username?.map((msg, index) => (
+                            <div className="invalid-feedback" key={index}>
+                              {msg}
+                            </div>
+                          ))}
                         </div>
                         <div className="mb-3">
                           <label className="mb-1">
@@ -66,14 +110,20 @@ const Login = () => {
                             type="password"
                             className="form-control"
                             value={password}
-                            onChange={(e)=>setPassword(e.target.value)}
+                            onChange={(e) => setPassword(e.target.value)}
                           />
+                          {error.password?.map((msg, index) => (
+                            <div className="invalid-feedback" key={index}>
+                              {msg}
+                            </div>
+                          ))}
                         </div>
                         <div className="text-end">
                           <button
                             type="submit"
-                            className="btn btn-primary btn-block"
-                            // onClick={()=>navigasi("/",{replace:true})}
+                            className={`btn btn-primary btn-block ${
+                              waiting ? "disabled" : ""
+                            }`}
                           >
                             Login
                           </button>

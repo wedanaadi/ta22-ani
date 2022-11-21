@@ -6,6 +6,7 @@ import "@popperjs/core";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/app.css";
+import 'react-toastify/dist/ReactToastify.css';
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./hook/Auth";

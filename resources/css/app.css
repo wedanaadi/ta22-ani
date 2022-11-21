@@ -3056,3 +3056,7 @@ fieldset:disabled .btn {
   display: block;
   width: 100%;
 }
+
+.invalid-feedback {
+  display: block !important;
+}

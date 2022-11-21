@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -29,9 +30,23 @@ class AuthController extends Controller
    */
   public function login(Request $request)
   {
+    $rules = [
+      'username' => 'required|string',
+      'password' => 'required'
+    ];
+
+    $validator = Validator::make($request->only(['username', 'password']), $rules, [
+      'required' => 'The :attribute can not empty',
+      'string' => 'The :attribute must be string'
+    ]);
+
+    if($validator->fails()) {
+      return response()->json(['error' => $validator->messages()->toArray()],422);
+    }
+
     $credentials = $request->only(['username', 'password']);
     if (!$token = auth()->setTTL(1)->attempt($credentials)) {
-      return response()->json(['error' => 'Unauthorized'], 401);
+      return response()->json(['error' => 'Bad Credentials, please check again username and password'], 401);
     }
 
     $refreshToken = auth()->setTTL(60)->attempt($credentials);
