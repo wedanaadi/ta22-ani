@@ -6,7 +6,7 @@ import {faCircle} from '@fortawesome/free-regular-svg-icons'
 const Sidebar = () => {
   return (
     <aside className="bg-white" id="sidebar-wrapper">
-      <div className="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
+      <div className="sidebar-heading text-center py-header primary-text fs-4 fw-bold text-uppercase border-bottom">
         {/* <i className="fas fa-user-secret me-2" /> */}
         {/* <FontAwesomeIcon icon={faUserSecret} className="me-2" /> */}
         {/* Codersbite */}

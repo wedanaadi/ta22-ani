@@ -3,8 +3,9 @@ import { useRoutes, Outlet } from "react-router-dom";
 import Login from "./components/pages/Login";
 import NotFound from "./components/pages/404";
 import Sample from "./components/pages/Sample";
-import Preload from "./components/layout/Preload";
 import Home from "./components/pages/Home"
+import {RequiredAuth} from './hook/PrivateAuth'
+import Pegawai from './components/pages/Pegawai'
 
 const Routes = () => {
   const routes = useRoutes([
@@ -26,13 +27,17 @@ const Routes = () => {
         },
         {
           path: "/",
-          element: <Home />,
+          element: <RequiredAuth><Home /></RequiredAuth>,
           children: [
             {
               index: true,
               element: <Sample />,
-              errorElement: <NotFound />,
+              // errorElement: <NotFound />,
             },
+            {
+              path: "pegawai",
+              element: <RequiredAuth><Pegawai /></RequiredAuth>
+            }
           ],
         },
       ],

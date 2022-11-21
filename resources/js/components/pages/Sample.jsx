@@ -1,7 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {useToken} from '../../hook/Token'
+import jwt_decode from 'jwt-decode'
+import axios from "axios";
 
 const Sample = () => {
+  const {token, setToken, exp, setExp} = useToken()
+  const [hello, setHello] =useState('')
+
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const currentDate = new Date();
+      if (exp * 1000 < currentDate.getTime()) {
+        const {data} = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/refresh`
+        );
+
+        config.headers.Authorization = `Bearer ${data.access_token}`;
+        setToken(data.access_token);
+        const decode = jwt_decode(data.access_token);
+        setExp(decode.exp);
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  const getHello = async () => {
+    const {data} = await axiosJWT.get(`${import.meta.env.VITE_BASE_URL}/hello`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+    setHello(data)
+  }
+
+  const handleTest = () => {
+    getHello()
+  }
+
   const navigasi = useNavigate();
   return (
     <div className="card">
@@ -10,8 +51,7 @@ const Sample = () => {
       </div>
       <div className="card-body">
         <p className="card-text">
-          This is a wider card with supporting text and below as a natural
-          lead-in to the additional content. This content is a little <br /> bit
+          {`ini api ${hello}`} <br /> bit
           longer. Some quick example text to build the bulk
         </p>
         <form action="#">
@@ -62,6 +102,9 @@ const Sample = () => {
         </div>
         <button className="btn btn-success" onClick={() => navigasi("/test")}>
           Go somewhere
+        </button>
+        <button className="btn btn-success" onClick={() => handleTest()}>
+          test
         </button>
       </div>
     </div>

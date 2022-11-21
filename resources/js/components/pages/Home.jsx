@@ -3,17 +3,44 @@ import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 import Footer from "../layout/Footer";
 import Preload from "../layout/Preload";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useToken } from "../../hook/Token";
+import jwt_decode from "jwt-decode";
 
 const Home = () => {
   const [sidebarOpen, setSidebar] = useState(false);
   const [preloading, setPreload] = useState(true);
+  const navigasi = useNavigate();
+  const { setToken, setExp } = useToken();
 
-  useEffect(()=>{
+
+  const refreshToken = async () => {
+    try {
+      const { data: response } = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/refresh`
+      );
+      setToken(response.access_token);
+      const decoder = jwt_decode(response.access_token);
+      setExp(decoder.exp);
+    } catch (error) {
+      if (error) {
+        navigasi("/");
+      }
+    }
+  };
+
+  const awalFetch = async () => {
+    await refreshToken();
+
     setTimeout(() => {
-      setPreload(false)
+      setPreload(false);
     }, 1500);
-  },[])
+  };
+
+  useEffect(() => {
+    awalFetch();
+  }, []);
 
   return (
     <>

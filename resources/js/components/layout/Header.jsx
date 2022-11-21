@@ -1,11 +1,59 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignLeft } from "@fortawesome/free-solid-svg-icons";
+import {useToken} from '../../hook/Token'
+import jwt_decode from 'jwt-decode'
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ sidebarOpen, setSidebar }) => {
+  const {token, setToken, exp, setExp} = useToken()
+
+  const navigasi = useNavigate()
+
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const currentDate = new Date();
+      if (exp * 1000 < currentDate.getTime()) {
+        const {data} = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/refresh`
+        );
+
+        config.headers.Authorization = `Bearer ${data.access_token}`;
+        setToken(data.access_token);
+        const decode = jwt_decode(data.access_token);
+        setExp(decode.exp);
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
   const hamburger = () => {
     setSidebar(!sidebarOpen);
   };
+
+  const handleLogout = async () => {
+    console.log(token);
+    try {
+      const {data} = await axiosJWT.post(`${import.meta.env.VITE_BASE_URL}/logout`,{}, {
+        withCredentials:true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
+      localStorage.clear('isLogin')
+      localStorage.clear('auth_user')
+      console.log(data);
+      navigasi("/login",{replace:true})
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white px-4 border-bottom">
@@ -53,9 +101,9 @@ const Header = ({ sidebarOpen, setSidebar }) => {
               aria-labelledby="navbarDropdown"
             >
               <li>
-                <a className="dropdown-item" href="#">
+                <button className="dropdown-item" onClick={handleLogout}>
                   <span className="ms-2">Logout</span>
-                </a>
+                </button>
               </li>
             </ul>
           </li>
