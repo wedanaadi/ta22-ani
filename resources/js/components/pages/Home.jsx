@@ -14,7 +14,6 @@ const Home = () => {
   const navigasi = useNavigate();
   const { setToken, setExp } = useToken();
 
-
   const refreshToken = async () => {
     try {
       const { data: response } = await axios.get(
@@ -24,8 +23,10 @@ const Home = () => {
       const decoder = jwt_decode(response.access_token);
       setExp(decoder.exp);
     } catch (error) {
-      if (error) {
-        navigasi("/");
+      if (error.response.status===401) {
+        localStorage.clear("isLogin");
+        localStorage.clear("auth_user");
+        navigasi("/login");
       }
     }
   };
