@@ -11,6 +11,11 @@ use Webpatser\Uuid\Uuid;
 
 class PegawaiController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth:api');
+  }
+
   public function index()
   {
     $pegawaiAll = Pegawai::with('jabatan')->get();
@@ -30,7 +35,8 @@ class PegawaiController extends Controller
       'pendidikan',
       'no_telepon',
       'foto',
-      'jabatan_id'
+      'jabatan_id',
+      'status_pegawai'
     ]);
     $validator = Validator::make($req, [
       'nama_pegawai' => 'required',
@@ -41,6 +47,7 @@ class PegawaiController extends Controller
       'agama' => 'required',
       'status' => 'required',
       'pendidikan' => 'required',
+      'status_pegawai' => 'required',
       'no_telepon' => 'required',
       'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
       'jabatan_id' => 'required'
@@ -62,11 +69,12 @@ class PegawaiController extends Controller
         'id_pegawai' => $newID,
         'nama_pegawai' => $request->nama_pegawai,
         'tempat_lahir' => $request->tempat_lahir,
-        'tanggal_lahir' => $request->tanggal_lahir,
+        'tanggal_lahir' => date('Y-m-d', strtotime($request->tanggal_lahir)),
         'jenis_kelamin' => $request->jenis_kelamin,
         'alamat' => $request->alamat,
         'agama' => $request->agama,
         'status' => $request->status,
+        'status_pegawai' => $request->status_pegawai,
         'pendidikan' => $request->pendidikan,
         'no_telepon' => $request->no_telepon,
         'jabatan_id' => $request->jabatan_id,
@@ -104,7 +112,8 @@ class PegawaiController extends Controller
       'pendidikan',
       'no_telepon',
       'foto',
-      'jabatan_id'
+      'jabatan_id',
+      'status_pegawai'
     ]);
 
     $validator = Validator::make($req, [
@@ -117,6 +126,7 @@ class PegawaiController extends Controller
       'status' => 'required',
       'pendidikan' => 'required',
       'no_telepon' => 'required',
+      'status_pegawai' => 'required',
       'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
       'jabatan_id' => 'required'
     ], [
@@ -136,11 +146,12 @@ class PegawaiController extends Controller
       $payload = [
         'nama_pegawai' => $request->nama_pegawai,
         'tempat_lahir' => $request->tempat_lahir,
-        'tanggal_lahir' => $request->tanggal_lahir,
+        'tanggal_lahir' => date('Y-m-d', strtotime($request->tanggal_lahir)),
         'jenis_kelamin' => $request->jenis_kelamin,
         'alamat' => $request->alamat,
         'agama' => $request->agama,
         'status' => $request->status,
+        'status_pegawai' => $request->status_pegawai,
         'pendidikan' => $request->pendidikan,
         'no_telepon' => $request->no_telepon,
         'jabatan_id' => $request->jabatan_id,
@@ -157,15 +168,15 @@ class PegawaiController extends Controller
         $destinationPath = 'images/pegawai';
         $profileImage = $id . "=" . $dataImage->getClientOriginalName();
         $dataImage->move($destinationPath, $profileImage);
-        $data['foto'] = $profileImage;
+        $payload['foto'] = $profileImage;
     }
 
       $pegawaiFind->update($payload);
       DB::commit();
-      return response()->json(['msg' => 'Successfuly updated data jabatan', "data" => $payload, 'error' => []], 200);
+      return response()->json(['msg' => 'Successfuly updated data pegawai', "data" => $payload, 'error' => []], 200);
     } catch (Exception $e) {
       DB::rollBack();
-      return response()->json(['msg' => 'fail created data jabatan', "data" => [], 'error' => $e->getMessage()], 500);
+      return response()->json(['msg' => 'fail created data pegawai', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
 }

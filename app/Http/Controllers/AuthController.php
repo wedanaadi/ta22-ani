@@ -49,7 +49,7 @@ class AuthController extends Controller
       return response()->json(['error' => 'Bad Credentials, please check again username and password'], 401);
     }
 
-    $refreshToken = auth()->setTTL(60)->attempt($credentials);
+    $refreshToken = auth()->setTTL(1440)->attempt($credentials);
     return response()->json([
       'access_token' => $token,
       'refresh_token' => $refreshToken

@@ -36,5 +36,5 @@ Route::middleware('api')->group(function () {
   // pegawai
   Route::get('pegawai', [PegawaiController::class, 'index']);
   Route::post('pegawai', [PegawaiController::class, 'store']);
-  Route::post('pegawai/{id}', [PegawaiController::class, 'update']);
+  Route::put('pegawai/{id}', [PegawaiController::class, 'update']);
 });

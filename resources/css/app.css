@@ -3060,3 +3060,11 @@ fieldset:disabled .btn {
 .invalid-feedback {
   display: block !important;
 }
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.css-1s2u09g-control {
+  border-radius: 1rem !important;
+}
