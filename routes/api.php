@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CutiController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\UserController;
@@ -25,6 +26,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('refresh', [AuthController::class, 'refresh']);
+
+Route::get('cuti', [CutiController::class, 'index']);
+Route::post('cuti', [CutiController::class, 'store']);
+Route::put('cuti/{id}', [CutiController::class, 'update']);
 
 Route::middleware('api')->group(function () {
   Route::get('me', [AuthController::class, 'me']);

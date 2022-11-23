@@ -45,8 +45,9 @@ const Header = ({ sidebarOpen, setSidebar }) => {
           Authorization: `Bearer ${token}`,
         }
       })
-      localStorage.clear('isLogin')
-      localStorage.clear('auth_user')
+      localStorage.clear();
+      // localStorage.clear('isLogin')
+      // localStorage.clear('auth_user')
       navigasi("/login",{replace:true})
     } catch (error) {
       console.log(error);

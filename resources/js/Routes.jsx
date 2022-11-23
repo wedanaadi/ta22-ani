@@ -14,6 +14,9 @@ import PegawaiEdit from "./components/pages/pegawai/Edit"
 import User from "./components/pages/user/User"
 import UserAdd from "./components/pages/user/Add"
 import UserEdit from "./components/pages/user/Edit"
+import Cuti from "./components/pages/cuti/Cuti"
+import CutiAdd from "./components/pages/cuti/Add"
+import CutiEdit from "./components/pages/cuti/Edit"
 
 const Routes = () => {
   const routes = useRoutes([
@@ -76,7 +79,19 @@ const Routes = () => {
             },
             {
               path: "user/edit",
-              element: <RequiredAuth> <UserEdit/> </RequiredAuth>
+              element: <RequiredAuth><UserEdit/></RequiredAuth>
+            },
+            {
+              path: "cuti",
+              element: <RequiredAuth><Cuti/></RequiredAuth>
+            },
+            {
+              path: "cuti/add",
+              element: <RequiredAuth><CutiAdd /></RequiredAuth>
+            },
+            {
+              path: "cuti/edit",
+              element: <RequiredAuth><CutiEdit/></RequiredAuth>
             },
           ],
         },
