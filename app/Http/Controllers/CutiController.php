@@ -71,12 +71,10 @@ class CutiController extends Controller
     DB::beginTransaction();
     try {
       $payload = [
-        'id_cuti' => Uuid::generate()->string,
         'tanggal_mulai' => $request->tanggal_mulai,
         'tanggal_selesai' => $request->tanggal_selesai,
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
-        'created_at' => round(microtime(true) * 1000),
       ];
       $cutiFind->update($payload);
       DB::commit();

@@ -27,6 +27,7 @@ const Login = () => {
       const { data: me } = await axios.get("http://127.0.0.1:8000/api/me", {
         headers: {
           Authorization: `Bearer ${data.access_token}`,
+          Accept: `application/json`,
         },
       });
       const userLocal = {
@@ -62,6 +63,13 @@ const Login = () => {
           theme: "light",
         });
         setError(error.response.data.error);
+      } else if(error?.response?.status === 500) {
+        toast.update(auth, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
       } else {
         toast.update(auth, {
           render: error?.response?.data?.error,

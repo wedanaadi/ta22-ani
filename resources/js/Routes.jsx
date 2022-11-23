@@ -17,6 +17,9 @@ import UserEdit from "./components/pages/user/Edit"
 import Cuti from "./components/pages/cuti/Cuti"
 import CutiAdd from "./components/pages/cuti/Add"
 import CutiEdit from "./components/pages/cuti/Edit"
+import Absen from "./components/pages/absen/Absen"
+import AbsenAdd from "./components/pages/absen/Add"
+import AbsenEdit from "./components/pages/absen/Edit"
 
 const Routes = () => {
   const routes = useRoutes([
@@ -92,6 +95,18 @@ const Routes = () => {
             {
               path: "cuti/edit",
               element: <RequiredAuth><CutiEdit/></RequiredAuth>
+            },
+            {
+              path: "absen",
+              element: <RequiredAuth><Absen/></RequiredAuth>
+            },
+            {
+              path: "absen/add",
+              element: <RequiredAuth><AbsenAdd /></RequiredAuth>
+            },
+            {
+              path: "absen/edit",
+              element: <RequiredAuth><AbsenEdit/></RequiredAuth>
             },
           ],
         },

@@ -70,10 +70,11 @@ const CutiAdd = () => {
   }, []);
 
   const ConvertToEpoch = (date) => {
-    let myDate = new Date(date * 1000)
-    const myEpoch = myDate.getTime()/1000.0
+    let dateProps = new Date(date).setHours(0,0,0,0);
+    let myDate = new Date(dateProps * 1000);
+    const myEpoch = myDate.getTime() / 1000.0;
     return myEpoch;
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

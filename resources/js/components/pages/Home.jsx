@@ -36,7 +36,7 @@ const Home = () => {
 
     setTimeout(() => {
       setPreload(false);
-    }, 1500);
+    }, 800);
   };
 
   useEffect(() => {

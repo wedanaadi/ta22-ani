@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\JabatanController;
@@ -23,13 +24,14 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::get('absen', [AbsenController::class, 'index']);
+Route::get('pegawai-absen', [AbsenController::class, 'getPegawaiNotCuti']);
+Route::post('absen', [AbsenController::class, 'store']);
+Route::put('absen/{id}', [AbsenController::class, 'update']);
+
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('refresh', [AuthController::class, 'refresh']);
-
-Route::get('cuti', [CutiController::class, 'index']);
-Route::post('cuti', [CutiController::class, 'store']);
-Route::put('cuti/{id}', [CutiController::class, 'update']);
 
 Route::middleware('api')->group(function () {
   Route::get('me', [AuthController::class, 'me']);
@@ -48,4 +50,8 @@ Route::middleware('api')->group(function () {
   Route::get('user', [UserController::class, 'index']);
   Route::post('user', [UserController::class, 'store']);
   Route::put('user/{id}', [UserController::class, 'update']);
+  // cuti
+  Route::get('cuti', [CutiController::class, 'index']);
+  Route::post('cuti', [CutiController::class, 'store']);
+  Route::put('cuti/{id}', [CutiController::class, 'update']);
 });
