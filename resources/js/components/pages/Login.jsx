@@ -22,18 +22,24 @@ const Login = () => {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/login`,
-        { username, password }
+        { username: username.toLowerCase(), password }
       );
-      await axios.get("http://127.0.0.1:8000/api/me", {
+      const { data: me } = await axios.get("http://127.0.0.1:8000/api/me", {
         headers: {
           Authorization: `Bearer ${data.access_token}`,
         },
       });
+      const userLocal = {
+        nama: me.pegawai.nama_pegawai,
+        role: me.pegawai.jabatan.nama_jabatan,
+        foto: me.pegawai.foto,
+      };
       dispatch({ type: "login" });
       setToken(data.access_token);
       const decodeToken = jwt_decode(data.access_token);
       setExp(decodeToken.exp);
       localStorage.setItem("isLogin", true);
+      localStorage.setItem("userLocal", btoa(userLocal));
       setWait(false);
       toast.update(auth, {
         render: "Authentication Successfuly",
@@ -44,20 +50,21 @@ const Login = () => {
         navigasi("/");
       }, 300);
     } catch (error) {
+      console.log(error);
       setError([]);
       setWait(false);
-      if (error.response.status === 422) {
+      if (error?.response?.status === 422) {
         toast.update(auth, {
           render: "Error Validation",
           type: "error",
           isLoading: false,
           autoClose: 1500,
-          theme: "light"
+          theme: "light",
         });
         setError(error.response.data.error);
       } else {
         toast.update(auth, {
-          render: error.response.data.error,
+          render: error?.response?.data?.error,
           type: "error",
           isLoading: false,
           autoClose: 1500,

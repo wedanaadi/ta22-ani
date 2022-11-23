@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Webpatser\Uuid\Uuid;
 
 class AuthController extends Controller
 {
@@ -63,7 +64,7 @@ class AuthController extends Controller
    */
   public function me()
   {
-    return response()->json(auth()->user())->withCookie('auth_user', auth()->user()->id);
+    return response()->json(auth()->user()->load('pegawai','pegawai.jabatan'))->withCookie('auth_user', auth()->user()->id);
   }
 
   /**
@@ -109,9 +110,11 @@ class AuthController extends Controller
   public function register(Request $request)
   {
     $data = [
-      'name' => $request->name,
+      'id' => Uuid::generate()->string,
       'username' => $request->username,
       'password' => Hash::make($request->password),
+      'pegawai_id' => $request->pegawai_id,
+      'created_at' => round(microtime(true) * 1000),
     ];
     User::create($data);
     return response()->json('created', 201);

@@ -197,7 +197,7 @@ const PegawaiEdit = () => {
       <div className="card">
         <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
           <h5 className="card-title">Ubah Pegawai</h5>
-          <Link to="/jabatan" className="btn btn-secondary float-end">
+          <Link to="/pegawai" className="btn btn-secondary float-end">
             <FontAwesomeIcon icon={faArrowLeft} />
             &nbsp; Kembali
           </Link>

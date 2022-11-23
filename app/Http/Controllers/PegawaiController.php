@@ -179,4 +179,20 @@ class PegawaiController extends Controller
       return response()->json(['msg' => 'fail created data pegawai', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
+
+  public function getPegawaiNotHasUser(Request $request)
+  {
+    if ($request->act === 'save') {
+    $data = DB::select("SELECT pegawais.*
+    FROM pegawais
+    LEFT JOIN users t2 ON t2.pegawai_id = pegawais.id_pegawai
+    WHERE t2.pegawai_id IS NULL;");
+    } else {
+    $data = DB::select("SELECT pegawais.*
+    FROM pegawais
+    LEFT JOIN users t2 ON t2.pegawai_id = pegawais.id_pegawai
+    WHERE t2.pegawai_id = '$request->id'");
+    }
+    return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
+  }
 }

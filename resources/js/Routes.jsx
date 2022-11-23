@@ -11,6 +11,9 @@ import Edit from "./components/pages/jabatan/Edit";
 import Pegawai from "./components/pages/pegawai/Pegawai"
 import PegawaiAdd from "./components/pages/pegawai/Add"
 import PegawaiEdit from "./components/pages/pegawai/Edit"
+import User from "./components/pages/user/User"
+import UserAdd from "./components/pages/user/Add"
+import UserEdit from "./components/pages/user/Edit"
 
 const Routes = () => {
   const routes = useRoutes([
@@ -62,7 +65,19 @@ const Routes = () => {
             {
               path: "pegawai/edit",
               element: <RequiredAuth> <PegawaiEdit/> </RequiredAuth>
-            }
+            },
+            {
+              path: "user",
+              element: <RequiredAuth> <User/> </RequiredAuth>
+            },
+            {
+              path: "user/add",
+              element: <RequiredAuth><UserAdd /></RequiredAuth>
+            },
+            {
+              path: "user/edit",
+              element: <RequiredAuth> <UserEdit/> </RequiredAuth>
+            },
           ],
         },
       ],

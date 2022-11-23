@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,11 @@ Route::middleware('api')->group(function () {
   Route::put('jabatan/{id}', [JabatanController::class, 'update']);
   // pegawai
   Route::get('pegawai', [PegawaiController::class, 'index']);
+  Route::get('pegawai-user', [PegawaiController::class, 'getPegawaiNotHasUser']);
   Route::post('pegawai', [PegawaiController::class, 'store']);
   Route::put('pegawai/{id}', [PegawaiController::class, 'update']);
+  // user
+  Route::get('user', [UserController::class, 'index']);
+  Route::post('user', [UserController::class, 'store']);
+  Route::put('user/{id}', [UserController::class, 'update']);
 });
