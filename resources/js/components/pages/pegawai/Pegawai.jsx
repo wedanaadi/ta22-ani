@@ -50,6 +50,7 @@ const Pegawai = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
+    { name: "NIK", field: "nik", sortable: true },
     { name: "Nama Pegawai", field: "nama_pegawai", sortable: true },
     { name: "Jabatan", field: "jabatan_id", sortable: true },
     { name: "Tempat Lahir", field: "tempat_lahir", sortable: true },
@@ -100,6 +101,7 @@ const Pegawai = () => {
           data.agama.toLowerCase().includes(search.toLowerCase()) ||
           data.pendidikan.toLowerCase().includes(search.toLowerCase()) ||
           data.no_telepon.toLowerCase().includes(search.toLowerCase()) ||
+          data.nik.toLowerCase().includes(search.toLowerCase()) ||
           data.alamat.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -163,6 +165,7 @@ const Pegawai = () => {
                     pegawaiData.map((pegawai, index) => (
                       <tr key={pegawai.id_pegawai}>
                         <th scope="row">{index + 1}</th>
+                        <td>{pegawai.nik}</td>
                         <td>{pegawai.nama_pegawai}</td>
                         <td>{pegawai.jabatan.nama_jabatan}</td>
                         <td>{pegawai.tempat_lahir}</td>

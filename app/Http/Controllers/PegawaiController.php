@@ -25,6 +25,7 @@ class PegawaiController extends Controller
   public function store(Request $request)
   {
     $req = $request->only([
+      'nik',
       'nama_pegawai',
       'tempat_lahir',
       'tanggal_lahir',
@@ -39,6 +40,7 @@ class PegawaiController extends Controller
       'status_pegawai'
     ]);
     $validator = Validator::make($req, [
+      'nik' => 'required|numeric',
       'nama_pegawai' => 'required',
       'tempat_lahir' => 'required',
       'tanggal_lahir' => 'required',
@@ -53,6 +55,7 @@ class PegawaiController extends Controller
       'jabatan_id' => 'required'
     ], [
       'required' =>  'The :attribute can not empty',
+      'numeric' =>  'The :attribute must be number',
       'image' => 'File tidak valid',
       'mimes' => 'Format gambar harus jpeg/png/jpg',
       'max:2048' => 'Ukuran maksimal 2 MB'
@@ -67,6 +70,7 @@ class PegawaiController extends Controller
       $newID = Uuid::generate()->string;
       $payload = [
         'id_pegawai' => $newID,
+        'nik' => $request->nik,
         'nama_pegawai' => $request->nama_pegawai,
         'tempat_lahir' => $request->tempat_lahir,
         'tanggal_lahir' => date('Y-m-d', strtotime($request->tanggal_lahir)),
@@ -102,6 +106,7 @@ class PegawaiController extends Controller
   public function update(Request $request, $id)
   {
     $req = $request->only([
+      'nik',
       'nama_pegawai',
       'tempat_lahir',
       'tanggal_lahir',
@@ -117,6 +122,7 @@ class PegawaiController extends Controller
     ]);
 
     $validator = Validator::make($req, [
+      'nik' => 'required',
       'nama_pegawai' => 'required',
       'tempat_lahir' => 'required',
       'tanggal_lahir' => 'required',
@@ -145,6 +151,7 @@ class PegawaiController extends Controller
     try {
       $payload = [
         'nama_pegawai' => $request->nama_pegawai,
+        'nik' => $request->nik,
         'tempat_lahir' => $request->tempat_lahir,
         'tanggal_lahir' => date('Y-m-d', strtotime($request->tanggal_lahir)),
         'jenis_kelamin' => $request->jenis_kelamin,

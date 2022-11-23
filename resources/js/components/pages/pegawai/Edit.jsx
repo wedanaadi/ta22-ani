@@ -22,6 +22,7 @@ const PegawaiEdit = () => {
   const [status, setStatus] = useState("");
   const [pendidikan, setPendidikan] = useState("");
   const [no_telepon, setTelp] = useState("");
+  const [nik, setNIK] = useState("");
   const [status_pegawai, setSP] = useState(0);
   const [foto, setFoto] = useState(null);
   const [jabatans, setJabatans] = useState([]);
@@ -88,6 +89,7 @@ const PegawaiEdit = () => {
     setPendidikan(edit.pendidikan)
     setId(edit.id_pegawai)
     setOldFoto(edit.foto)
+    setNIK(edit.nik)
   }
 
   const loadJabatan = async () => {
@@ -124,6 +126,7 @@ const PegawaiEdit = () => {
     e.preventDefault();
     const formData = {
       nama_pegawai,
+      nik,
       jabatan_id: jabatan_id.value,
       tempat_lahir,
       tanggal_lahir,
@@ -216,6 +219,24 @@ const PegawaiEdit = () => {
                   onChange={(e) => setPegawai(e.target.value)}
                 />
                 {errors.nama_pegawai?.map((msg, index) => (
+                  <div className="invalid-feedback" key={index}>
+                    {msg}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="col-xs-12 col-md-6 col-lg-6">
+              <div className="mb-3">
+                <label className="mb-3">
+                  <strong>NIK</strong>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={nik}
+                  onChange={(e) => setNIK(e.target.value)}
+                />
+                {errors.nik?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
                   </div>
