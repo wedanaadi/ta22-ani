@@ -6,7 +6,7 @@ import jwt_decode from 'jwt-decode'
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Header = ({ sidebarOpen, setSidebar }) => {
+const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
   const {token, setToken, exp, setExp} = useToken()
 
   const navigasi = useNavigate()
@@ -88,7 +88,7 @@ const Header = ({ sidebarOpen, setSidebar }) => {
               aria-expanded="false"
             >
               <img
-                src="/images/pic4.jpg"
+                src={`/images/pegawai/${fotoLogin}`}
                 width={52}
                 height={52}
                 alt="logo"

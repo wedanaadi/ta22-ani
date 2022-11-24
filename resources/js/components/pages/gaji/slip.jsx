@@ -4,6 +4,7 @@ import {
   faArrowLeft,
   faCheck,
   faComment,
+  faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NumericFormat } from "react-number-format";
@@ -24,6 +25,8 @@ const slip = () => {
     const last = new Date(y, m + 1, 0).getDate();
     return last;
   };
+
+  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
 
   const axiosJWT = axios.create();
 
@@ -76,20 +79,25 @@ const slip = () => {
     checkComment();
   }, []);
 
-  const handleValidasi = async() => {
+  const handleValidasi = async () => {
     try {
       const { data: response } = await axiosJWT.put(
         `${import.meta.env.VITE_BASE_URL}/validasi/${localEditData.id_gaji}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      navigasi("/gaji")
+      navigasi("/gaji");
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSlip = async () => {
+    window.open(`${import.meta.env.VITE_BASE_URL}/slip/export/${dataLokal.id}`)
   };
 
   return (
@@ -98,10 +106,20 @@ const slip = () => {
       <div className="card">
         <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
           <h5 className="card-title fw-bold">SLIP GAJI</h5>
-          <Link to="/gaji" className="btn btn-secondary float-end">
-            <FontAwesomeIcon icon={faArrowLeft} />
-            &nbsp; Kembali
-          </Link>
+          <div>
+            <button className="btn btn-danger" onClick={()=>handleSlip()}>
+              <FontAwesomeIcon icon={faFileExcel} />
+              &nbsp; Laporan
+            </button>
+            &nbsp;
+            <button
+              onClick={() => navigasi(-1)}
+              className="btn btn-secondary float-end"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} />
+              &nbsp; Kembali
+            </button>
+          </div>
         </div>
         <div className="card-body">
           <div className="row px-2">
@@ -172,11 +190,15 @@ const slip = () => {
               <span className="fw-bold mb-3">GAJI</span>
             </div>
             <div>
-              <button className="btn btn-success" onClick={handleValidasi}>
-                <FontAwesomeIcon icon={faCheck} />
-                &nbsp; Validasi
-              </button>{" "}
-              {countComment > 0 ? (
+              {dataLokal.role === 4 ? (
+                <button className="btn btn-success" onClick={handleValidasi}>
+                  <FontAwesomeIcon icon={faCheck} />
+                  &nbsp; Validasi
+                </button>
+              ) : (
+                <></>
+              )}{" "}
+              {countComment > 0 && dataLokal.role !== 4 ? (
                 <></>
               ) : (
                 <button

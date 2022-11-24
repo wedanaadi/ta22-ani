@@ -1,20 +1,17 @@
-import axios from "axios";
-import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import { useToken } from "../../../hook/Token";
+import axios from 'axios';
+import React, { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useToken } from '../../../hook/Token';
 import jwt_decode from 'jwt-decode'
+import { toast, ToastContainer } from "react-toastify";
 
-const Komentar = () => {
+const ExcelAbsen = () => {
   const closeModal = useRef(null);
-  const [comment, setComment] = useState("");
+  const [file, setFile] = useState(null);
   const { token, setToken, exp, setExp } = useToken();
   const [errors, setErrors] = useState([]);
   const [waiting, setWait] = useState(false);
-
   const navigasi = useNavigate()
-
-  const localEditData = JSON.parse(atob(localStorage.getItem("gajiEdit")));
 
   const axiosJWT = axios.create();
 
@@ -54,20 +51,21 @@ const Komentar = () => {
     setWait(true);
     try {
       const { data: response } = await axiosJWT.post(
-        `${import.meta.env.VITE_BASE_URL}/comment`,
+        `${import.meta.env.VITE_BASE_URL}/absen/import`,
         {
-          comment,
-          gaji_id: localEditData.id_gaji,
+          file,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+            "Content-Type": "multipart/form-data"
           },
         }
       );
       setWait(false);
       toast.update(notifProses, {
-        render: "Create Successfuly",
+        render: "Import Successfuly",
         type: "success",
         isLoading: false,
         autoClose: 1500,
@@ -117,7 +115,7 @@ const Komentar = () => {
         <div className="modal-content">
           <div className="modal-header">
             <h1 className="modal-title fs-5" id="commentMdLabel">
-              Tambah Komentar
+              Import Absen
             </h1>
             <button
               type="button"
@@ -132,16 +130,10 @@ const Komentar = () => {
               <ToastContainer />
               <div className="mb-3">
                 <label htmlFor="comment" className="form-label">
-                  Komentar
+                  File
                 </label>
-                <textarea
-                  value={comment}
-                  className="form-control"
-                  cols="30"
-                  rows="10"
-                  onChange={(e) => setComment(e.target.value)}
-                ></textarea>
-                {errors.comment?.map((msg, index) => (
+                <input type="file" className='form-control' onChange={(e) => setFile(e.target.files[0])} />
+                {errors.file?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
                   </div>
@@ -157,7 +149,7 @@ const Komentar = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Komentar;
+export default ExcelAbsen

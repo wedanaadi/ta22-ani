@@ -13,10 +13,18 @@ const AddUser = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [pegawai_id, setIdPegawai] = useState("");
+  const [hak_akses, setHakAkses] = useState("");
   const [pegawais, setPegawais] = useState([]);
   const [errors, setErrors] = useState([]);
   const [waiting, setWait] = useState(false);
   const navigasi = useNavigate();
+
+  const optionHK = [
+    { value: 1, label: "Admin" },
+    { value: 2, label: "HRD" },
+    { value: 3, label: "Pegawai" },
+    { value: 4, label: "Pimpinan" },
+  ];
 
   const axiosJWT = axios.create();
 
@@ -53,7 +61,7 @@ const AddUser = () => {
       `${import.meta.env.VITE_BASE_URL}/pegawai-user`,
       {
         params: {
-          act: 'save',
+          act: "save",
           id: null,
         },
         headers: {
@@ -77,6 +85,7 @@ const AddUser = () => {
       username: username.toLowerCase(),
       password,
       pegawai_id: pegawai_id.value,
+      hak_akses: hak_akses.value,
     };
 
     const notifikasiSave = toast.loading("Saving....");
@@ -138,53 +147,68 @@ const AddUser = () => {
             </Link>
           </div>
           <div className="card-body">
-          <div className="mb-3">
-                <label className="mb-3">
-                  <strong>Username</strong>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                {errors.username?.map((msg, index) => (
-                  <div className="invalid-feedback" key={index}>
-                    {msg}
-                  </div>
-                ))}
-              </div>
-          <div className="mb-3">
-                <label className="mb-3">
-                  <strong>Password</strong>
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                {errors.password?.map((msg, index) => (
-                  <div className="invalid-feedback" key={index}>
-                    {msg}
-                  </div>
-                ))}
-              </div>
-              <div className="mb-3">
-                <label className="mb-3">
-                  <strong>Pegawai</strong>
-                </label>
-                <Select
-                  value={pegawai_id}
-                  onChange={setIdPegawai}
-                  options={pegawais}
-                />
-                {errors.pegawai_id?.map((msg, index) => (
-                  <div className="invalid-feedback" key={index}>
-                    {msg}
-                  </div>
-                ))}
-              </div>
+            <div className="mb-3">
+              <label className="mb-3">
+                <strong>Username</strong>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              {errors.username?.map((msg, index) => (
+                <div className="invalid-feedback" key={index}>
+                  {msg}
+                </div>
+              ))}
+            </div>
+            <div className="mb-3">
+              <label className="mb-3">
+                <strong>Password</strong>
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {errors.password?.map((msg, index) => (
+                <div className="invalid-feedback" key={index}>
+                  {msg}
+                </div>
+              ))}
+            </div>
+            <div className="mb-3">
+              <label className="mb-3">
+                <strong>Pegawai</strong>
+              </label>
+              <Select
+                value={pegawai_id}
+                onChange={setIdPegawai}
+                options={pegawais}
+              />
+              {errors.pegawai_id?.map((msg, index) => (
+                <div className="invalid-feedback" key={index}>
+                  {msg}
+                </div>
+              ))}
+            </div>
+            <div className="mb-3">
+              <label className="mb-3">
+                <strong>Hak Akses</strong>
+              </label>
+              <Select
+                value={hak_akses}
+                onChange={setHakAkses}
+                options={optionHK}
+              />
+              {errors.hak_akses?.map((msg, index) => (
+                <div className="invalid-feedback" key={index}>
+                  {msg}
+                </div>
+              ))}
+            </div>
           </div>
           <div className="card-footer d-sm-flex justify-content-between align-items-center bg-white">
             <div className="card-footer-link mb-4 mb-sm-0"></div>

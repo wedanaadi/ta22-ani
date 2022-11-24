@@ -1,11 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPencil } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faPencil,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import ExcelAbsen from "./ExcelAbsen";
 
 const Absen = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -38,7 +43,7 @@ const Absen = () => {
             localStorage.clear("isLogin");
             localStorage.clear("auth_user");
             navigasi("/login");
-          } else if(error?.response?.status === 500) {
+          } else if (error?.response?.status === 500) {
             toast.update(auth, {
               render: error?.response?.data?.message,
               type: "error",
@@ -92,8 +97,12 @@ const Absen = () => {
       computedAbsens = computedAbsens.filter(
         (data) =>
           data.pegawai.nik.toLowerCase().includes(search.toLowerCase()) ||
-          data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase()) ||
-          data.pegawai.jabatan.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
+          data.pegawai.nama_pegawai
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+          data.pegawai.jabatan.nama_jabatan
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
           data.keterangan.toLowerCase().includes(search.toLowerCase()) ||
           data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase())
       );
@@ -123,18 +132,36 @@ const Absen = () => {
   };
 
   const convertDate = (dateProps) => {
-    let date = new Date(dateProps)
-    return date.toLocaleDateString('id-ID',{year:'numeric', month: 'long', day: 'numeric'}).toString();
-  }
+    let date = new Date(dateProps);
+    return date
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      .toString();
+  };
 
   return (
     <div className="card">
+      <ExcelAbsen />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Absen</h5>
-        <Link to="add" className="btn btn-success float-end">
-          <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah Absen
-        </Link>
+        <div>
+          <button
+            className="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#commentModal"
+          >
+            <FontAwesomeIcon icon={faFileExcel} />
+            &nbsp; Import Absen
+          </button>
+          &nbsp;
+          <Link to="add" className="btn btn-success float-end">
+            <FontAwesomeIcon icon={faPlus} />
+            &nbsp; Tambah Absen
+          </Link>
+        </div>
       </div>
       <div className="card-body">
         {/* datatable */}
@@ -198,7 +225,7 @@ const Absen = () => {
         {/* end datatable */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Absen
+export default Absen;

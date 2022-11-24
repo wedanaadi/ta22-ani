@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\exportGaji;
+use App\Exports\exportSlip;
 use App\Models\Gaji;
 use App\Models\Pegawai;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Webpatser\Uuid\Uuid;
 
 class GajiController extends Controller
@@ -177,5 +180,23 @@ class GajiController extends Controller
       'is_valid' => 1,
     ]);
     return response()->json(['msg' => 'Successfuly updated data validasi', "data" => [], 'error' => []], 200);
+  }
+
+  public function export()
+  {
+    $gaji = Gaji::with('pegawai','pegawai.jabatan','comment')->get();
+    return Excel::download(new exportGaji($gaji), 'gaji-laporan-dicetak-'.date('Y-m-d').'.xlsx');
+  }
+
+  public function exportSlip($id)
+  {
+    $gaji = Gaji::with('pegawai','pegawai.jabatan','comment')->where('pegawai_id',$id)->get();
+    return Excel::download(new exportSlip($gaji), 'slip-gaji-dicetak-'.date('Y-m-d').'.xlsx');
+  }
+
+  public function pegawai_slip(Request $request)
+  {
+    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->where('pegawai_id',$request->id)->where('is_valid',0)->get();
+    return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
   }
 }

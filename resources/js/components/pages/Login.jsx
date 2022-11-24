@@ -31,8 +31,9 @@ const Login = () => {
         },
       });
       const userLocal = {
+        id:me.pegawai_id,
         nama: me.pegawai.nama_pegawai,
-        role: me.pegawai.jabatan.nama_jabatan,
+        role: me.hak_akses,
         foto: me.pegawai.foto,
       };
       dispatch({ type: "login" });
@@ -40,7 +41,7 @@ const Login = () => {
       const decodeToken = jwt_decode(data.access_token);
       setExp(decodeToken.exp);
       localStorage.setItem("isLogin", true);
-      localStorage.setItem("userLocal", btoa(userLocal));
+      localStorage.setItem("userLocal", btoa(JSON.stringify(userLocal)));
       setWait(false);
       toast.update(auth, {
         render: "Authentication Successfuly",

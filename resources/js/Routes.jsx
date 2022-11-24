@@ -24,6 +24,7 @@ import Gaji from "./components/pages/gaji/Gaji"
 import GajiAdd from "./components/pages/gaji/Add"
 import GajiEdit from "./components/pages/gaji/Edit"
 import SlipGaji from "./components/pages/gaji/slip"
+import SlipGajiPegawai from "./components/pages/gaji/GajiPegawai"
 
 const Routes = () => {
   const routes = useRoutes([
@@ -127,6 +128,10 @@ const Routes = () => {
             {
               path: "gaji/slip",
               element: <RequiredAuth><SlipGaji/></RequiredAuth>
+            },
+            {
+              path: "slip",
+              element: <RequiredAuth><SlipGajiPegawai/></RequiredAuth>
             },
           ],
         },

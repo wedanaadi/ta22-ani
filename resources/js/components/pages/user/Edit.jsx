@@ -11,13 +11,21 @@ import Select from "react-select";
 const EditUser = () => {
   const { token, setToken, exp, setExp } = useToken();
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(null);
   const [pegawai_id, setIdPegawai] = useState("");
   const [pegawais, setPegawais] = useState([]);
   const [errors, setErrors] = useState([]);
   const [waiting, setWait] = useState(false);
   const [idEdit, setIdEdit] = useState("")
+  const [hak_akses, setHakAkses] = useState("");
   const navigasi = useNavigate();
+
+  const optionHK = [
+    { value: 1, label: "Admin" },
+    { value: 2, label: "HRD" },
+    { value: 3, label: "Pegawai" },
+    { value: 4, label: "Pimpinan" },
+  ];
 
   const axiosJWT = axios.create();
 
@@ -72,6 +80,8 @@ const EditUser = () => {
   const loadEdit = () => {
     setUsername(localEditData.username)
     setIdEdit(localEditData.id)
+    const selected = optionHK.filter(({value})=> value === localEditData.hak_akses)
+    setHakAkses(selected[0])
   }
 
   const loadSelectAwait = () => {
@@ -94,6 +104,7 @@ const EditUser = () => {
       username: username.toLowerCase().split(" ").join(""),
       password,
       pegawai_id: pegawai_id.value,
+      hak_akses: hak_akses.value,
       _method:'PUT'
     };
 
@@ -203,6 +214,21 @@ const EditUser = () => {
                   </div>
                 ))}
               </div>
+              <div className="mb-3">
+              <label className="mb-3">
+                <strong>Hak Akses</strong>
+              </label>
+              <Select
+                value={hak_akses}
+                onChange={setHakAkses}
+                options={optionHK}
+              />
+              {errors.hak_akses?.map((msg, index) => (
+                <div className="invalid-feedback" key={index}>
+                  {msg}
+                </div>
+              ))}
+            </div>
           </div>
           <div className="card-footer d-sm-flex justify-content-between align-items-center bg-white">
             <div className="card-footer-link mb-4 mb-sm-0"></div>

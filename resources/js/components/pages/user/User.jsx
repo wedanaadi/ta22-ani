@@ -53,6 +53,7 @@ const User = () => {
     { name: "Username", field: "nama_pegawai", sortable: true },
     { name: "password", field: "jabatan_id", sortable: false },
     { name: "Nama Pegawai", field: "tempat_lahir", sortable: true },
+    { name: "Hak_Akses", field: "hak_akses", sortable: true },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 
@@ -110,6 +111,18 @@ const User = () => {
     // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
   };
 
+  const handleHK = (val) => {
+    if(parseInt(val) === 1) {
+      return 'Admin'
+    } else if(parseInt(val) === 2) {
+      return 'HRD'
+    } else if(parseInt(val) === 3) {
+      return 'Pegawai'
+    } else {
+      return 'Pemimpin'
+    }
+  }
+
   return (
     <div className="card">
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
@@ -149,6 +162,7 @@ const User = () => {
                         <td>{user.username}</td>
                         <td>********</td>
                         <td>{user.pegawai.nama_pegawai}</td>
+                        <td>{handleHK(user.hak_akses)}</td>
                         <td>
                           <button
                             className="btn btn-warning"

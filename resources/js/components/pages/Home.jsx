@@ -13,6 +13,7 @@ const Home = () => {
   const [preloading, setPreload] = useState(true);
   const navigasi = useNavigate();
   const { setToken, setExp } = useToken();
+  const [fotoLogin, setFotoLogin] = useState();
 
   const refreshToken = async () => {
     try {
@@ -39,8 +40,14 @@ const Home = () => {
     }, 800);
   };
 
+  const setFoto = () => {
+    const dataLokal = JSON.parse(atob(localStorage.getItem('userLocal')));
+    setFotoLogin(dataLokal.foto)
+  }
+
   useEffect(() => {
     awalFetch();
+    setFoto();
   }, []);
 
   return (
@@ -51,7 +58,7 @@ const Home = () => {
         <div className={sidebarOpen ? "d-flex toggled" : "d-flex"} id="wrapper">
           <Sidebar />
           <div id="page-content-wrapper">
-            <Header sidebarOpen={sidebarOpen} setSidebar={setSidebar} />
+            <Header sidebarOpen={sidebarOpen} setSidebar={setSidebar} fotoLogin={fotoLogin} />
             <main className="container-fluid px-4 py-4">
               <Outlet />
             </main>

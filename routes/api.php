@@ -40,6 +40,19 @@ Route::put('validasi/{id}', [GajiController::class, 'validasi']);
 Route::get('check/{id}', [CommentController::class, 'check']);
 Route::post('comment', [CommentController::class, 'store']);
 
+Route::get('user', [UserController::class, 'index']);
+Route::post('user', [UserController::class, 'store']);
+Route::put('user/{id}', [UserController::class, 'update']);
+
+Route::post('absen/import', [AbsenController::class, 'import']);
+Route::get('pegawai/export', [PegawaiController::class, 'export']);
+Route::get('cuti/export', [CutiController::class, 'export']);
+Route::get('absensi/export', [AbsenController::class, 'export']);
+Route::get('gaji/export', [GajiController::class, 'export']);
+Route::get('slip/export/{id}', [GajiController::class, 'exportSlip']);
+
+Route::get('pegawai-slip', [GajiController::class, 'pegawai_slip']);
+
 Route::middleware('api')->group(function () {
   Route::get('me', [AuthController::class, 'me']);
   Route::get('hello', [AuthController::class, 'hello']);
@@ -54,9 +67,7 @@ Route::middleware('api')->group(function () {
   Route::post('pegawai', [PegawaiController::class, 'store']);
   Route::put('pegawai/{id}', [PegawaiController::class, 'update']);
   // user
-  Route::get('user', [UserController::class, 'index']);
-  Route::post('user', [UserController::class, 'store']);
-  Route::put('user/{id}', [UserController::class, 'update']);
+
   // cuti
   Route::get('cuti', [CutiController::class, 'index']);
   Route::post('cuti', [CutiController::class, 'store']);

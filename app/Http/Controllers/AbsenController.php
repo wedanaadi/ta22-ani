@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportAbsen;
+use App\Imports\ImportAbsen;
 use App\Models\Absen;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Webpatser\Uuid\Uuid;
 
 class AbsenController extends Controller
@@ -94,7 +97,7 @@ class AbsenController extends Controller
                 LEFT JOIN (
                 SELECT * FROM cutis
                 ) AS pv1 ON pv1.pegawai_id = absens.pegawai_id
-                WHERE absens.tanggal = '$now' OR pv1.tanggal_mulai <= '$now' AND pv1.tanggal_selesai >= '$now'
+                WHERE absens.tanggal >= '$now' OR pv1.tanggal_mulai <= '$now' AND pv1.tanggal_selesai >= '$now'
               ) AS pv2 ON pv2.pegawai_id = pegawais.id_pegawai
               WHERE pv2.pegawai_id IS NULL;";
     } else {
@@ -112,5 +115,24 @@ class AbsenController extends Controller
 
     $data = DB::select($sql);
     return response()->json(['msg' => 'Get pegawai tersedia', "data" => $data, 'error' => []], 200);
+  }
+
+  public function import(Request $request)
+  {
+    DB::beginTransaction();
+    try {
+      Excel::import(new ImportAbsen, request()->file('file'));
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly import data absen', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail import data absen', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function export()
+  {
+    $cuti = Absen::with('pegawai','pegawai.jabatan')->get();
+    return Excel::download(new ExportAbsen($cuti), 'absensi-laporan-dicetak-'.date('Y-m-d').'.xlsx');
   }
 }

@@ -23,12 +23,14 @@ class UserController extends Controller
     $req = $request->only([
       'username',
       'password',
-      'pegawai_id'
+      'pegawai_id',
+      'hak_akses'
     ]);
 
     $validator = Validator::make($req, [
       'username' => 'required',
       'password' => 'required',
+      'hak_akses' => 'required',
       'pegawai_id' => 'required'
     ], [
       'required' =>  'The :attribute can not empty',
@@ -51,6 +53,7 @@ class UserController extends Controller
         'username' => $request->username,
         'password' => Hash::make($request->password),
         'pegawai_id' => $request->pegawai_id,
+        'hak_akses' => $request->hak_akses,
         'created_at' => round(microtime(true) * 1000),
       ];
 
@@ -69,7 +72,8 @@ class UserController extends Controller
     $req = $request->only([
       'username',
       'password',
-      'pegawai_id'
+      'pegawai_id',
+      'hak_akses',
     ]);
 
     $validator = Validator::make($req, [
@@ -95,9 +99,10 @@ class UserController extends Controller
       $payload = [
         'username' => $request->username,
         'pegawai_id' => $request->pegawai_id,
+        'hak_akses' => $request->hak_akses,
       ];
 
-      if($request->password !== '') {
+      if($request->password != '' OR $request->password != null) {
         $payload['password'] = Hash::make($request->password);
       }
 

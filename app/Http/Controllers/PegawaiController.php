@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportPegawai;
 use App\Models\Pegawai;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Webpatser\Uuid\Uuid;
 
 class PegawaiController extends Controller
 {
-  public function __construct()
-  {
-    $this->middleware('auth:api');
-  }
+  // public function __construct()
+  // {
+  //   $this->middleware('auth:api');
+  // }
 
   public function index()
   {
@@ -201,5 +203,11 @@ class PegawaiController extends Controller
     WHERE t2.pegawai_id = '$request->id' or t2.pegawai_id IS NULL");
     }
     return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
+  }
+
+  public function export()
+  {
+    $pegawaiAll = Pegawai::with('jabatan')->get();
+    return Excel::download(new ExportPegawai($pegawaiAll), 'pegawai-laporan.xlsx');
   }
 }

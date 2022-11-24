@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\exportCuti;
 use App\Models\Cuti;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Webpatser\Uuid\Uuid;
 
 class CutiController extends Controller
@@ -83,5 +85,11 @@ class CutiController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'fail updated data cuti', "data" => [], 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function export()
+  {
+    $cuti = Cuti::with('pegawai','pegawai.jabatan')->get();
+    return Excel::download(new exportCuti($cuti), 'cuti-laporan.xlsx');
   }
 }
