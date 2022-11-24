@@ -124,7 +124,7 @@ const Absen = () => {
 
   const convertDate = (dateProps) => {
     let date = new Date(dateProps)
-    return date.toLocaleDateString('fr-CA').toString();
+    return date.toLocaleDateString('id-ID',{year:'numeric', month: 'long', day: 'numeric'}).toString();
   }
 
   return (

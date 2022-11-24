@@ -20,6 +20,10 @@ import CutiEdit from "./components/pages/cuti/Edit"
 import Absen from "./components/pages/absen/Absen"
 import AbsenAdd from "./components/pages/absen/Add"
 import AbsenEdit from "./components/pages/absen/Edit"
+import Gaji from "./components/pages/gaji/Gaji"
+import GajiAdd from "./components/pages/gaji/Add"
+import GajiEdit from "./components/pages/gaji/Edit"
+import SlipGaji from "./components/pages/gaji/slip"
 
 const Routes = () => {
   const routes = useRoutes([
@@ -107,6 +111,22 @@ const Routes = () => {
             {
               path: "absen/edit",
               element: <RequiredAuth><AbsenEdit/></RequiredAuth>
+            },
+            {
+              path: "gaji",
+              element: <RequiredAuth><Gaji/></RequiredAuth>
+            },
+            {
+              path: "gaji/add",
+              element: <RequiredAuth><GajiAdd/></RequiredAuth>
+            },
+            {
+              path: "gaji/edit",
+              element: <RequiredAuth><GajiEdit/></RequiredAuth>
+            },
+            {
+              path: "gaji/slip",
+              element: <RequiredAuth><SlipGaji/></RequiredAuth>
             },
           ],
         },

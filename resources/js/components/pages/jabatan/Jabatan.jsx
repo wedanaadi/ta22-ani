@@ -6,7 +6,7 @@ import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
 import { NumericFormat } from "react-number-format";
 import { useNavigate, Link } from "react-router-dom";
-import jwt_decode from 'jwt-decode'
+import jwt_decode from "jwt-decode";
 
 const Jabatan = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -83,9 +83,11 @@ const Jabatan = () => {
     if (search) {
       computedJabatans = computedJabatans.filter(
         (data) =>
-        data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
-        String(data.gaji_pokok).toLowerCase().includes(search.toLowerCase()) ||
-        String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
+          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
+          String(data.gaji_pokok)
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+          String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -106,94 +108,97 @@ const Jabatan = () => {
     );
   }, [jabatans, currentPage, search, sorting]);
 
-  const handleEdit= async (row) => {
-    localStorage.setItem('JabatanEdit',btoa(JSON.stringify(row)))
-    navigasi("edit")
+  const handleEdit = async (row) => {
+    localStorage.setItem("JabatanEdit", btoa(JSON.stringify(row)));
+    navigasi("edit");
     // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
-  }
+  };
 
   return (
-      <div className="card">
-        <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-          <h5 className="card-title">Data Jabatan</h5>
-          <Link to="add" className="btn btn-success float-end">
-            <FontAwesomeIcon icon={faPlus} />
-            &nbsp; Tambah Data
-          </Link>
-        </div>
-        <div className="card-body">
-          {/* datatable */}
-          <div className="row w-100">
-            <div className="col col-12 mb-3 text-center">
-              <div className="row mb-3">
-                <div className="col-md-6"></div>
-                <div className="col-md-6 d-flex flex-row-reverse">
-                  <Search
-                    onSearch={(value) => {
-                      setSearch(value);
-                      setCurrentPage(1);
-                    }}
-                  />
-                </div>
+    <div className="card">
+      <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
+        <h5 className="card-title">Data Jabatan</h5>
+        <Link to="add" className="btn btn-success float-end">
+          <FontAwesomeIcon icon={faPlus} />
+          &nbsp; Tambah Data
+        </Link>
+      </div>
+      <div className="card-body">
+        {/* datatable */}
+        <div className="row w-100">
+          <div className="col col-12 mb-3 text-center">
+            <div className="row mb-3">
+              <div className="col-md-6"></div>
+              <div className="col-md-6 d-flex flex-row-reverse">
+                <Search
+                  onSearch={(value) => {
+                    setSearch(value);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
+            </div>
 
-              <div className="table-responsive">
-                <table className="table table-striped table-bordered">
-                  <TableHeader
-                    headers={headers}
-                    onSorting={(field, order) => setSorting({ field, order })}
-                  />
-                  <tbody>
-                    {jabatansData.length > 0 &&
-                      jabatansData.map((jabatan, index) => (
-                        <tr key={jabatan.id_jabatan}>
-                          <th scope="row">{index + 1}</th>
-                          <td>{jabatan.nama_jabatan}</td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={jabatan.gaji_pokok}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={jabatan.tunjangan}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td>
-                            <button className="btn btn-warning" onClick={()=>handleEdit(jabatan)}>
-                              <FontAwesomeIcon icon={faPencil} />
-                              &nbsp; Edit
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              {loader}
-              <div className="row">
-                <div className="col-12 d-flex flex-row-reverse">
-                  <Pagging
-                    total={totalItems}
-                    itemsPerPage={ITEMS_PER_PAGE}
-                    currentPage={currentPage}
-                    onPageChange={(page) => setCurrentPage(page)}
-                  />
-                </div>
+            <div className="table-responsive">
+              <table className="table table-striped table-bordered">
+                <TableHeader
+                  headers={headers}
+                  onSorting={(field, order) => setSorting({ field, order })}
+                />
+                <tbody>
+                  {jabatansData.length > 0 &&
+                    jabatansData.map((jabatan, index) => (
+                      <tr key={jabatan.id_jabatan}>
+                        <th scope="row">{index + 1}</th>
+                        <td>{jabatan.nama_jabatan}</td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={jabatan.gaji_pokok}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={jabatan.tunjangan}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-warning"
+                            onClick={() => handleEdit(jabatan)}
+                          >
+                            <FontAwesomeIcon icon={faPencil} />
+                            &nbsp; Edit
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            {loader}
+            <div className="row">
+              <div className="col-12 d-flex flex-row-reverse">
+                <Pagging
+                  total={totalItems}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  currentPage={currentPage}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
               </div>
             </div>
           </div>
-          {/* end datatable */}
         </div>
+        {/* end datatable */}
       </div>
+    </div>
   );
 };
 

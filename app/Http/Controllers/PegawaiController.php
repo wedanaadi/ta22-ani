@@ -198,7 +198,7 @@ class PegawaiController extends Controller
     $data = DB::select("SELECT pegawais.*
     FROM pegawais
     LEFT JOIN users t2 ON t2.pegawai_id = pegawais.id_pegawai
-    WHERE t2.pegawai_id = '$request->id'");
+    WHERE t2.pegawai_id = '$request->id' or t2.pegawai_id IS NULL");
     }
     return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
   }
