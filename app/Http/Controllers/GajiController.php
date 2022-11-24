@@ -14,7 +14,7 @@ class GajiController extends Controller
 {
   public function index()
   {
-    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan')->get();
+    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->get();
     return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
   }
 
@@ -168,5 +168,14 @@ class GajiController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'fail updated data gaji', "data" => [], 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function Validasi($id)
+  {
+    $gaji = Gaji::find($id);
+    $gaji->update([
+      'is_valid' => 1,
+    ]);
+    return response()->json(['msg' => 'Successfuly updated data validasi', "data" => [], 'error' => []], 200);
   }
 }

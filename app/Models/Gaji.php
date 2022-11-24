@@ -19,4 +19,8 @@ class Gaji extends Model
   {
     return $this->belongsTo(Pegawai::class, 'pegawai_id', 'id_pegawai');
   }
+
+  function comment() {
+    return $this->belongsTo(Comment::class, 'gaji_id', 'id_gaji');
+  }
 }

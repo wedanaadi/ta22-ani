@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   faArrowLeft,
   faCheck,
@@ -8,9 +8,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NumericFormat } from "react-number-format";
 import { round } from "lodash";
+import Komentar from "./Komentar";
+import axios from "axios";
+import { useToken } from "../../../hook/Token";
 
 const slip = () => {
+  const navigasi = useNavigate();
+  const { token, setToken, exp, setExp } = useToken();
   const localEditData = JSON.parse(atob(localStorage.getItem("gajiEdit")));
+  const [countComment, setCountComment] = useState(0);
   const getLastDay = () => {
     let current = new Date();
     const y = current.getFullYear();
@@ -19,8 +25,76 @@ const slip = () => {
     return last;
   };
 
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const currentDate = new Date();
+      if (exp * 1000 < currentDate.getTime()) {
+        try {
+          const { data } = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/refresh`
+          );
+
+          config.headers.Authorization = `Bearer ${data.access_token}`;
+          setToken(data.access_token);
+          const decode = jwt_decode(data.access_token);
+          setExp(decode.exp);
+        } catch (error) {
+          if (error?.response?.status === 401) {
+            localStorage.clear("isLogin");
+            localStorage.clear("auth_user");
+            navigasi("/login");
+          }
+        }
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  const checkComment = async () => {
+    const editlocal = JSON.parse(atob(localStorage.getItem("gajiEdit")));
+    try {
+      const { data: response } = await axiosJWT.get(
+        `${import.meta.env.VITE_BASE_URL}/check/${editlocal.id_gaji}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCountComment(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    checkComment();
+  }, []);
+
+  const handleValidasi = async() => {
+    try {
+      const { data: response } = await axiosJWT.put(
+        `${import.meta.env.VITE_BASE_URL}/validasi/${localEditData.id_gaji}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      navigasi("/gaji")
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
+      <Komentar />
       <div className="card">
         <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
           <h5 className="card-title fw-bold">SLIP GAJI</h5>
@@ -98,16 +172,22 @@ const slip = () => {
               <span className="fw-bold mb-3">GAJI</span>
             </div>
             <div>
-              <button className="btn btn-success">
+              <button className="btn btn-success" onClick={handleValidasi}>
                 <FontAwesomeIcon icon={faCheck} />
                 &nbsp; Validasi
               </button>{" "}
-              <button
-                className="btn btn-info"
-              >
-                <FontAwesomeIcon icon={faComment} />
-                &nbsp; Comments
-              </button>
+              {countComment > 0 ? (
+                <></>
+              ) : (
+                <button
+                  className="btn btn-info"
+                  data-bs-toggle="modal"
+                  data-bs-target="#commentModal"
+                >
+                  <FontAwesomeIcon icon={faComment} />
+                  &nbsp; Comments
+                </button>
+              )}
             </div>
           </div>
           <div className="row mb-3">

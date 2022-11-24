@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\JabatanController;
@@ -34,6 +35,10 @@ Route::get('hitung-gaji', [GajiController::class, 'getGaji']);
 Route::get('pegawai-gaji', [GajiController::class, 'getPegawaiNonGaji']);
 Route::post('gaji', [GajiController::class, 'store']);
 Route::put('gaji/{id}', [GajiController::class, 'update']);
+Route::put('validasi/{id}', [GajiController::class, 'validasi']);
+
+Route::get('check/{id}', [CommentController::class, 'check']);
+Route::post('comment', [CommentController::class, 'store']);
 
 Route::middleware('api')->group(function () {
   Route::get('me', [AuthController::class, 'me']);
