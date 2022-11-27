@@ -14,4 +14,8 @@ class Comment extends Model
   protected $guarded = [];
   protected $primaryKey = 'id_comment';
   protected $keyType = 'string';
+
+  function gaji() {
+    return $this->belongsTo(Gaji::class, 'gaji_id', 'id_gaji');
+  }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ExportPegawai;
+use App\Libraries\Fungsi;
 use App\Models\Pegawai;
 use Exception;
 use Illuminate\Http\Request;
@@ -69,7 +70,11 @@ class PegawaiController extends Controller
 
     DB::beginTransaction();
     try {
-      $newID = Uuid::generate()->string;
+      $date = date('y') . date('m');
+      $lastKode = Pegawai::select(DB::raw('MAX(id_pegawai) AS kode'))
+          ->where(DB::raw('SUBSTR(id_pegawai,2,4)'), $date)
+          ->first();
+      $newID = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'P', $date);
       $payload = [
         'id_pegawai' => $newID,
         'nik' => $request->nik,
@@ -203,6 +208,17 @@ class PegawaiController extends Controller
     WHERE t2.pegawai_id = '$request->id' or t2.pegawai_id IS NULL");
     }
     return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
+  }
+
+  public function getDataLaporan()
+  {
+    return $pegawaiAll = Pegawai::with('jabatan')->get();
+  }
+
+  public function laporan(Request $request)
+  {
+    $data = $this->getDataLaporan();
+    return response()->json(['msg' => 'Successfuly get data gaji', "data" => $data, 'error' => []], 200);
   }
 
   public function export()

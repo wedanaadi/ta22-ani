@@ -15,10 +15,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ExportAbsen implements WithStyles, FromView, ShouldAutoSize, WithTitle
 {
   protected $dataparsing;
-  public function __construct($data)
+  protected $head;
+  public function __construct($data,$head)
   {
     // dd(count($customer_invs));
     $this->dataparsing = $data;
+    $this->head = $head;
   }
 
   public function registerEvents(): array
@@ -56,6 +58,7 @@ class ExportAbsen implements WithStyles, FromView, ShouldAutoSize, WithTitle
   {
     return view('exports.absensi', [
       'data' => $this->dataparsing,
+      'head' => $this->head,
     ]);
   }
 }

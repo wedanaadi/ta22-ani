@@ -25,6 +25,12 @@ import GajiAdd from "./components/pages/gaji/Add"
 import GajiEdit from "./components/pages/gaji/Edit"
 import SlipGaji from "./components/pages/gaji/slip"
 import SlipGajiPegawai from "./components/pages/gaji/GajiPegawai"
+import Laporan from "./components/pages/Laporan"
+import Comment from "./components/pages/comment/indexComment"
+import LapCuti from "./components/pages/cuti/LapCuti";
+import LapAbsen from "./components/pages/absen/LapAbsen";
+import LapGaji from "./components/pages/gaji/LapGaji";
+import LapPeg from "./components/pages/pegawai/LapPeg";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -132,6 +138,26 @@ const Routes = () => {
             {
               path: "slip",
               element: <RequiredAuth><SlipGajiPegawai/></RequiredAuth>
+            },
+            {
+              path: "slip/comment",
+              element: <RequiredAuth><Comment/></RequiredAuth>
+            },
+            {
+              path: "cuti/laporan",
+              element: <RequiredAuth><LapCuti/></RequiredAuth>
+            },
+            {
+              path: "absen/laporan",
+              element: <RequiredAuth> <LapAbsen/> </RequiredAuth>
+            },
+            {
+              path: "gaji/laporan",
+              element: <RequiredAuth> <LapGaji/> </RequiredAuth>
+            },
+            {
+              path: "pegawai/laporan",
+              element: <RequiredAuth> <LapPeg/> </RequiredAuth>
             },
           ],
         },

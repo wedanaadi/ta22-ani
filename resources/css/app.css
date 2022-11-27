@@ -3068,3 +3068,79 @@ fieldset:disabled .btn {
 .css-1s2u09g-control {
   border-radius: 1rem !important;
 }
+
+.breadcrumb {
+  font-size: 1.1875rem; }
+  .breadcrumb .breadcrumb-item.active a {
+    color: var(--primary); }
+  .breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--primary); }
+
+.page-titles {
+  padding: 0.9375rem 2.5rem;
+  background: #fff;
+  margin-bottom: 1.875rem;
+  border-radius: 1rem;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0; }
+  [data-theme-version="dark"] .page-titles {
+    background: #202020; }
+  @media only screen and (max-width: 74.9375rem) {
+    .page-titles {
+      margin-top: -1.875rem; } }
+  @media only screen and (max-width: 47.9375rem) {
+    .page-titles {
+      margin-left: -1.25rem;
+      margin-right: -1.25rem;
+      margin-bottom: 0.9375rem;
+      padding: 0.9375rem 1.25rem;
+      margin-top: -1.25rem; } }
+  .page-titles .justify-content-sm-end {
+    align-items: center; }
+  .page-titles h4, .page-titles .h4 {
+    margin-bottom: 0;
+    margin-top: 0;
+    color: var(--primary);
+    font-size: 1.25rem; }
+    .page-titles h4 span, .page-titles .h4 span {
+      font-size: 0.875rem;
+      font-weight: 400; }
+  .page-titles .breadcrumb {
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent; }
+    .page-titles .breadcrumb li {
+      margin-top: 0;
+      margin-bottom: 0; }
+      .page-titles .breadcrumb li a {
+        color: #828690; }
+        @media only screen and (max-width: 35.9375rem) {
+          .page-titles .breadcrumb li a {
+            font-size: 0.75rem; } }
+      .page-titles .breadcrumb li.active {
+        color: var(--primary);
+        font-weight: 600; }
+        .page-titles .breadcrumb li.active a {
+          color: #FFA7D7; }
+    .page-titles .breadcrumb .breadcrumb-item + .breadcrumb-item:before {
+                /* font-family: 'simple-line-icons';
+                font-weight: 400;
+				position:absolute;
+                font-size: 10px; */
+      color: #FFA7D7; }
+    .page-titles .breadcrumb-datepicker {
+      font-size: 0.75rem;
+      color: #89879f; }
+      .page-titles .breadcrumb-datepicker__icon {
+        font-size: 0.875rem; }
+  .page-titles .breadcrumb-widget .border-dark {
+    border-color: #dee2e6 !important; }
+  .page-titles .breadcrumb-widget h4, .page-titles .breadcrumb-widget .h4 {
+    color: #646c9a;
+    font-weight: 600; }
+  @media only screen and (max-width: 35.9375rem) {
+    .page-titles .breadcrumb-widget {
+      text-align: left !important;
+      margin-bottom: 0.9375rem; } }
+

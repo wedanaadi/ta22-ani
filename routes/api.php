@@ -37,6 +37,7 @@ Route::post('gaji', [GajiController::class, 'store']);
 Route::put('gaji/{id}', [GajiController::class, 'update']);
 Route::put('validasi/{id}', [GajiController::class, 'validasi']);
 
+Route::get('comment', [CommentController::class, 'index']);
 Route::get('check/{id}', [CommentController::class, 'check']);
 Route::post('comment', [CommentController::class, 'store']);
 
@@ -47,9 +48,14 @@ Route::put('user/{id}', [UserController::class, 'update']);
 Route::post('absen/import', [AbsenController::class, 'import']);
 Route::get('pegawai/export', [PegawaiController::class, 'export']);
 Route::get('cuti/export', [CutiController::class, 'export']);
-Route::get('absensi/export', [AbsenController::class, 'export']);
+Route::get('absen/export', [AbsenController::class, 'export']);
 Route::get('gaji/export', [GajiController::class, 'export']);
 Route::get('slip/export/{id}', [GajiController::class, 'exportSlip']);
+
+Route::get('laporan-cuti',[CutiController::class, 'laporan']);
+Route::get('laporan-absen',[AbsenController::class, 'laporan']);
+Route::get('laporan-gaji',[GajiController::class, 'laporan']);
+Route::get('laporan-pegawai',[PegawaiController::class, 'laporan']);
 
 Route::get('pegawai-slip', [GajiController::class, 'pegawai_slip']);
 

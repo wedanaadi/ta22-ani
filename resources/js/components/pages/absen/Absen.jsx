@@ -206,10 +206,12 @@ const Absen = () => {
                         </td>
                       </tr>
                     ))}
+                  <tr>
+                    <td colSpan={7}>{loader}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            {loader}
             <div className="row">
               <div className="col-12 d-flex flex-row-reverse">
                 <Pagging

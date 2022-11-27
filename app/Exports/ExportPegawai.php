@@ -7,9 +7,11 @@ use Illuminate\View\View;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+// use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ExportPegawai implements WithStyles, FromView, ShouldAutoSize, WithTitle
@@ -21,35 +23,25 @@ class ExportPegawai implements WithStyles, FromView, ShouldAutoSize, WithTitle
     $this->dataparsing = $data;
   }
 
-  public function registerEvents(): array
-    {
-        $alphabetRange = range('A', 'Z');
-        $alphabet = $alphabetRange[$this->totalValue + 6]; // returns Alphabet
+  public function styles(Worksheet $sheet)
+  {
+    return [
+      // Style the first row as bold text.
+      1    => ['font' => ['bold' => true]],
+      2    => ['font' => ['bold' => true]],
+    ];
+  }
 
-        // $totalRow       = (count($this->attributeSets) * 3) + count($this->allItems) + 1;
-        $cellRange      = 'B6:G7';
-
-        return [
-            AfterSheet::class    => function (AfterSheet $event) use ($cellRange) {
-                $event->sheet->getDelegate()->getStyle($cellRange)
-                    ->getAlignment()
-                    ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
-            },
-        ];
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        return [
-            // Style the first row as bold text.
-            1    => ['font' => ['bold' => true]],
-            2    => ['font' => ['bold' => true]],
-        ];
-    }
+  // public function columnFormats(): array
+  // {
+  //   return [
+  //     'C' => NumberFormat::FORMAT_NUMBER,
+  //   ];
+  // }
 
   public function title(): string
   {
-    return 'Laporan Pegawai - '.date('Y-m');
+    return 'Laporan Pegawai - ' . date('Y-m');
   }
 
   public function view(): View

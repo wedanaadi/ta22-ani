@@ -54,23 +54,28 @@ const AbsenEdit = () => {
   const localEditData = JSON.parse(atob(localStorage.getItem("absenEdit")));
 
   const loadPegawais = async () => {
-    const { data: response } = await axiosJWT.get(
-      `${import.meta.env.VITE_BASE_URL}/pegawai-absen`,
-      {
-        params: {
-          now:ConvertToEpoch(tanggal),
-          act: 'edit',
-          id: localEditData.pegawai_id
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const options = response.data.map((data) => {
-      return { value: data.id_pegawai, label: data.nama_pegawai };
-    });
-    setPegawais(options);
+    try {
+      const { data: response } = await axiosJWT.get(
+        `${import.meta.env.VITE_BASE_URL}/pegawai-absen`,
+        {
+          params: {
+            now:ConvertToEpoch(tanggal),
+            act: 'edit',
+            id: localEditData.pegawai_id
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const options = response.data.map((data) => {
+        return { value: data.id_pegawai, label: data.nama_pegawai };
+      });
+      // console.log(options);
+      setPegawais(options);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const optionsKeterangan = () => {
@@ -105,6 +110,7 @@ const AbsenEdit = () => {
     ]
     const keteranganSelected = data.filter(({value})=> value === localEditData.keterangan)
     setKeterangan(keteranganSelected[0])
+    setIdPegawai({ value: localEditData.pegawai_id, label: localEditData.pegawai.nama_pegawai })
   };
 
   const loadSelectAwait = () => {
@@ -116,7 +122,7 @@ const AbsenEdit = () => {
 
   useEffect(()=>{
     loadPegawais();
-    setIdPegawai("");
+    setIdPegawai("")
   },[tanggal])
 
   useEffect(() => {
@@ -133,7 +139,7 @@ const AbsenEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
-      tanggal: ConvertToEpoch(tanggal),
+      tanggal: tanggal,
       keterangan: keterangan.value,
       pegawai_id: pegawai_id.value,
     };
@@ -222,7 +228,7 @@ const AbsenEdit = () => {
                   selected={tanggal}
                   onChange={(date) => setTanggal(date)}
                   startDate={tanggal}
-                  minDate={new Date()}
+                  // minDate={new Date()}
                 />
                 {errors.tanggal?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>

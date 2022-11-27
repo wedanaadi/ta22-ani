@@ -82,7 +82,7 @@ class GajiController extends Controller
     $dateAkhir = $moth->akhir;
     $sqlKehadiran = "select count(id_absen) as 'kehadiran' from absens
     WHERE keterangan = 'Hadir' AND pegawai_id = '$pegawaiId'
-    AND tanggal BETWEEN '$dateAwal' and '$dateAkhir';";
+    AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir';";
     $kehadiran = DB::select($sqlKehadiran)[0]->kehadiran;
 
     $dayOfMonth = date("t", substr($dateAwal, 0, 10));
@@ -182,10 +182,36 @@ class GajiController extends Controller
     return response()->json(['msg' => 'Successfuly updated data validasi', "data" => [], 'error' => []], 200);
   }
 
-  public function export()
+  public function getDataLaporan($id, $awal, $akhir)
   {
-    $gaji = Gaji::with('pegawai','pegawai.jabatan','comment')->get();
-    return Excel::download(new exportGaji($gaji), 'gaji-laporan-dicetak-'.date('Y-m-d').'.xlsx');
+    $sql = "SELECT g.*, p.nama_pegawai, p.nik, p.status_pegawai, j.nama_jabatan FROM gajis g
+            INNER JOIN pegawais p on p.id_pegawai =g.pegawai_id
+            INNER JOIN jabatans j on j.id_jabatan = p.jabatan_id
+            WHERE periode BETWEEN '$awal' AND '$akhir' and g.is_valid = '1'
+            ";
+    if($id!=='all') {
+      $sql.= "AND g.pegawai_id = '$id'";
+    }
+    $data = DB::select($sql);
+    return $data;
+  }
+
+  public function laporan(Request $request)
+  {
+    $id = $request->pegawai_id;
+    $periode = json_decode($request->periode);
+    $data = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
+    return response()->json(['msg' => 'Successfuly get data gaji', "data" => $data, 'error' => []], 200);
+  }
+
+  public function export(Request $request)
+  {
+    $id = $request->pegawai_id;
+    $periode = json_decode($request->periode);
+    $gaji = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
+    $awal = date("Y-m-d", substr($periode->awal, 0, 10));
+    $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
+    return Excel::download(new exportGaji($gaji,$periode), 'gaji-laporan-dicetak-'.$awal.'-'.$akhir.'.xlsx');
   }
 
   public function exportSlip($id)
@@ -196,7 +222,7 @@ class GajiController extends Controller
 
   public function pegawai_slip(Request $request)
   {
-    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->where('pegawai_id',$request->id)->where('is_valid',0)->get();
+    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->where('pegawai_id',$request->id)->where('is_valid',1)->get();
     return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
   }
 }

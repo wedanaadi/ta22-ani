@@ -41,8 +41,8 @@ class AuthController extends Controller
       'string' => 'The :attribute must be string'
     ]);
 
-    if($validator->fails()) {
-      return response()->json(['error' => $validator->messages()->toArray()],422);
+    if ($validator->fails()) {
+      return response()->json(['error' => $validator->messages()->toArray()], 422);
     }
 
     $credentials = $request->only(['username', 'password']);
@@ -53,8 +53,9 @@ class AuthController extends Controller
     $refreshToken = auth()->setTTL(1440)->attempt($credentials);
     return response()->json([
       'access_token' => $token,
-      'refresh_token' => $refreshToken
-    ], 200)->withCookie('rf_token', $refreshToken);
+      'refresh_token' => $refreshToken,
+      'user' => $this->me()
+    ], 200)->withCookie('rf_token', $refreshToken)->withCookie('auth_user', auth()->user()->id);
   }
 
   /**
@@ -64,7 +65,7 @@ class AuthController extends Controller
    */
   public function me()
   {
-    return response()->json(auth()->user()->load('pegawai','pegawai.jabatan'))->withCookie('auth_user', auth()->user()->id);
+    return auth()->user()->load('pegawai', 'pegawai.jabatan');
   }
 
   /**
@@ -99,7 +100,7 @@ class AuthController extends Controller
     //   'now' => (int)$now,
     //   'user' => $request->cookie('auth_user')
     // ]);
-    if($jwtPayload->exp < $now) {
+    if ($jwtPayload->exp < $now) {
       return response()->json(['error' => 'Unauthorized'], 401);
     }
     return response()->json([

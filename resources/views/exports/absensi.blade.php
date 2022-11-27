@@ -28,6 +28,10 @@
       </tr>
       <tr>
           <td></td>
+          <td colspan="6" style="text-align: center; font-size: 13px; font-weight: bold">Periode {{ date("Y-m-d", substr($head->awal, 0, 10)) }} - {{ date("Y-m-d", substr($head->akhir, 0, 10)) }}</td>
+      </tr>
+      <tr>
+          <td></td>
           <td colspan="6" style="text-align: center"></td>
       </tr>
   </tbody>
@@ -53,10 +57,10 @@
           <tr>
               <td></td>
               <td style="border: 1px solid black">{{ $no }}</td>
-              <td style="border: 1px solid black">{{ $d->pegawai->nik }}</td>
-              <td style="border: 1px solid black">{{ $d->pegawai->nama_pegawai }}</td>
-              <td style="border: 1px solid black">{{ $d->pegawai->jabatan->nama_jabatan }}</td>
-              <td style="border: 1px solid black">{{  date("Y-m-d", substr($d->tanggal, 0, 10))  }}</td>
+              <td style="border: 1px solid black">{{ "'".$d->nik }}</td>
+              <td style="border: 1px solid black">{{ $d->nama_pegawai }}</td>
+              <td style="border: 1px solid black">{{ $d->nama_jabatan }}</td>
+              <td style="border: 1px solid black">{{  $d->tanggal  }}</td>
               <td style="border: 1px solid black">{{ $d->keterangan }}</td>
           </tr>
           @php

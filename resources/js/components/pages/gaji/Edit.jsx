@@ -125,6 +125,7 @@ const EditGaji = () => {
 
   useEffect(() => {
     loadPegawais();
+    setVisible(false)
   }, [month]);
 
   // useEffect(() => {

@@ -96,18 +96,18 @@ const CutiEdit = () => {
     loadSelectAwait();
   }, [pegawais]);
 
-  const ConvertToEpoch = (date) => {
-    let dateProps = new Date(date).setHours(0,0,0,0);
-    let myDate = new Date(dateProps * 1000);
-    const myEpoch = myDate.getTime() / 1000.0;
-    return myEpoch;
-  };
+  // const ConvertToEpoch = (date) => {
+  //   let dateProps = new Date(date).setHours(0,0,0,0);
+  //   let myDate = new Date(dateProps * 1000);
+  //   const myEpoch = myDate.getTime() / 1000.0;
+  //   return myEpoch;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
-      tanggal_mulai: ConvertToEpoch(tanggal_mulai),
-      tanggal_selesai: ConvertToEpoch(tanggal_selesai),
+      tanggal_mulai: tanggal_mulai,
+      tanggal_selesai: tanggal_selesai,
       alasan,
       pegawai_id: pegawai_id.value,
     };

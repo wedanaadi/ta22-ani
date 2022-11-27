@@ -108,6 +108,7 @@ const AddGaji = () => {
 
   useEffect(() => {
     loadPegawais();
+    setVisible(false)
   }, [month]);
 
   const handleChangeRaw = (date) => {
@@ -201,9 +202,6 @@ const AddGaji = () => {
       tunjangan: getHitung.atas.tunjangan,
       gaji_pokok_harian: totalGajiPokok,
       tunjangan_harian: totalTunjangan,
-      bonus: bonusU,
-      potongan: potonganU,
-      totalFinal
     }
 
     console.log(formData);

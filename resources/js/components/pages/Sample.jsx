@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {useToken} from '../../hook/Token'
-import jwt_decode from 'jwt-decode'
+import { useToken } from "../../hook/Token";
+import jwt_decode from "jwt-decode";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faCommenting } from "@fortawesome/free-regular-svg-icons";
 
 const Sample = () => {
-  const {token, setToken, exp, setExp} = useToken()
-  const [hello, setHello] =useState('')
+  const { token, setToken, exp, setExp } = useToken();
+  const [countPegawai, setCountPegawai] = useState(0);
+  const [countJabatan, setCountJabatan] = useState(0);
+  const [countComment, setCountComment] = useState(0);
 
   const axiosJWT = axios.create();
 
@@ -14,7 +19,7 @@ const Sample = () => {
     async (config) => {
       const currentDate = new Date();
       if (exp * 1000 < currentDate.getTime()) {
-        const {data} = await axios.get(
+        const { data } = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/refresh`
         );
 
@@ -30,83 +35,98 @@ const Sample = () => {
     }
   );
 
-  const getHello = async () => {
-    const {data} = await axiosJWT.get(`${import.meta.env.VITE_BASE_URL}/hello`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  const getCountPegawai = async () => {
+    const { data } = await axiosJWT.get(
+      `${import.meta.env.VITE_BASE_URL}/pegawai`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    })
-    setHello(data)
+    );
+    setCountPegawai(data.data.length);
+  };
+  const getCountJabatan = async () => {
+    const { data } = await axiosJWT.get(
+      `${import.meta.env.VITE_BASE_URL}/jabatan`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setCountJabatan(data.data.length);
+  };
+
+  const getCountComment = async () => {
+    const { data } = await axiosJWT.get(
+      `${import.meta.env.VITE_BASE_URL}/comment`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setCountComment(data.data.length);
+  };
+
+  const fetch = async () => {
+    const pegawaiPromise = getCountPegawai();
+    const commentPromise = getCountComment();
+    const jabatanPromise = getCountJabatan();
+
+    // await pegawaiPromise
+    // await commentPromise
+    // await jabatanPromise
   }
 
-  const handleTest = () => {
-    getHello()
-  }
+  useEffect(()=>{
+    fetch();
+  },[])
 
-  const navigasi = useNavigate();
+  // const navigasi = useNavigate();
   return (
-    <div className="card">
-      <div className="card-header bg-white">
-        <h5 className="card-title">Card title</h5>
-      </div>
-      <div className="card-body">
-        <p className="card-text">
-          {`ini api ${hello}`} <br /> bit
-          longer. Some quick example text to build the bulk
-        </p>
-        <form action="#">
-          <div className="mb-3">
-            <label htmlFor="exampleInputEmail1" className="form-label">
-              Email address
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-            />
-            <div id="emailHelp" className="form-text">
-              We'll never share your email with anyone else.
+    <div className="container-fluid px-4">
+      <div className="row g-3 my-2">
+        <div className="col-md-3">
+          <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+            <div>
+              <h3 className="fs-2">{countPegawai}</h3>
+              <p className="fs-5">Jumlah Pegawai</p>
             </div>
+            <FontAwesomeIcon icon={faUsers} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
           </div>
-          <div className="mb-3">
-            <label htmlFor="exampleInputPassword1" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              id="exampleInputPassword1"
-            />
-          </div>
-          <div className="mb-3 form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="exampleCheck1"
-            />
-            <label className="form-check-label" htmlFor="exampleCheck1">
-              Check me out
-            </label>
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-        </form>
-      </div>
-      <div className="card-footer d-sm-flex justify-content-between align-items-center bg-white">
-        <div className="card-footer-link mb-4 mb-sm-0">
-          <p className="card-text text-dark d-inline">
-            Last updated 3 mins ago
-          </p>
         </div>
-        <button className="btn btn-success" onClick={() => navigasi("/test")}>
-          Go somewhere
-        </button>
-        <button className="btn btn-success" onClick={() => handleTest()}>
-          test
-        </button>
+        <div className="col-md-3">
+          <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+            <div>
+              <h3 className="fs-2">{countJabatan}</h3>
+              <p className="fs-5">Jumlah Jabatan</p>
+            </div>
+            <FontAwesomeIcon icon={faUserPlus} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+            <div>
+              <h3 className="fs-2">{countComment}</h3>
+              <p className="fs-5">Comment</p>
+            </div>
+            <FontAwesomeIcon icon={faCommenting} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
+          </div>
+        </div>
+        {/* <div className="col-md-3">
+          <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+            <div>
+              <h3 className="fs-2">%25</h3>
+              <p className="fs-5">Increase</p>
+            </div>
+            <FontAwesomeIcon icon={faChartLine} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
+          </div>
+        </div> */}
       </div>
+
+      {/* end */}
     </div>
   );
 };

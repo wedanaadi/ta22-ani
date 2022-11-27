@@ -37,7 +37,7 @@ const Home = () => {
 
     setTimeout(() => {
       setPreload(false);
-    }, 800);
+    }, 300);
   };
 
   const setFoto = () => {
@@ -59,7 +59,7 @@ const Home = () => {
           <Sidebar />
           <div id="page-content-wrapper">
             <Header sidebarOpen={sidebarOpen} setSidebar={setSidebar} fotoLogin={fotoLogin} />
-            <main className="container-fluid px-4 py-4">
+            <main className="container-fluid px-4 py-4 min-vh-100">
               <Outlet />
             </main>
             <Footer />

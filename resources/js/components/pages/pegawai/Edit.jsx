@@ -141,7 +141,6 @@ const PegawaiEdit = () => {
       oldFoto,
       _method:'PUT'
     }
-    console.log(formData);
     const notifikasiSave = toast.loading("Saving....");
     setWait(true);
     try {
@@ -162,7 +161,6 @@ const PegawaiEdit = () => {
         type: "success",
         isLoading: false,
       });
-      localStorage.clear("PegawaiEdit")
       setTimeout(() => {
         navigasi("/pegawai");
       }, 500);

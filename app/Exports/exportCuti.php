@@ -15,28 +15,30 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class exportCuti implements WithStyles, FromView, ShouldAutoSize, WithTitle
 {
   protected $dataparsing;
-  public function __construct($data)
+  protected $head;
+  public function __construct($data, $head)
   {
     // dd(count($customer_invs));
     $this->dataparsing = $data;
+    $this->head = $head;
   }
 
-  public function registerEvents(): array
-  {
-    $alphabetRange = range('A', 'Z');
-    $alphabet = $alphabetRange[$this->totalValue + 6]; // returns Alphabet
+  // public function registerEvents(): array
+  // {
+  //   $alphabetRange = range('A', 'Z');
+  //   $alphabet = $alphabetRange[$this->totalValue + 6]; // returns Alphabet
 
-    // $totalRow       = (count($this->attributeSets) * 3) + count($this->allItems) + 1;
-    $cellRange      = 'B6:G7';
+  //   // $totalRow       = (count($this->attributeSets) * 3) + count($this->allItems) + 1;
+  //   $cellRange      = 'B6:G7';
 
-    return [
-      AfterSheet::class    => function (AfterSheet $event) use ($cellRange) {
-        $event->sheet->getDelegate()->getStyle($cellRange)
-          ->getAlignment()
-          ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
-      },
-    ];
-  }
+  //   return [
+  //     AfterSheet::class    => function (AfterSheet $event) use ($cellRange) {
+  //       $event->sheet->getDelegate()->getStyle($cellRange)
+  //         ->getAlignment()
+  //         ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+  //     },
+  //   ];
+  // }
 
   public function styles(Worksheet $sheet)
   {
@@ -56,6 +58,7 @@ class exportCuti implements WithStyles, FromView, ShouldAutoSize, WithTitle
   {
     return view('exports.cuti', [
       'data' => $this->dataparsing,
+      'head' => $this->head,
     ]);
   }
 }

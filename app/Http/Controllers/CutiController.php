@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\exportCuti;
 use App\Models\Cuti;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,8 +39,8 @@ class CutiController extends Controller
     try {
       $payload = [
         'id_cuti' => Uuid::generate()->string,
-        'tanggal_mulai' => $request->tanggal_mulai,
-        'tanggal_selesai' => $request->tanggal_selesai,
+        'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d'),
+        'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d'),
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
         'created_at' => round(microtime(true) * 1000),
@@ -73,8 +74,8 @@ class CutiController extends Controller
     DB::beginTransaction();
     try {
       $payload = [
-        'tanggal_mulai' => $request->tanggal_mulai,
-        'tanggal_selesai' => $request->tanggal_selesai,
+        'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d'),
+        'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d'),
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
       ];
@@ -87,9 +88,36 @@ class CutiController extends Controller
     }
   }
 
-  public function export()
+  public function getDataLaporan($id, $awal, $akhir)
   {
-    $cuti = Cuti::with('pegawai','pegawai.jabatan')->get();
-    return Excel::download(new exportCuti($cuti), 'cuti-laporan.xlsx');
+    $sql = "SELECT c.*, p.nama_pegawai, p.nik, j.nama_jabatan FROM cutis c
+            INNER JOIN pegawais p on p.id_pegawai = c.pegawai_id
+            INNER JOIN jabatans j on j.id_jabatan = p.jabatan_id
+            WHERE (UNIX_TIMESTAMP(c.tanggal_mulai)*1000) >= '$awal'
+            AND (UNIX_TIMESTAMP(c.tanggal_selesai)*1000) <= '$akhir'
+            ";
+    if($id!=='all') {
+      $sql.= "AND c.pegawai_id = '$id'";
+    }
+    $data = DB::select($sql);
+    return $data;
+  }
+
+  public function laporan(Request $request)
+  {
+    $id = $request->pegawai_id;
+    $periode = json_decode($request->periode);
+    $data = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
+    return response()->json(['msg' => 'Successfuly get data cuti', "data" => $data, 'error' => []], 200);
+  }
+
+  public function export(Request $request)
+  {
+    $id = $request->pegawai_id;
+    $periode = json_decode($request->periode);
+    $cuti = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
+    $awal = date("Y-m-d", substr($periode->awal, 0, 10));
+    $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
+    return Excel::download(new exportCuti($cuti, $periode), 'cuti-laporan-'.$awal.'-'.$akhir.'.xlsx');
   }
 }

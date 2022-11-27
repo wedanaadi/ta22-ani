@@ -9,7 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NumericFormat } from "react-number-format";
 import { round } from "lodash";
-import Komentar from "./Komentar";
+// import Komentar from "./Komentar";
 import axios from "axios";
 import { useToken } from "../../../hook/Token";
 
@@ -97,20 +97,24 @@ const slip = () => {
   };
 
   const handleSlip = async () => {
-    window.open(`${import.meta.env.VITE_BASE_URL}/slip/export/${dataLokal.id}`)
+    window.open(`${import.meta.env.VITE_BASE_URL}/slip/export/${dataLokal.id}`);
   };
 
   return (
     <>
-      <Komentar />
+      {/* <Komentar /> */}
       <div className="card">
         <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
           <h5 className="card-title fw-bold">SLIP GAJI</h5>
           <div>
-            <button className="btn btn-danger" onClick={()=>handleSlip()}>
-              <FontAwesomeIcon icon={faFileExcel} />
-              &nbsp; Laporan
-            </button>
+            {localEditData.is_valid === 1 && dataLokal.role !== 4 ? (
+              <button className="btn btn-danger" onClick={() => handleSlip()}>
+                <FontAwesomeIcon icon={faFileExcel} />
+                &nbsp; Print
+              </button>
+            ) : (
+              <></>
+            )}
             &nbsp;
             <button
               onClick={() => navigasi(-1)}
@@ -198,17 +202,17 @@ const slip = () => {
               ) : (
                 <></>
               )}{" "}
-              {countComment > 0 && dataLokal.role !== 4 ? (
-                <></>
-              ) : (
-                <button
+              {localEditData.is_valid === 1 && dataLokal.role !== 4 ? (
+                <Link to={`/slip/comment`}
                   className="btn btn-info"
-                  data-bs-toggle="modal"
-                  data-bs-target="#commentModal"
+                  // data-bs-toggle="modal"
+                  // data-bs-target="#commentModal"
                 >
                   <FontAwesomeIcon icon={faComment} />
                   &nbsp; Comments
-                </button>
+                </Link>
+              ) : (
+                <></>
               )}
             </div>
           </div>

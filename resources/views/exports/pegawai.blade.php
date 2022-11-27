@@ -60,7 +60,7 @@
             <tr>
                 <td></td>
                 <td style="border: 1px solid black">{{ $no }}</td>
-                <td style="border: 1px solid black">{{ $d->nik }}</td>
+                <td style="border: 1px solid black">{{ "'".$d->nik }}</td>
                 <td style="border: 1px solid black">{{ $d->nama_pegawai }}</td>
                 <td style="border: 1px solid black">{{ $d->jabatan->nama_jabatan }}</td>
                 <td style="border: 1px solid black">{{ $d->tempat_lahir }}</td>

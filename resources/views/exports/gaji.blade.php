@@ -28,6 +28,10 @@
       </tr>
       <tr>
           <td></td>
+          <td colspan="14" style="text-align: center; font-size: 13px; font-weight: bold">Periode {{ date("Y-m-d", substr($head->awal, 0, 10)) }} - {{ date("Y-m-d", substr($head->akhir, 0, 10)) }}</td>
+      </tr>
+      <tr>
+          <td></td>
           <td colspan="14" style="text-align: center"></td>
       </tr>
   </tbody>
@@ -60,20 +64,20 @@
       @foreach ($data as $d)
           <tr>
               <td></td>
-              <td style="border: 1px solid black">{{ $no }}</td>
-              <td style="border: 1px solid black">{{ date("Y-m", substr($d->periode, 0, 10)) }}</td>
-              <td style="border: 1px solid black">{{ $d->pegawai->nik }}</td>
-              <td style="border: 1px solid black">{{ $d->pegawai->nama_pegawai }}</td>
-              <td style="border: 1px solid black">{{ $d->pegawai->jabatan->nama_jabatan }}</td>
-              <td style="border: 1px solid black">{{ $d->status === 0 ? 'Pekerja Kontrak' : 'Pekerja Tetap' }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->gaji_pokok,0,',','.') }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->tunjangan,0,',','.') }}</td>
-              <td style="border: 1px solid black">{{ $d->total_hadir }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->gaji_harian,0,',','.') }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->tunjangan_harian,0,',','.') }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->bonus,0,',','.') }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->potongan,0,',','.') }}</td>
-              <td style="border: 1px solid black">{{ number_format($d->total_gaji,0,',','.') }}</td>
+              <td style="border: 1px solid black;">{{ $no }}</td>
+              <td style="border: 1px solid black;">{{ date("Y-m", substr($d->periode, 0, 10)) }}</td>
+              <td style="border: 1px solid black;">{{ "'".$d->nik }}</td>
+              <td style="border: 1px solid black;">{{ $d->nama_pegawai }}</td>
+              <td style="border: 1px solid black;">{{ $d->nama_jabatan }}</td>
+              <td style="border: 1px solid black;">{{ $d->status_pegawai === 0 ? 'Pekerja Kontrak' : 'Pekerja Tetap' }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->gaji_pokok,0) }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->tunjangan,0) }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ $d->total_hadir }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->gaji_harian,0) }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->tunjangan_harian,0) }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->bonus,0) }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->potongan,0) }}</td>
+              <td style="border: 1px solid black; text-align: right;">{{ number_format($d->total,0) }}</td>
           </tr>
           @php
               $no++;
@@ -91,7 +95,7 @@
     <tr>
       <td></td>
       <td colspan="11"></td>
-      <td colspan="3" style="text-align: center">Gianyar, {{ date('d-m-Y') }}</td>
+      <td colspan="3" style="text-align: center">Tabanan, {{ date('d-m-Y') }}</td>
     </tr>
     <tr>
       <td></td>

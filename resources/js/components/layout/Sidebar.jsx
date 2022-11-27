@@ -1,9 +1,13 @@
-import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faTachometer} from '@fortawesome/free-solid-svg-icons'
-import {faCircle} from '@fortawesome/free-regular-svg-icons'
+import React, { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTachometer } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+  const location = useLocation();
+
+  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
   return (
     <aside className="bg-white" id="sidebar-wrapper">
       <div className="sidebar-heading text-center py-header primary-text fs-4 fw-bold text-uppercase border-bottom">
@@ -13,72 +17,148 @@ const Sidebar = () => {
         &nbsp;
       </div>
       <div className="list-group list-group-flush my-3">
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text active"
+        <Link
+          to={`/`}
+          className={`list-group-item list-group-item-action bg-transparent second-text ${
+            location.pathname === "/" ? "active" : ""
+          }`}
         >
           <FontAwesomeIcon icon={faTachometer} className="me-2" />
           Dashboard
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Projects
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Analytics
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Reports
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Store Mng
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Products
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Chat
-        </a>
-        <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Outlet
-        </a>
-        <a
+        </Link>
+        {dataLokal.role === 1 ? (
+          <Link
+            to={`/user`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/user" ||
+              location.pathname === "/user/add" ||
+              location.pathname === "/user/edit"
+                ? "active"
+                : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            User
+          </Link>
+        ) : (
+          <></>
+        )}
+
+        {dataLokal.role === 2 ? (
+          <>
+            <Link
+              to={`/jabatan`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/jabatan" ||
+                location.pathname === "/jabatan/add" ||
+                location.pathname === "/jabatan/edit"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Jabatan
+            </Link>
+            <Link
+              to={`/pegawai`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/pegawai" ||
+                location.pathname === "/pegawai/add" ||
+                location.pathname === "/pegawai/edit"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Pegawai
+            </Link>
+            <Link
+              to={`/cuti`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/cuti" ||
+                location.pathname === "/cuti/add" ||
+                location.pathname === "/cuti/edit"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Cuti
+            </Link>
+            <Link
+              to={`/absen`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/absen" ||
+                location.pathname === "/absen/add" ||
+                location.pathname === "/absen/edit"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Absen
+            </Link>
+          </>
+        ) : (
+          <></>
+        )}
+
+        {dataLokal.role === 2 || dataLokal.role === 4 ? (
+          <Link
+            to={`/gaji`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/gaji" ||
+              location.pathname === "/gaji/add" ||
+              location.pathname === "/gaji/slip" ||
+              location.pathname === "/gaji/edit"
+                ? "active"
+                : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Gaji
+          </Link>
+        ) : (
+          <></>
+        )}
+
+        {dataLokal.role === 4 ? (
+          <Link
+            to={`laporan`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/laporan" ? "active" : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Laporan
+          </Link>
+        ) : (
+          <></>
+        )}
+
+        {dataLokal.role !== 4 ? (
+          <Link
+            to={`slip`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/slip" ? "active" : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Slip Gaji
+          </Link>
+        ) : (
+          <></>
+        )}
+        {/* <a
           href="#"
           className="list-group-item list-group-item-action bg-transparent text-danger fw-bold"
         >
           <FontAwesomeIcon icon={faCircle} className="me-2" />
           Logout
-        </a>
+        </a> */}
       </div>
     </aside>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

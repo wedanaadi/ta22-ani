@@ -19,22 +19,17 @@ const Login = () => {
     e.preventDefault();
     const auth = toast.loading("Authentication...");
     setWait(true);
+    setError([]);
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/login`,
         { username: username.toLowerCase(), password }
       );
-      const { data: me } = await axios.get("http://127.0.0.1:8000/api/me", {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
-          Accept: `application/json`,
-        },
-      });
       const userLocal = {
-        id:me.pegawai_id,
-        nama: me.pegawai.nama_pegawai,
-        role: me.hak_akses,
-        foto: me.pegawai.foto,
+        id:data.user.pegawai_id,
+        nama: data.user.pegawai.nama_pegawai,
+        role: data.user.hak_akses,
+        foto: data.user.pegawai.foto,
       };
       dispatch({ type: "login" });
       setToken(data.access_token);
@@ -50,10 +45,8 @@ const Login = () => {
       });
       setTimeout(() => {
         navigasi("/");
-      }, 300);
+      }, 200);
     } catch (error) {
-      console.log(error);
-      setError([]);
       setWait(false);
       if (error?.response?.status === 422) {
         toast.update(auth, {
@@ -64,16 +57,26 @@ const Login = () => {
           theme: "light",
         });
         setError(error.response.data.error);
-      } else if(error?.response?.status === 500) {
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
         toast.update(auth, {
           render: error?.response?.data?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,
         });
-      } else {
+      } else if (error?.response?.status === 401) {
         toast.update(auth, {
           render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(auth, {
+          render: error?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,

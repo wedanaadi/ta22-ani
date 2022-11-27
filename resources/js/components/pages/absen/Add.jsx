@@ -99,7 +99,7 @@ const AbsenAdd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
-      tanggal: ConvertToEpoch(tanggal),
+      tanggal: tanggal,
       keterangan: keterangan.value,
       pegawai_id: pegawai_id.value,
     };
@@ -188,7 +188,7 @@ const AbsenAdd = () => {
                   selected={tanggal}
                   onChange={(date) => setTanggal(date)}
                   startDate={tanggal}
-                  minDate={new Date()}
+                  // minDate={new Date()}
                 />
                 {errors.tanggal?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>

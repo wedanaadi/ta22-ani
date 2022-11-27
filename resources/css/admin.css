@@ -3,7 +3,7 @@
   /* --main-bg-color: #009d63; */
   --main-text-color: #886CC0;
   /* --main-text-color: #009d63; */
-  --second-text-color: #bbbec5;
+  --second-text-color: #2a2e36;
   --second-bg-color: #c1efde;
   --primary: #886CC0;
   --secondary: #FFA7D7;
@@ -133,3 +133,10 @@ main {
   padding-top: 2rem !important;
   padding-bottom: 2rem !important;
 }
+
+/* footer {
+  clear: both;
+  position: relative;
+  height: 70px;
+  margin-top: 10px;
+} */

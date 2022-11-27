@@ -112,16 +112,16 @@ const User = () => {
   };
 
   const handleHK = (val) => {
-    if(parseInt(val) === 1) {
-      return 'Admin'
-    } else if(parseInt(val) === 2) {
-      return 'HRD'
-    } else if(parseInt(val) === 3) {
-      return 'Pegawai'
+    if (parseInt(val) === 1) {
+      return "Admin";
+    } else if (parseInt(val) === 2) {
+      return "HRD";
+    } else if (parseInt(val) === 3) {
+      return "Pegawai";
     } else {
-      return 'Pemimpin'
+      return "Pemimpin";
     }
-  }
+  };
 
   return (
     <div className="card">
@@ -174,10 +174,12 @@ const User = () => {
                         </td>
                       </tr>
                     ))}
+                  <tr>
+                    <td colSpan={6}>{loader}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            {loader}
             <div className="row">
               <div className="col-12 d-flex flex-row-reverse">
                 <Pagging
@@ -193,7 +195,7 @@ const User = () => {
         {/* end datatable */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default User
+export default User;

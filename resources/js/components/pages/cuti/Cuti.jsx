@@ -83,7 +83,7 @@ const Cuti = () => {
     if (search) {
       computedCutis = computedCutis.filter(
         (data) =>
-          data.username.toLowerCase().includes(search.toLowerCase()) ||
+          // data.username.toLowerCase().includes(search.toLowerCase()) ||
           data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -112,9 +112,15 @@ const Cuti = () => {
   };
 
   const convertDate = (dateProps) => {
-    let date = new Date(dateProps)
-    return date.toLocaleDateString('id-ID',{year:'numeric', month: 'long', day: 'numeric'}).toString();
-  }
+    let date = new Date(dateProps);
+    return date
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      .toString();
+  };
 
   return (
     <div className="card">
@@ -167,10 +173,12 @@ const Cuti = () => {
                         </td>
                       </tr>
                     ))}
+                  <tr>
+                    <td colSpan={6}>{loader}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            {loader}
             <div className="row">
               <div className="col-12 d-flex flex-row-reverse">
                 <Pagging
@@ -186,7 +194,7 @@ const Cuti = () => {
         {/* end datatable */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Cuti
+export default Cuti;

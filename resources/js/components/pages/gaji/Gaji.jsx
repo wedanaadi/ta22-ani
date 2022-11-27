@@ -16,7 +16,11 @@ const Gaji = () => {
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState({ field: "", order: "" });
   const [loader, showLoader, hideLoader] = useLoading();
+  const [showButtonEdit, setButtonEdit] = useState(false);
+  const [showButtonValid, setButtonValid] = useState(false);
   const navigasi = useNavigate();
+
+  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
 
   const axiosJWT = axios.create();
 
@@ -65,11 +69,11 @@ const Gaji = () => {
     { name: "Gaji Pokok", field: "gaji_pokok", sortable: true },
     { name: "Tunjangan", field: "tunjangan", sortable: true },
     { name: "Bonus", field: "bonus", sortable: true },
-    { name: "Gaji per Hari", field: "gaji_harian", sortable: true },
-    { name: "Tunjangan per Hari", field: "tunjangan_harian", sortable: true },
+    { name: "Total Gaji per Hari", field: "gaji_harian", sortable: true },
+    { name: "Total Tunjangan per Hari", field: "tunjangan_harian", sortable: true },
     { name: "Total Hadir", field: "total_hadir", sortable: true },
     { name: "Potongan", field: "potongan", sortable: true },
-    { name: "Total Gaji", field: "total", sortable: true },
+    { name: "Total Gaji Final", field: "total", sortable: true },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 
@@ -77,6 +81,7 @@ const Gaji = () => {
 
   useEffect(() => {
     getGajis();
+    // getRole()
   }, []);
 
   const getGajis = async () => {
@@ -133,23 +138,48 @@ const Gaji = () => {
   const convertDate = (dateProps) => {
     let date = new Date(dateProps);
     return date
-    .toLocaleDateString("id-ID", { year: "numeric", month: "long" })
-    .toString();
+      .toLocaleDateString("id-ID", { year: "numeric", month: "long" })
+      .toString();
   };
 
   const handleValidasi = (row) => {
     localStorage.setItem("gajiEdit", btoa(JSON.stringify(row)));
     navigasi("slip");
-  }
+  };
+
+  const getRole = (gaji) => {
+    if (dataLokal.role === 2) {
+      return (
+        <button className="btn btn-warning" onClick={() => handleEdit(gaji)}>
+          <FontAwesomeIcon icon={faPencil} />
+          &nbsp; Edit
+        </button>
+      );
+    } else {
+      return (
+        <button
+          className="btn btn-success"
+          onClick={() => handleValidasi(gaji)}
+        >
+          <FontAwesomeIcon icon={faCheck} />
+          &nbsp; Validasi
+        </button>
+      );
+    }
+  };
 
   return (
     <div className="card">
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Gaji</h5>
-        <Link to="add" className="btn btn-success float-end">
-          <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah Gaji
-        </Link>
+        {dataLokal.role === 2 ? (
+          <Link to="add" className="btn btn-success float-end">
+            <FontAwesomeIcon icon={faPlus} />
+            &nbsp; Tambah Gaji
+          </Link>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="card-body">
         {/* datatable */}
@@ -182,7 +212,11 @@ const Gaji = () => {
                         <td>{gaji.pegawai.nik}</td>
                         <td>{gaji.pegawai.nama_pegawai}</td>
                         <td>{gaji.pegawai.jabatan.nama_jabatan}</td>
-                        <td>{gaji.pegawai.status_pegawai === 0 ? 'Pegawai Kontrak' : 'Pegawai Tetap'}</td>
+                        <td>
+                          {gaji.pegawai.status_pegawai === 0
+                            ? "Pegawai Kontrak"
+                            : "Pegawai Tetap"}
+                        </td>
                         <td className="text-end">
                           <NumericFormat
                             displayType="text"
@@ -249,22 +283,7 @@ const Gaji = () => {
                         </td>
                         <td>
                           {gaji.is_valid === 0 ? (
-                            <>
-                              <button
-                                className="btn btn-warning"
-                                onClick={() => handleEdit(gaji)}
-                              >
-                                <FontAwesomeIcon icon={faPencil} />
-                                &nbsp; Edit
-                              </button>{" "}
-                              <button
-                                className="btn btn-success"
-                                onClick={() => handleValidasi(gaji)}
-                              >
-                                <FontAwesomeIcon icon={faCheck} />
-                                &nbsp; Validasi
-                              </button>
-                            </>
+                            getRole(gaji)
                           ) : (
                             <span className="badge text-bg-success">
                               Tervalidasi
@@ -273,10 +292,12 @@ const Gaji = () => {
                         </td>
                       </tr>
                     ))}
+                  <tr>
+                    <td colSpan={15}>{loader}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            {loader}
             <div className="row">
               <div className="col-12 d-flex flex-row-reverse">
                 <Pagging

@@ -11,7 +11,7 @@ import Select from "react-select";
 const EditUser = () => {
   const { token, setToken, exp, setExp } = useToken();
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState(null);
+  const [password, setPassword] = useState("");
   const [pegawai_id, setIdPegawai] = useState("");
   const [pegawais, setPegawais] = useState([]);
   const [errors, setErrors] = useState([]);

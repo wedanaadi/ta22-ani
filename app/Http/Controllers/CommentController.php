@@ -11,6 +11,12 @@ use Webpatser\Uuid\Uuid;
 
 class CommentController extends Controller
 {
+  public function index()
+  {
+    $absen = Comment::with('gaji', 'gaji.pegawai.jabatan')->get();
+    return response()->json(['msg' => 'get all absen', "data" => $absen, 'error' => []], 200);
+  }
+
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [
