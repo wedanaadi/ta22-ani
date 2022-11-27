@@ -13,7 +13,7 @@ class CommentController extends Controller
 {
   public function index()
   {
-    $absen = Comment::with('gaji', 'gaji.pegawai.jabatan')->get();
+    $absen = Comment::with('gaji', 'gaji.pegawai.jabatan')->where('is_read',"1")->get();
     return response()->json(['msg' => 'get all absen', "data" => $absen, 'error' => []], 200);
   }
 
@@ -36,9 +36,18 @@ class CommentController extends Controller
         'id_comment' => Uuid::generate()->string,
         'comment' => $request->comment,
         'gaji_id' => $request->gaji_id,
+        'pegawai_id' => $request->pegawai_id,
         'created_at' => round(microtime(true) * 1000),
       ];
       Comment::create($payload);
+      $commentPrev = Comment::where('gaji_id', $request->gaji_id)
+      ->where('is_read', 0)
+      ->where('pegawai_id', '!=', $request->pegawai_id)->count();
+      if($commentPrev > 0) {
+        Comment::where('gaji_id',$request->gaji_id)
+        ->where('pegawai_id','!=',$request->pegawai_id)
+        ->update(['is_read'=>1]);
+      }
       unset($payload['id_comment']);
       DB::commit();
       return response()->json(['msg' => 'Successfuly created data jabatan', "data" => $payload, 'error' => []], 201);
@@ -50,7 +59,30 @@ class CommentController extends Controller
 
   public function check($id)
   {
-    $count = Comment::where('gaji_id',$id)->count();
+    $count = Comment::where('gaji_id', $id)->count();
     return response()->json(['msg' => 'Successfuly get data comment', "data" => $count, 'error' => []], 200);
+  }
+
+  public function getComment($id)
+  {
+    $sql = "SELECT c.*, p.nama_pegawai FROM `comments` c
+            INNER JOIN pegawais p on p.id_pegawai = c.pegawai_id
+            WHERE c.gaji_id = '$id'
+            ORDER by created_at DESC";
+    $comment = DB::select($sql);
+    return response()->json(['msg' => 'get all absen', "data" => $comment, 'error' => []], 200);
+  }
+
+  public function getComment2()
+  {
+    $sql = "SELECT p.nama_pegawai, p.nik, g.periode, g.id_gaji, c.comment, c.created_at, c.id_comment
+            FROM `comments` c
+            INNER JOIN pegawais p on p.id_pegawai = c.pegawai_id
+            INNER JOIN gajis g on g.id_gaji = c.gaji_id
+            WHERE c.is_read = '0'
+            GROUP BY c.id_comment;";
+    $data = DB::select($sql);
+
+    return response()->json(['msg' => 'get all absen', "data" => $data, 'error' => []], 200);
   }
 }

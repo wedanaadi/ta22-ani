@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useToken } from "../../hook/Token";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
@@ -12,6 +12,8 @@ const Sample = () => {
   const [countPegawai, setCountPegawai] = useState(0);
   const [countJabatan, setCountJabatan] = useState(0);
   const [countComment, setCountComment] = useState(0);
+
+  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
 
   const axiosJWT = axios.create();
 
@@ -78,11 +80,11 @@ const Sample = () => {
     // await pegawaiPromise
     // await commentPromise
     // await jabatanPromise
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch();
-  },[])
+  }, []);
 
   // const navigasi = useNavigate();
   return (
@@ -94,7 +96,10 @@ const Sample = () => {
               <h3 className="fs-2">{countPegawai}</h3>
               <p className="fs-5">Jumlah Pegawai</p>
             </div>
-            <FontAwesomeIcon icon={faUsers} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
+            <FontAwesomeIcon
+              icon={faUsers}
+              className="fs-1 primary-text border rounded-full secondary-bg p-3"
+            />
           </div>
         </div>
         <div className="col-md-3">
@@ -103,16 +108,32 @@ const Sample = () => {
               <h3 className="fs-2">{countJabatan}</h3>
               <p className="fs-5">Jumlah Jabatan</p>
             </div>
-            <FontAwesomeIcon icon={faUserPlus} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
+            <FontAwesomeIcon
+              icon={faUserPlus}
+              className="fs-1 primary-text border rounded-full secondary-bg p-3"
+            />
           </div>
         </div>
         <div className="col-md-3">
-          <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-            <div>
-              <h3 className="fs-2">{countComment}</h3>
-              <p className="fs-5">Comment</p>
+          <div className="p-3 bg-white shadow-sm">
+            <div className="d-flex justify-content-around align-items-center rounded">
+              <div>
+                <h3 className="fs-2">{countComment}</h3>
+                <p className="fs-5">Comment</p>
+              </div>
+              <FontAwesomeIcon
+                icon={faCommenting}
+                className="fs-1 primary-text border rounded-full secondary-bg p-3"
+              />
             </div>
-            <FontAwesomeIcon icon={faCommenting} className="fs-1 primary-text border rounded-full secondary-bg p-3" />
+            {dataLokal.role === 2 || dataLokal.role === 4 ? (
+              <>
+                <hr />
+                <Link to={"/comment/list"}>Comment</Link>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         {/* <div className="col-md-3">

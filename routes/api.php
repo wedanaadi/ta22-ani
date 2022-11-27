@@ -30,6 +30,9 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('refresh', [AuthController::class, 'refresh']);
 
+Route::get('comment-list',[CommentController::class, 'getComment2']);
+Route::get('comment-by/{id}',[CommentController::class, 'getComment']);
+
 Route::get('gaji', [GajiController::class, 'index']);
 Route::get('hitung-gaji', [GajiController::class, 'getGaji']);
 Route::get('pegawai-gaji', [GajiController::class, 'getPegawaiNonGaji']);

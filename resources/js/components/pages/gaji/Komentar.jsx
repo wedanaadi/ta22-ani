@@ -53,11 +53,13 @@ const Komentar = () => {
     const notifProses = toast.loading("Processing....");
     setWait(true);
     try {
+      const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
       const { data: response } = await axiosJWT.post(
         `${import.meta.env.VITE_BASE_URL}/comment`,
         {
           comment,
           gaji_id: localEditData.id_gaji,
+          pegawai_id: dataLokal.id
         },
         {
           headers: {

@@ -3,6 +3,7 @@
 @import url(./admin.css);
 /* END ANDMIN */
 @import url(./auth.css);
+@import url(./timeline.css);
 
 .card {
   position: relative;

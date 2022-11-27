@@ -31,6 +31,7 @@ import LapCuti from "./components/pages/cuti/LapCuti";
 import LapAbsen from "./components/pages/absen/LapAbsen";
 import LapGaji from "./components/pages/gaji/LapGaji";
 import LapPeg from "./components/pages/pegawai/LapPeg";
+import CommentList from "./components/pages/comment/CommentList";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -158,6 +159,10 @@ const Routes = () => {
             {
               path: "pegawai/laporan",
               element: <RequiredAuth> <LapPeg/> </RequiredAuth>
+            },
+            {
+              path: "comment/list",
+              element: <RequiredAuth> <CommentList/> </RequiredAuth>
             },
           ],
         },

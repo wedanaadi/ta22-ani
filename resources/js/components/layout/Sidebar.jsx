@@ -122,15 +122,18 @@ const Sidebar = () => {
           <></>
         )}
 
-        {dataLokal.role === 4 ? (
+        {dataLokal.role === 2 || dataLokal.role === 4 ? (
           <Link
-            to={`laporan`}
+            to={`/comment/list`}
             className={`list-group-item list-group-item-action bg-transparent second-text ${
-              location.pathname === "/laporan" ? "active" : ""
+              location.pathname === "/comment/list" ||
+              location.pathname === "/slip/comment"
+                ? "active"
+                : ""
             }`}
           >
             <FontAwesomeIcon icon={faCircle} className="me-2" />
-            Laporan
+            Comment
           </Link>
         ) : (
           <></>
@@ -149,13 +152,49 @@ const Sidebar = () => {
         ) : (
           <></>
         )}
-        {/* <a
-          href="#"
-          className="list-group-item list-group-item-action bg-transparent text-danger fw-bold"
-        >
-          <FontAwesomeIcon icon={faCircle} className="me-2" />
-          Logout
-        </a> */}
+
+        {dataLokal.role === 4 ? (
+          <>
+            <Link
+              to={`/pegawai/laporan`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/pegawai/laporan" ? "active" : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Laporan Pegawai
+            </Link>
+            <Link
+              to={`/cuti/laporan`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/cuti/laporan" ? "active" : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Laporan Cuti
+            </Link>
+            <Link
+              to={`/absen/laporan`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/absen/laporan" ? "active" : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Laporan Absen
+            </Link>
+            <Link
+              to={`/gaji/laporan`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/gaji/laporan" ? "active" : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              Laporan Gaji
+            </Link>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
     </aside>
   );

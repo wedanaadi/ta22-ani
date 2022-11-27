@@ -204,7 +204,6 @@ const AddGaji = () => {
       tunjangan_harian: totalTunjangan,
     }
 
-    console.log(formData);
     try {
       const { data: response } = await axiosJWT.post(
         `${import.meta.env.VITE_BASE_URL}/gaji`,
