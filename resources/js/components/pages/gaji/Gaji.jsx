@@ -104,11 +104,14 @@ const Gaji = () => {
     if (search) {
       computedGajis = computedGajis.filter(
         (data) =>
-          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
-          String(data.gaji_pokok)
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
+          data.pegawai.jabatan.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
+          data.gaji_pokok.toString().includes(search.toLowerCase()) ||
+          data.total_hadir.toString().includes(search.toLowerCase()) ||
+          data.tunjangan.toString().includes(search.toLowerCase())
+          // String(data.gaji_pokok)
+          //   .toLowerCase()
+          //   .includes(search.toLowerCase()) ||
+          // String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
       );
     }
 

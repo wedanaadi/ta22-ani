@@ -82,11 +82,7 @@ const CommentList = () => {
     if (search) {
       computedComments = computedComments.filter(
         (data) =>
-          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
-          String(data.gaji_pokok)
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
+          data.nama_pegawai.toLowerCase().includes(search.toLowerCase())
       );
     }
 

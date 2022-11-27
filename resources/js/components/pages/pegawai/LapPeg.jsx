@@ -7,6 +7,8 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import useLoading from "../../Loading";
 import { Pagging, Search, TableHeader } from "../../datatable";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 const LapPeg = () => {
   const [pegawais, setPegawais] = useState([]);
@@ -146,20 +148,22 @@ const LapPeg = () => {
       </div>
       <div className="card-body">
         <div className="row">
-          <div className="col-md-2">
+          <div className="col-md-3">
             <div className="mb-3">
               <label className="mb-3"></label>
-              <button className="btn btn-primary" onClick={handleView}>
-                Lihat
+              <button className="btn btn-info" onClick={handleView}>
+                <FontAwesomeIcon icon={faEye} />
+                &nbsp; Lihat
               </button>
               &nbsp;
               <button
-                className="btn btn-primary"
+                className="btn btn-danger"
                 onClick={() =>
                   window.open(`${import.meta.env.VITE_BASE_URL}/pegawai/export`)
                 }
               >
-                Cetak
+                <FontAwesomeIcon icon={faFileExcel} />
+                &nbsp; Cetak
               </button>
             </div>
           </div>

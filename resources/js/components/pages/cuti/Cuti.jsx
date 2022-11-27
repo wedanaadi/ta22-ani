@@ -77,14 +77,23 @@ const Cuti = () => {
     hideLoader();
   };
 
+  const convertDate = (dateProps) => {
+    let date = new Date(dateProps);
+    return date
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      .toString();
+  };
+
   const cutiData = useMemo(() => {
     let computedCutis = cutis;
 
     if (search) {
-      computedCutis = computedCutis.filter(
-        (data) =>
-          // data.username.toLowerCase().includes(search.toLowerCase()) ||
-          data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase())
+      computedCutis = computedCutis.filter((data) =>
+        data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -109,17 +118,6 @@ const Cuti = () => {
     localStorage.setItem("cutiEdit", btoa(JSON.stringify(row)));
     navigasi("edit");
     // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
-  };
-
-  const convertDate = (dateProps) => {
-    let date = new Date(dateProps);
-    return date
-      .toLocaleDateString("id-ID", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-      .toString();
   };
 
   return (

@@ -96,15 +96,14 @@ const Absen = () => {
     if (search) {
       computedAbsens = computedAbsens.filter(
         (data) =>
-          data.pegawai.nik.toLowerCase().includes(search.toLowerCase()) ||
+          data.pegawai.nik.toString().toLowerCase().includes(search.toLowerCase()) ||
           data.pegawai.nama_pegawai
             .toLowerCase()
             .includes(search.toLowerCase()) ||
           data.pegawai.jabatan.nama_jabatan
             .toLowerCase()
             .includes(search.toLowerCase()) ||
-          data.keterangan.toLowerCase().includes(search.toLowerCase()) ||
-          data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase())
+          data.keterangan.toLowerCase().includes(search.toLowerCase())
       );
     }
 
