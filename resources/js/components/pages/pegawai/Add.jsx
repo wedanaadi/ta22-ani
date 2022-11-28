@@ -102,6 +102,7 @@ const PegawaiAdd = () => {
     console.log(formData);
     const notifikasiSave = toast.loading("Saving....");
     setWait(true);
+    setErrors([]);
     try {
       const { data: response } = await axiosJWT.post(
         `${import.meta.env.VITE_BASE_URL}/pegawai`,
@@ -124,7 +125,6 @@ const PegawaiAdd = () => {
         navigasi("/pegawai");
       }, 500);
     } catch (error) {
-      setErrors([]);
       setWait(false);
       if (error?.response?.status === 422) {
         toast.update(notifikasiSave, {
@@ -135,9 +135,26 @@ const PegawaiAdd = () => {
           theme: "light",
         });
         setErrors(error.response.data.error);
-      } else {
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
         toast.update(notifikasiSave, {
           render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiSave, {
+          render: error?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,

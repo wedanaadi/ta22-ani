@@ -88,9 +88,26 @@ const Add = () => {
           theme: "light",
         });
         setErrors(error.response.data.error);
-      } else {
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
         toast.update(notifikasiSave, {
           render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiSave, {
+          render: error?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,

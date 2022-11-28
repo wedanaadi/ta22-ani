@@ -143,6 +143,7 @@ const PegawaiEdit = () => {
     }
     const notifikasiSave = toast.loading("Saving....");
     setWait(true);
+    setErrors([]);
     try {
       const { data: response } = await axiosJWT.post(
         `${import.meta.env.VITE_BASE_URL}/pegawai/${idEdit}`,
@@ -165,7 +166,6 @@ const PegawaiEdit = () => {
         navigasi("/pegawai");
       }, 500);
     } catch (error) {
-      setErrors([]);
       setWait(false);
       if (error?.response?.status === 422) {
         toast.update(notifikasiSave, {
@@ -176,9 +176,26 @@ const PegawaiEdit = () => {
           theme: "light",
         });
         setErrors(error.response.data.error);
-      } else {
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
         toast.update(notifikasiSave, {
           render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiSave, {
+          render: error?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,
@@ -432,7 +449,7 @@ const PegawaiEdit = () => {
             </div>
             <div className="col-xs-12 col-md-6 col-lg-6">
               <div className="foto-content col-md-3 col-lg-3 float-end">
-              <img width={100} height={100} src={`/images/pegawai/${oldFoto}`} alt={`${oldFoto}`} />
+              <img width={100} height={100} src={`${import.meta.env.VITE_PUBLIC}/images/pegawai/${oldFoto}`} alt={`${oldFoto}`} />
               </div>
             </div>
           </div>

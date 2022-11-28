@@ -88,7 +88,7 @@ const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
               aria-expanded="false"
             >
               <img
-                src={`/images/pegawai/${fotoLogin}`}
+                src={`${import.meta.env.VITE_PUBLIC}/images/pegawai/${fotoLogin}`}
                 width={52}
                 height={52}
                 alt="logo"

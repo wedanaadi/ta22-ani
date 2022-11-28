@@ -46,7 +46,7 @@ class AuthController extends Controller
     }
 
     $credentials = $request->only(['username', 'password']);
-    if (!$token = auth()->setTTL(1)->attempt($credentials)) {
+    if (!$token = auth()->setTTL(60)->attempt($credentials)) {
       return response()->json(['error' => 'Bad Credentials, please check again username and password'], 401);
     }
 
@@ -104,7 +104,7 @@ class AuthController extends Controller
       return response()->json(['error' => 'Unauthorized'], 401);
     }
     return response()->json([
-      'access_token' => auth()->setTTL(1)->tokenById($request->cookie('auth_user')),
+      'access_token' => auth()->setTTL(60)->tokenById($request->cookie('auth_user')),
     ], 200);
   }
 

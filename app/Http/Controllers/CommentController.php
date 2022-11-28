@@ -75,12 +75,10 @@ class CommentController extends Controller
 
   public function getComment2()
   {
-    $sql = "SELECT p.nama_pegawai, p.nik, g.periode, g.id_gaji, c.comment, c.created_at, c.id_comment
-            FROM `comments` c
-            INNER JOIN pegawais p on p.id_pegawai = c.pegawai_id
-            INNER JOIN gajis g on g.id_gaji = c.gaji_id
-            WHERE c.is_read = '0'
-            GROUP BY c.id_comment;";
+    $sql = "SELECT g.*, p.nama_pegawai, p.nik FROM gajis g
+            INNER JOIN comments c ON c.gaji_id = g.id_gaji
+            INNER JOIN pegawais p ON p.id_pegawai = g.pegawai_id
+            GROUP BY g.id_gaji;";
     $data = DB::select($sql);
 
     return response()->json(['msg' => 'get all absen', "data" => $data, 'error' => []], 200);

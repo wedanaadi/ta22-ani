@@ -7,6 +7,8 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import useLoading from "../../Loading";
 import { Pagging, Search, TableHeader } from "../../datatable";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 const LapCuti = () => {
   const [pegawai, setPegawai] = useState({
@@ -219,16 +221,17 @@ const LapCuti = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-2">
+          <div className="col-md-3">
             <div className="mb-5">
               <label className="mb-4"></label>
               <div className="mb-1"></div>
-              <button className="btn btn-primary" onClick={handleView}>
-                Lihat
+              <button className="btn btn-info" onClick={handleView}>
+                <FontAwesomeIcon icon={faEye} />
+                &nbsp; Lihat
               </button>
               &nbsp;
               <button
-                className="btn btn-primary"
+                className="btn btn-danger"
                 onClick={() =>
                   window.open(
                     `${
@@ -242,7 +245,8 @@ const LapCuti = () => {
                   )
                 }
               >
-                Cetak
+                <FontAwesomeIcon icon={faFileExcel} />
+                &nbsp; Cetak
               </button>
             </div>
           </div>

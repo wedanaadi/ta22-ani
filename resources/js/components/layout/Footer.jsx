@@ -5,10 +5,10 @@ const Footer = () => {
     // <footer className="pb-3">
     <footer className="copyright text-center bg-white">
     <p>
-    Copyright © Designed &amp; Developed by
-    <a href="/" target="_blank">
-      &nbsp; Ani
-    </a>{" "}
+    Copyright © Designed &amp; Developed by 
+    <span href="/" target="_blank">
+    &nbsp;Ani
+    </span>{" "}
     2022
     </p>
   </footer>

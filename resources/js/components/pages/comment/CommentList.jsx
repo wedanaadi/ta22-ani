@@ -82,11 +82,7 @@ const CommentList = () => {
     if (search) {
       computedComments = computedComments.filter(
         (data) =>
-          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
-          String(data.gaji_pokok)
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
+          data.nama_pegawai.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -150,7 +146,7 @@ const CommentList = () => {
                 <tbody>
                   {commentData.length > 0 &&
                     commentData.map((comment, index) => (
-                      <tr key={comment.id_comment}>
+                      <tr key={index}>
                         <th scope="row">{index + 1}</th>
                         <td>{comment.nama_pegawai}</td>
                         <td>{convertDate(parseInt(comment.periode))}</td>

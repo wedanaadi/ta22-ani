@@ -163,16 +163,26 @@ const AddGaji = () => {
           theme: "light",
         });
         setErrors(error.response.data.error);
-      } else if (error?.response?.status === 500) {
-        toast.update(auth, {
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifProses, {
           render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifProses, {
+          render: error?.response?.data?.error,
           type: "error",
           isLoading: false,
           autoClose: 1500,
         });
       } else {
         toast.update(notifProses, {
-          render: error?.response?.data?.error,
+          render: error?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,

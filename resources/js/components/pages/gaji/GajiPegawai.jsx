@@ -108,11 +108,12 @@ const GajiPegawai = () => {
     if (search) {
       computedGajis = computedGajis.filter(
         (data) =>
-          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
-          String(data.gaji_pokok)
+          data.pegawai.nama_pegawai
             .toLowerCase()
             .includes(search.toLowerCase()) ||
-          String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
+          data.gaji_pokok.toString().includes(search.toLowerCase()) ||
+          data.total_hadir.toString().includes(search.toLowerCase()) ||
+          data.tunjangan.toString().includes(search.toLowerCase())
       );
     }
 
@@ -152,140 +153,142 @@ const GajiPegawai = () => {
   };
 
   return (
-      <div className="card">
-        <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-          <h5 className="card-title">Data Gaji</h5>
-        </div>
-        <div className="card-body">
-          {/* datatable */}
-          <div className="row w-100">
-            <div className="col col-12 mb-3 text-center">
-              <div className="row mb-3">
-                <div className="col-md-6"></div>
-                <div className="col-md-6 d-flex flex-row-reverse">
-                  <Search
-                    onSearch={(value) => {
-                      setSearch(value);
-                      setCurrentPage(1);
-                    }}
-                  />
-                </div>
+    <div className="card">
+      <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
+        <h5 className="card-title">Data Gaji</h5>
+      </div>
+      <div className="card-body">
+        {/* datatable */}
+        <div className="row w-100">
+          <div className="col col-12 mb-3 text-center">
+            <div className="row mb-3">
+              <div className="col-md-6"></div>
+              <div className="col-md-6 d-flex flex-row-reverse">
+                <Search
+                  onSearch={(value) => {
+                    setSearch(value);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
+            </div>
 
-              <div className="table-responsive">
-                <table className="table table-striped table-bordered nowrap">
-                  <TableHeader
-                    headers={headers}
-                    onSorting={(field, order) => setSorting({ field, order })}
-                  />
-                  <tbody>
-                    {gajisData.length > 0 &&
-                      gajisData.map((gaji, index) => (
-                        <tr key={gaji.id_gaji}>
-                          <th scope="row">{index + 1}</th>
-                          <td>{convertDate(parseInt(gaji.periode))}</td>
-                          <td>{gaji.pegawai.nik}</td>
-                          <td>{gaji.pegawai.nama_pegawai}</td>
-                          <td>{gaji.pegawai.jabatan.nama_jabatan}</td>
-                          <td>
-                            {gaji.pegawai.status_pegawai === 0
-                              ? "Pegawai Kontrak"
-                              : "Pegawai Tetap"}
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.gaji_pokok}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.tunjangan}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.bonus}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.gaji_harian}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.tunjangan_harian}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td>{gaji.total_hadir}</td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.potongan}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td className="text-end">
-                            <NumericFormat
-                              displayType="text"
-                              value={gaji.total}
-                              thousandSeparator="."
-                              decimalSeparator=","
-                              allowNegative={false}
-                            />
-                          </td>
-                          <td>
-                            <button
-                              className="btn btn-success"
-                              onClick={() => handleValidasi(gaji)}
-                            >
-                              <FontAwesomeIcon icon={faSearch} />
-                              &nbsp; Slip Gaji
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      <tr><td colSpan={15}>{loader}</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="row">
-                <div className="col-12 d-flex flex-row-reverse">
-                  <Pagging
-                    total={totalItems}
-                    itemsPerPage={ITEMS_PER_PAGE}
-                    currentPage={currentPage}
-                    onPageChange={(page) => setCurrentPage(page)}
-                  />
-                </div>
+            <div className="table-responsive">
+              <table className="table table-striped table-bordered nowrap">
+                <TableHeader
+                  headers={headers}
+                  onSorting={(field, order) => setSorting({ field, order })}
+                />
+                <tbody>
+                  {gajisData.length > 0 &&
+                    gajisData.map((gaji, index) => (
+                      <tr key={gaji.id_gaji}>
+                        <th scope="row">{index + 1}</th>
+                        <td>{convertDate(parseInt(gaji.periode))}</td>
+                        <td>{gaji.pegawai.nik}</td>
+                        <td>{gaji.pegawai.nama_pegawai}</td>
+                        <td>{gaji.pegawai.jabatan.nama_jabatan}</td>
+                        <td>
+                          {gaji.pegawai.status_pegawai === 0
+                            ? "Pegawai Kontrak"
+                            : "Pegawai Tetap"}
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.gaji_pokok}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.tunjangan}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.bonus}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.gaji_harian}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.tunjangan_harian}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td>{gaji.total_hadir}</td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.potongan}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={gaji.total}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-success"
+                            onClick={() => handleValidasi(gaji)}
+                          >
+                            <FontAwesomeIcon icon={faSearch} />
+                            &nbsp; Slip Gaji
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  <tr>
+                    <td colSpan={15}>{loader}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="row">
+              <div className="col-12 d-flex flex-row-reverse">
+                <Pagging
+                  total={totalItems}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  currentPage={currentPage}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
               </div>
             </div>
           </div>
-          {/* end datatable */}
         </div>
+        {/* end datatable */}
       </div>
+    </div>
   );
 };
 

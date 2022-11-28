@@ -101,7 +101,7 @@ const Pegawai = () => {
           data.agama.toLowerCase().includes(search.toLowerCase()) ||
           data.pendidikan.toLowerCase().includes(search.toLowerCase()) ||
           data.no_telepon.toLowerCase().includes(search.toLowerCase()) ||
-          data.nik.toLowerCase().includes(search.toLowerCase()) ||
+          data.nik.toString().toLowerCase().includes(search.toLowerCase()) ||
           data.alamat.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -193,7 +193,7 @@ const Pegawai = () => {
                           <img
                             height={56}
                             width={56}
-                            src={`/images/pegawai/${pegawai.foto}`}
+                            src={`${import.meta.env.VITE_PUBLIC}/images/pegawai/${pegawai.foto}`}
                           />
                         </td>
                         <td>

@@ -82,10 +82,10 @@
         <tr>
             <td></td>
             <td style="border: 1px solid black">GAJI POKOK</td>
-            <td style="border: 1px solid black">{{ number_format($data->gaji_pokok, 0) }}</td>
+            <td style="border: 1px solid black; text-align: right;">{{ number_format($data->gaji_pokok, 0) }}</td>
             <td style="border: 1px solid black">{{ $data->total_hadir }}</td>
-            <td style="border: 1px solid black">{{ number_format($data->gaji_harian, 0) }}</td>
-            <td style="border: 1px solid black">{{ number_format($data->gaji_harian * $data->total_hadir, 0) }}
+            <td style="border: 1px solid black; text-align: right;">{{ number_format($data->gaji_harian, 0) }}</td>
+            <td style="border: 1px solid black; text-align: right;">{{ number_format($data->gaji_harian * $data->total_hadir, 0) }}
             </td>
         </tr>
         <tr>
@@ -95,9 +95,9 @@
         <tr>
             <td></td>
             <td style="border: 1px solid black">TUNJANGAN</td>
-            <td style="border: 1px solid black">{{ number_format($data->tunjangan, 0) }}</td>
-            <td style="border: 1px solid black">{{ $data->total_hadir }}</td>
-            <td style="border: 1px solid black">{{ number_format($data->tunjangan_harian, 0) }}</td>
+            <td style="border: 1px solid black; text-align: right;">{{ number_format($data->tunjangan, 0) }}</td>
+            <td style="border: 1px solid black; text-align: right;">{{ $data->total_hadir }}</td>
+            <td style="border: 1px solid black; text-align: right;">{{ number_format($data->tunjangan_harian, 0) }}</td>
             <td style="border: 1px solid black">
                 {{ number_format($data->tunjangan_harian * $data->total_hadir, 0) }}</td>
         </tr>
@@ -107,7 +107,7 @@
             <th></th>
             <th style="font-weight: bold; vertical-align: center; text-align: center; border: 1px solid black"
                 colspan="4">TOTAL</th>
-            <th style="font-weight: bold; vertical-align: center; text-align: center; border: 1px solid black">
+            <th style="font-weight: bold; vertical-align: right; text-align: center; border: 1px solid black">
                 {{ number_format($data->total, 0) }}</th>
         </tr>
     </tfoot>
