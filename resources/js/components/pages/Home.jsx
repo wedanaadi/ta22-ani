@@ -37,7 +37,7 @@ const Home = () => {
 
     setTimeout(() => {
       setPreload(false);
-    }, 300);
+    }, 150);
   };
 
   const setFoto = () => {

@@ -62,11 +62,11 @@ const Absen = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "NIK", field: "nik", sortable: true },
-    { name: "Nama Pegawai", field: "nama_pegawai", sortable: true },
-    { name: "Jabatan", field: "nama_jabatan", sortable: true },
-    { name: "Tanggal Absen", field: "tanggal_absen", sortable: true },
-    { name: "Keterangan", field: "keterangan", sortable: true },
+    { name: "NIK", field: "nik", sortable: false },
+    { name: "Nama Pegawai", field: "nama_pegawai", sortable: false },
+    { name: "Jabatan", field: "nama_jabatan", sortable: false },
+    { name: "Tanggal Absen", field: "tanggal_absen", sortable: false },
+    { name: "Keterangan", field: "keterangan", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 

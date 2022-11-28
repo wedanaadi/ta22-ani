@@ -1,15 +1,16 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignLeft } from "@fortawesome/free-solid-svg-icons";
-import {useToken} from '../../hook/Token'
-import jwt_decode from 'jwt-decode'
+import { useToken } from "../../hook/Token";
+import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import SettingUser from "../pages/user/SettingUser";
 
 const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
-  const {token, setToken, exp, setExp} = useToken()
+  const { token, setToken, exp, setExp } = useToken();
 
-  const navigasi = useNavigate()
+  const navigasi = useNavigate();
 
   const axiosJWT = axios.create();
 
@@ -17,7 +18,7 @@ const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
     async (config) => {
       const currentDate = new Date();
       if (exp * 1000 < currentDate.getTime()) {
-        const {data} = await axios.get(
+        const { data } = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/refresh`
         );
 
@@ -39,20 +40,24 @@ const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
 
   const handleLogout = async () => {
     try {
-      const {data} = await axiosJWT.post(`${import.meta.env.VITE_BASE_URL}/logout`,{}, {
-        withCredentials:true,
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const { data } = await axiosJWT.post(
+        `${import.meta.env.VITE_BASE_URL}/logout`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
+      );
       localStorage.clear();
       // localStorage.clear('isLogin')
       // localStorage.clear('auth_user')
-      navigasi("/login",{replace:true})
+      navigasi("/login", { replace: true });
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white px-4 border-bottom">
@@ -100,6 +105,15 @@ const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
               aria-labelledby="navbarDropdown"
             >
               <li>
+                <button
+                  className="dropdown-item"
+                  data-bs-toggle="modal"
+                  data-bs-target="#settingModal"
+                >
+                  <span className="ms-2">Setting</span>
+                </button>
+              </li>
+              <li>
                 <button className="dropdown-item" onClick={handleLogout}>
                   <span className="ms-2">Logout</span>
                 </button>
@@ -108,6 +122,7 @@ const Header = ({ sidebarOpen, setSidebar, fotoLogin }) => {
           </li>
         </ul>
       </div>
+      <SettingUser/>
     </nav>
   );
 };

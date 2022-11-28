@@ -17,7 +17,9 @@ class AbsenController extends Controller
 {
   public function index()
   {
-    $absen = Absen::with('pegawai', 'pegawai.jabatan')->get();
+    $absen = Absen::with('pegawai', 'pegawai.jabatan')
+            ->orderBy('tanggal','ASC')
+            ->get();
     return response()->json(['msg' => 'get all absen', "data" => $absen, 'error' => []], 200);
   }
 

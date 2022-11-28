@@ -114,4 +114,32 @@ class UserController extends Controller
       return response()->json(['msg' => 'fail created data user', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
+
+  public function setting(Request $request)
+  {
+    $id_pegawai = $request->id_pegawai;
+    $user = User::where('pegawai_id',$id_pegawai)->first();
+
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'username' => $user->username
+      ];
+
+      if($request->password != '' OR $request->password != null) {
+        $payload['password'] = Hash::make($request->password);
+      }
+
+      if($request->username != '' OR $request->username != null) {
+        $payload['username'] = $request->username;
+      }
+
+      $user->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly updated data user', "data" => $payload, 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail created data user', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
 }
