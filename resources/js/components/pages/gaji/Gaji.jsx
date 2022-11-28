@@ -15,9 +15,9 @@ const Gaji = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState({ field: "", order: "" });
-  const [loader, showLoader, hideLoader] = useLoading();
-  const [showButtonEdit, setButtonEdit] = useState(false);
-  const [showButtonValid, setButtonValid] = useState(false);
+  const [loader, showLoader, hideLoader, isLoad] = useLoading();
+  // const [showButtonEdit, setButtonEdit] = useState(false);
+  // const [showButtonValid, setButtonValid] = useState(false);
   const navigasi = useNavigate();
 
   const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
@@ -296,7 +296,7 @@ const Gaji = () => {
                       </tr>
                     ))}
                   <tr>
-                    <td colSpan={15}>{loader}</td>
+                    <td colSpan={15}>{gajisData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
                   </tr>
                 </tbody>
               </table>

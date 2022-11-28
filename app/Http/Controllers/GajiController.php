@@ -15,6 +15,11 @@ use Webpatser\Uuid\Uuid;
 
 class GajiController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth:api',['except' => ['export','exportSlip']]);
+  }
+
   public function index()
   {
     $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->get();

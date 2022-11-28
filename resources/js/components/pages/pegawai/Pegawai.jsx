@@ -1,11 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import {confirmAlert} from 'react-confirm-alert'
+import { toast, ToastContainer } from "react-toastify";
 
 const Pegawai = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -14,7 +16,7 @@ const Pegawai = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState({ field: "", order: "" });
-  const [loader, showLoader, hideLoader] = useLoading();
+  const [loader, showLoader, hideLoader, isLoading] = useLoading();
   const navigasi = useNavigate();
 
   const axiosJWT = axios.create();
@@ -129,8 +131,83 @@ const Pegawai = () => {
     // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
   };
 
+  const confirm = (id) => {
+    confirmAlert({
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDelete(id),
+        },
+        {
+          label: "Cancel",
+          onClick: () => false,
+        },
+      ],
+    });
+  }
+
+  const handleDelete = async (id) => {
+    const notifikasiSave = toast.loading("Saving....");
+    try {
+      const { data: response } = await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/pegawai/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      getPegawais()
+      toast.update(notifikasiSave, {
+        render: "Delete Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifikasiSave, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiSave, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
+  }
+
   return (
     <div className="card">
+      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Pegawai</h5>
         <Link to="add" className="btn btn-success float-end">
@@ -193,7 +270,9 @@ const Pegawai = () => {
                           <img
                             height={56}
                             width={56}
-                            src={`${import.meta.env.VITE_PUBLIC}/images/pegawai/${pegawai.foto}`}
+                            src={`${
+                              import.meta.env.VITE_PUBLIC
+                            }/images/pegawai/${pegawai.foto}`}
                           />
                         </td>
                         <td>
@@ -204,10 +283,24 @@ const Pegawai = () => {
                             <FontAwesomeIcon icon={faPencil} />
                             &nbsp; Edit
                           </button>
+                          &nbsp;
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => confirm(pegawai.id_pegawai)}
+                          >
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                            />
+                            &nbsp; Hapus
+                          </button>
                         </td>
                       </tr>
                     ))}
-                    <tr><td colSpan={15}>{loader}</td></tr>
+                  <tr>
+                    <td colSpan={15}>
+                      {pegawaiData.length === 0 && !isLoading ? "Tidak Ada Data" : loader}
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

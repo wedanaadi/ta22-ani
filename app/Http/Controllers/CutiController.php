@@ -14,6 +14,11 @@ use Webpatser\Uuid\Uuid;
 
 class CutiController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth:api',['except' => ['export']]);
+  }
+
   public function index()
   {
     $user = Cuti::with('pegawai')->get();

@@ -17,7 +17,7 @@ const LapAbsen = () => {
   });
   const [pegawais, setPegawais] = useState([]);
   const [absens, setAbsens] = useState([]);
-  const [loader, showLoader, hideLoader] = useLoading();
+  const [loader, showLoader, hideLoader, isLoad] = useLoading();
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -290,7 +290,7 @@ const LapAbsen = () => {
                       </tr>
                     ))}
                   <tr>
-                    <td colSpan={6}>{loader}</td>
+                    <td colSpan={6}>{absensData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
                   </tr>
                 </tbody>
                     </table>

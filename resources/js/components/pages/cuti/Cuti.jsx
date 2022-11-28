@@ -14,7 +14,7 @@ const Cuti = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState({ field: "", order: "" });
-  const [loader, showLoader, hideLoader] = useLoading();
+  const [loader, showLoader, hideLoader, isLoad] = useLoading();
   const navigasi = useNavigate();
 
   const axiosJWT = axios.create();
@@ -172,7 +172,7 @@ const Cuti = () => {
                       </tr>
                     ))}
                   <tr>
-                    <td colSpan={6}>{loader}</td>
+                    <td colSpan={6}>{cutiData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
                   </tr>
                 </tbody>
               </table>

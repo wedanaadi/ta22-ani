@@ -17,7 +17,7 @@ const LapCuti = () => {
   });
   const [pegawais, setPegawais] = useState([]);
   const [cutis, setCutis] = useState([]);
-  const [loader, showLoader, hideLoader] = useLoading();
+  const [loader, showLoader, hideLoader, isLoad] = useLoading();
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -292,7 +292,7 @@ const LapCuti = () => {
                             </tr>
                           ))}
                         <tr>
-                          <td colSpan={5}>{loader}</td>
+                          <td colSpan={5}>{cutiData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
                         </tr>
                       </tbody>
                     </table>

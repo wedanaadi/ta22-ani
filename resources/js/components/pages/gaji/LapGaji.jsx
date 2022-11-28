@@ -18,7 +18,7 @@ const LapGaji = () => {
   });
   const [pegawais, setPegawais] = useState([]);
   const [cutis, setCutis] = useState([]);
-  const [loader, showLoader, hideLoader] = useLoading();
+  const [loader, showLoader, hideLoader, isLoad] = useLoading();
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -365,7 +365,7 @@ const LapGaji = () => {
                       </tr>
                     ))}
                   <tr>
-                    <td colSpan={14}>{loader}</td>
+                    <td colSpan={14}>{gajisData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
                   </tr>
                 </tbody>
                     </table>

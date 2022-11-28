@@ -12,9 +12,14 @@ use Webpatser\Uuid\Uuid;
 
 class UserController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth:api');
+  }
+
   public function index()
   {
-    $user = User::with('pegawai')->get();
+    $user = User::with('pegawai')->whereRelation('pegawai', 'is_aktif', "1")->get();
     return response()->json(['msg' => 'get all data', "data" => $user, 'error' => []], 200);
   }
 

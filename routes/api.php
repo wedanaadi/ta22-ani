@@ -45,6 +45,7 @@ Route::middleware('api')->group(function () {
   Route::get('pegawai-user', [PegawaiController::class, 'getPegawaiNotHasUser']);
   Route::post('pegawai', [PegawaiController::class, 'store']);
   Route::put('pegawai/{id}', [PegawaiController::class, 'update']);
+  Route::delete('pegawai/{id}',[PegawaiController::class, 'destroy']);
   // user
   Route::get('user', [UserController::class, 'index']);
   Route::post('user', [UserController::class, 'store']);

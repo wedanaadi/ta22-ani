@@ -14,14 +14,14 @@ use Webpatser\Uuid\Uuid;
 
 class PegawaiController extends Controller
 {
-  // public function __construct()
-  // {
-  //   $this->middleware('auth:api');
-  // }
+  public function __construct()
+  {
+    $this->middleware('auth:api',['except' => ['export']]);
+  }
 
   public function index()
   {
-    $pegawaiAll = Pegawai::with('jabatan')->get();
+    $pegawaiAll = Pegawai::with('jabatan')->where('is_aktif',"1")->get();
     return response()->json(['msg' => 'get all data', "data" => $pegawaiAll, 'error' => []], 200);
   }
 
@@ -191,6 +191,24 @@ class PegawaiController extends Controller
     } catch (Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'fail created data pegawai', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function destroy($id)
+  {
+    $pegawaiFind = Pegawai::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'is_aktif' => "0"
+      ];
+
+      $pegawaiFind->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data pegawai', "data" => $payload, 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data pegawai', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
 

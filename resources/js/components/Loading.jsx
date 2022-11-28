@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 const Loading = () => {
-
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   return [
     loading ? "Loading...." : null,
     () => setLoading(true), //Show loader
-    () => setLoading(false) //Hide Loader
-]
-}
+    () => setLoading(false), //Hide Loader
+    loading,
+  ];
+};
 
-export default Loading
+export default Loading;

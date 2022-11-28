@@ -14,7 +14,7 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState({ field: "", order: "" });
-  const [loader, showLoader, hideLoader] = useLoading();
+  const [loader, showLoader, hideLoader, isLoading] = useLoading();
   const navigasi = useNavigate();
 
   const axiosJWT = axios.create();
@@ -175,7 +175,7 @@ const User = () => {
                       </tr>
                     ))}
                   <tr>
-                    <td colSpan={6}>{loader}</td>
+                    <td colSpan={6}>{userData.length === 0 && !isLoading ? "Tidak Ada Data" : loader}</td>
                   </tr>
                 </tbody>
               </table>

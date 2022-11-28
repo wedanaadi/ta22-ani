@@ -15,6 +15,11 @@ use Webpatser\Uuid\Uuid;
 
 class AbsenController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth:api',['except' => ['export']]);
+  }
+
   public function index()
   {
     $absen = Absen::with('pegawai', 'pegawai.jabatan')

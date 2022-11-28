@@ -11,6 +11,11 @@ use Webpatser\Uuid\Uuid;
 
 class CommentController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('auth:api');
+  }
+
   public function index()
   {
     $absen = Comment::with('gaji', 'gaji.pegawai.jabatan')->where('is_read',"1")->get();
