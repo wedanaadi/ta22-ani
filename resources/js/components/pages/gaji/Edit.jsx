@@ -45,7 +45,6 @@ const EditGaji = () => {
     setIdPegawai({ value: localEditData.pegawai_id, label: localEditData.pegawai.nama_pegawai });
     setBonus(localEditData.bonus)
     setPotongan(localEditData.potongan)
-    loadPegawais();
   };
 
   const axiosJWT = axios.create();
@@ -112,15 +111,21 @@ const EditGaji = () => {
         },
       }
     );
-    const options = response.data.map((data) => {
+    const options = await response.data.map((data) => {
       return { value: data.id_pegawai, label: data.nama_pegawai };
     });
+
+    // console.log(options);
     setPegawais(options);
   };
 
-  useEffect(() => {
+  const fetchdata = async () => {
     loadEdit();
     setMonth(getMonthDate());
+  }
+
+  useEffect(() => {
+    fetchdata();
   }, []);
 
   useEffect(() => {
@@ -240,8 +245,6 @@ const EditGaji = () => {
       gaji_pokok_harian: totalGajiPokok,
       tunjangan_harian: totalTunjangan,
     };
-
-    console.log(formData);
     try {
       const { data: response } = await axiosJWT.put(
         `${import.meta.env.VITE_BASE_URL}/gaji/${idEdit}`,

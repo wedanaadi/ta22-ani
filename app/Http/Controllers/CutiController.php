@@ -16,28 +16,31 @@ class CutiController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth:api',['except' => ['export']]);
+    $this->middleware('auth:api', ['except' => ['export']]);
   }
 
   public function index()
   {
-    $user = Cuti::with('pegawai')->get();
+    $user = Cuti::with('pegawai')
+      ->whereRelation('pegawai', 'is_aktif', "1")
+      ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+      ->get();
     return response()->json(['msg' => 'get all cuti', "data" => $user, 'error' => []], 200);
   }
 
   public function store(Request $request)
   {
-    $validator = Validator::make($request->all(),[
+    $validator = Validator::make($request->all(), [
       'tanggal_mulai' => 'required',
       'tanggal_selesai' => 'required',
       'pegawai_id' => 'required',
       'alasan' => 'required',
-    ],[
+    ], [
       'required' =>  'The :attribute can not empty',
     ]);
 
-    if($validator->fails()) {
-      return response()->json(['data' => [],'error' => $validator->messages()->toArray()],422);
+    if ($validator->fails()) {
+      return response()->json(['data' => [], 'error' => $validator->messages()->toArray()], 422);
     }
 
     DB::beginTransaction();
@@ -62,17 +65,17 @@ class CutiController extends Controller
 
   public function update(Request $request, $id)
   {
-    $validator = Validator::make($request->all(),[
+    $validator = Validator::make($request->all(), [
       'tanggal_mulai' => 'required',
       'tanggal_selesai' => 'required',
       'pegawai_id' => 'required',
       'alasan' => 'required',
-    ],[
+    ], [
       'required' =>  'The :attribute can not empty',
     ]);
 
-    if($validator->fails()) {
-      return response()->json(['data' => [],'error' => $validator->messages()->toArray()],422);
+    if ($validator->fails()) {
+      return response()->json(['data' => [], 'error' => $validator->messages()->toArray()], 422);
     }
 
     $cutiFind = Cuti::findOrFail($id);
@@ -114,9 +117,10 @@ class CutiController extends Controller
             INNER JOIN jabatans j on j.id_jabatan = p.jabatan_id
             WHERE (UNIX_TIMESTAMP(c.tanggal_mulai)*1000) >= '$awal'
             AND (UNIX_TIMESTAMP(c.tanggal_selesai)*1000) <= '$akhir'
+            AND p.is_aktif = '1' AND j.is_aktif='1'
             ";
-    if($id!=='all') {
-      $sql.= "AND c.pegawai_id = '$id'";
+    if ($id !== 'all') {
+      $sql .= "AND c.pegawai_id = '$id'";
     }
     $data = DB::select($sql);
     return $data;
@@ -137,6 +141,6 @@ class CutiController extends Controller
     $cuti = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
     $awal = date("Y-m-d", substr($periode->awal, 0, 10));
     $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
-    return Excel::download(new exportCuti($cuti, $periode), 'cuti-laporan-'.$awal.'-'.$akhir.'.xlsx');
+    return Excel::download(new exportCuti($cuti, $periode), 'cuti-laporan-' . $awal . '-' . $akhir . '.xlsx');
   }
 }

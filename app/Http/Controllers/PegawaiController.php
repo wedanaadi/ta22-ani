@@ -232,7 +232,9 @@ class PegawaiController extends Controller
 
   public function getDataLaporan()
   {
-    return $pegawaiAll = Pegawai::with('jabatan')->get();
+    return Pegawai::with('jabatan')
+    ->whereRelation('jabatan', 'is_aktif', "1")
+    ->where('is_aktif','1')->get();
   }
 
   public function laporan(Request $request)

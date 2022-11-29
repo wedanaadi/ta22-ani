@@ -100,15 +100,12 @@ const indexComment = () => {
   const handleDelete = async (id) => {
     const notifDelete = toast.loading("Saving....");
     try {
-      await axiosJWT.delete(
-        `${import.meta.env.VITE_BASE_URL}/comment/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: `application/json`,
-          },
-        }
-      );
+      await axiosJWT.delete(`${import.meta.env.VITE_BASE_URL}/comment/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: `application/json`,
+        },
+      });
       await getCommentGaji();
       toast.update(notifDelete, {
         render: "Delete Successfuly",
@@ -154,6 +151,8 @@ const indexComment = () => {
     }
   };
 
+  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
+
   return (
     <div className="card">
       <Komentar />
@@ -190,13 +189,17 @@ const indexComment = () => {
                 <li className="timeline-item mb-5" key={komentar.id_comment}>
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="fw-bold">{komentar.nama_pegawai}</h5>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => confirm(komentar.id_comment)}
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                      &nbsp; Hapus
-                    </button>
+                    {dataLokal.id == komentar.pegawai_id ? (
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => confirm(komentar.id_comment)}
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                        &nbsp; Hapus
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                   <p className="text-muted mb-2 fw-bold">
                     {convertToDate(komentar.created_at)}

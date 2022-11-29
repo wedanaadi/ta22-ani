@@ -19,7 +19,9 @@ class UserController extends Controller
 
   public function index()
   {
-    $user = User::with('pegawai')->whereRelation('pegawai', 'is_aktif', "1")->get();
+    $user = User::with('pegawai')->whereRelation('pegawai', 'is_aktif', "1")
+            ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+            ->get();
     return response()->json(['msg' => 'get all data', "data" => $user, 'error' => []], 200);
   }
 

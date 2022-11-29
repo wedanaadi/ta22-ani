@@ -17,14 +17,16 @@ class AbsenController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth:api',['except' => ['export']]);
+    $this->middleware('auth:api', ['except' => ['export']]);
   }
 
   public function index()
   {
     $absen = Absen::with('pegawai', 'pegawai.jabatan')
-            ->orderBy('tanggal','ASC')
-            ->get();
+      ->whereRelation('pegawai', 'is_aktif', "1")
+      ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+      ->orderBy('tanggal', 'ASC')
+      ->get();
     return response()->json(['msg' => 'get all absen', "data" => $absen, 'error' => []], 200);
   }
 
@@ -113,28 +115,32 @@ class AbsenController extends Controller
   {
     $now = $request->now;
     if ($request->act === 'save') {
-      $sql = "SELECT * FROM pegawais p
+      $sql = "SELECT p.*, tpv.pegawai_id AS 'id_pegawai_absen' FROM pegawais p
+              INNER JOIN jabatans j ON j.id_jabatan = p.jabatan_id
               LEFT JOIN (
-                SELECT pv1.pegawai_id FROM absens
-                RIGHT JOIN (
-                  SELECT * FROM cutis
-                ) AS pv1 ON pv1.pegawai_id = absens.pegawai_id
-                WHERE (UNIX_TIMESTAMP(absens.tanggal) * 1000) = '$now' OR (UNIX_TIMESTAMP(pv1.tanggal_mulai) * 1000) <= '$now'
-                AND (UNIX_TIMESTAMP(pv1.tanggal_selesai) * 1000) >= '$now'
-              ) AS pv2 on pv2.pegawai_id = p.id_pegawai
-              WHERE pv2.pegawai_id IS NULL";
+                SELECT a.*, pvcuti.pegawai_id AS 'cuti_pegawai' FROM absens a
+                LEFT JOIN (
+                  SELECT cutis.pegawai_id FROM cutis
+                  WHERE (UNIX_TIMESTAMP(tanggal_mulai) * 1000) <= '$now'
+                  AND (UNIX_TIMESTAMP(tanggal_selesai) * 1000) >= '$now'
+                ) AS pvcuti ON pvcuti.pegawai_id = a.pegawai_id
+                WHERE pvcuti.pegawai_id IS NOT NULL OR (UNIX_TIMESTAMP(tanggal) * 1000) = '$now'
+              ) AS tpv ON tpv.pegawai_id = p.id_pegawai
+              WHERE tpv.pegawai_id IS NULL AND p.is_aktif = '1' AND j.is_aktif = '1'";
     } else {
       $id = $request->id;
-      $sql = "SELECT * FROM pegawais p
+      $sql = "SELECT p.*, tpv.pegawai_id AS 'id_pegawai_absen' FROM pegawais p
+              INNER JOIN jabatans j ON j.id_jabatan = p.jabatan_id
               LEFT JOIN (
-                SELECT pv1.pegawai_id FROM absens
+                SELECT a.*, pvcuti.pegawai_id AS 'cuti_pegawai' FROM absens a
                 LEFT JOIN (
-                  SELECT * FROM cutis
-                ) AS pv1 ON pv1.pegawai_id = absens.pegawai_id
-                WHERE (UNIX_TIMESTAMP(absens.tanggal) * 1000) = '$now' OR (UNIX_TIMESTAMP(pv1.tanggal_mulai) * 1000) <= '$now'
-                AND (UNIX_TIMESTAMP(pv1.tanggal_selesai) * 1000) >= '$now'
-              ) AS pv2 on pv2.pegawai_id = p.id_pegawai
-              WHERE pv2.pegawai_id IS NULL";
+                  SELECT cutis.pegawai_id FROM cutis
+                  WHERE (UNIX_TIMESTAMP(tanggal_mulai) * 1000) <= '$now'
+                  AND (UNIX_TIMESTAMP(tanggal_selesai) * 1000) >= '$now'
+                ) AS pvcuti ON pvcuti.pegawai_id = a.pegawai_id
+                WHERE pvcuti.pegawai_id IS NOT NULL OR (UNIX_TIMESTAMP(tanggal) * 1000) = '$now'
+              ) AS tpv ON tpv.pegawai_id = p.id_pegawai
+              WHERE tpv.pegawai_id IS NULL AND p.is_aktif = '1' AND j.is_aktif = '1'";
     }
 
     $data = DB::select($sql);
@@ -160,9 +166,10 @@ class AbsenController extends Controller
             INNER JOIN pegawais p on p.id_pegawai = a.pegawai_id
             INNER JOIN jabatans j on j.id_jabatan = p.jabatan_id
             WHERE (UNIX_TIMESTAMP(a.tanggal)*1000) BETWEEN '$awal' AND '$akhir'
+            AND p.is_aktif = '1' AND j.is_aktif='1'
             ";
-    if($id!=='all') {
-      $sql.= "AND a.pegawai_id = '$id'";
+    if ($id !== 'all') {
+      $sql .= "AND a.pegawai_id = '$id'";
     }
     $data = DB::select($sql);
     return $data;
@@ -183,6 +190,6 @@ class AbsenController extends Controller
     $cuti = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
     $awal = date("Y-m-d", substr($periode->awal, 0, 10));
     $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
-    return Excel::download(new ExportAbsen($cuti,$periode), 'absensi-laporan-'.$awal.'-'.$akhir.'.xlsx');
+    return Excel::download(new ExportAbsen($cuti, $periode), 'absensi-laporan-' . $awal . '-' . $akhir . '.xlsx');
   }
 }

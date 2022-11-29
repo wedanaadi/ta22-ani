@@ -17,12 +17,15 @@ class GajiController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth:api',['except' => ['export','exportSlip']]);
+    $this->middleware('auth:api', ['except' => ['export', 'exportSlip']]);
   }
 
   public function index()
   {
-    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->get();
+    $jabatanAll = Gaji::with('pegawai', 'pegawai.jabatan', 'comment')
+      ->whereRelation('pegawai', 'is_aktif', "1")
+      ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+      ->get();
     return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
   }
 
@@ -70,15 +73,15 @@ class GajiController extends Controller
 
   public function getGaji(Request $request)
   {
-    $validator = Validator::make($request->all(),[
+    $validator = Validator::make($request->all(), [
       'pegawai_id' => 'required',
       'month' => 'required',
-    ],[
+    ], [
       'required' =>  'The :attribute can not empty',
     ]);
 
-    if($validator->fails()) {
-      return response()->json(['data' => [],'error' => $validator->messages()->toArray()],422);
+    if ($validator->fails()) {
+      return response()->json(['data' => [], 'error' => $validator->messages()->toArray()], 422);
     }
 
     $pegawaiId = $request->pegawai_id;
@@ -98,17 +101,17 @@ class GajiController extends Controller
       'atas' => [
         'nama' => $pegawai->nama_pegawai,
         'jabatan' => $pegawai->jabatan->nama_jabatan,
-        'dayofmonth' =>$dayOfMonth,
+        'dayofmonth' => $dayOfMonth,
         'kehadiran' => $kehadiran,
-        'offday' => $dayOfMonth - $kehadiran -4,
+        'offday' => $dayOfMonth - $kehadiran - 4,
         'gaji_pokok' => $pegawai->jabatan->gaji_pokok,
         'tunjangan' => $pegawai->jabatan->tunjangan,
       ],
       'bawah' => [
-        'gaji_pokok_harian' => $pegawai->jabatan->gaji_pokok/($dayOfMonth - 4),
-        'tunjangan_harian' => $pegawai->jabatan->tunjangan/($dayOfMonth - 4),
-        'total_pokok_harian' => ($pegawai->jabatan->gaji_pokok/($dayOfMonth - 4)) * $kehadiran,
-        'total_tunjangan_harian' => ($pegawai->jabatan->tunjangan/($dayOfMonth - 4)) * $kehadiran,
+        'gaji_pokok_harian' => $pegawai->jabatan->gaji_pokok / ($dayOfMonth - 4),
+        'tunjangan_harian' => $pegawai->jabatan->tunjangan / ($dayOfMonth - 4),
+        'total_pokok_harian' => ($pegawai->jabatan->gaji_pokok / ($dayOfMonth - 4)) * $kehadiran,
+        'total_tunjangan_harian' => ($pegawai->jabatan->tunjangan / ($dayOfMonth - 4)) * $kehadiran,
       ]
     ];
 
@@ -120,19 +123,39 @@ class GajiController extends Controller
     $periode = $request->periode;
     $id = $request->id;
     if ($request->act === 'save') {
-      $sql = "SELECT t1.*, pivot1.pegawai_id from pegawais t1
-              LEFT JOIN (
-              SELECT * FROM gajis
-              WHERE periode = '$periode'
-              ) AS pivot1 ON pivot1.pegawai_id = t1.id_pegawai
-              WHERE pivot1.pegawai_id IS NULL";
+      $sql = "SELECT tabel.*, gajis.pegawai_id FROM (
+                SELECT t1.* from pegawais t1
+                INNER JOIN jabatans j ON j.id_jabatan = t1.jabatan_id
+                LEFT JOIN (
+                      SELECT gajis.* FROM gajis
+                      INNER JOIN pegawais ON pegawais.id_pegawai = gajis.pegawai_id
+                      INNER JOIN jabatans on jabatans.id_jabatan = pegawais.jabatan_id
+                            WHERE periode = '$periode' AND pegawais.is_aktif = '1' AND jabatans.is_aktif = '1'
+                ) AS pivot1 ON pivot1.pegawai_id = t1.id_pegawai
+                WHERE t1.is_aktif = '1' AND j.is_aktif = '1'
+              ) AS tabel
+              LEFT JOIN gajis ON gajis.pegawai_id = tabel.id_pegawai
+              WHERE gajis.pegawai_id IS NULL";
     } else {
-      $sql = "SELECT t1.*, pivot1.pegawai_id from pegawais t1
-              LEFT JOIN (
-              SELECT * FROM gajis
-              WHERE periode = '$periode'
-              ) AS pivot1 ON pivot1.pegawai_id = t1.id_pegawai
-              WHERE pivot1.pegawai_id IS NULL OR pivot1.pegawai_id = '$id'";
+      // $sql = "SELECT t1.*, pivot1.pegawai_id from pegawais t1
+      //         LEFT JOIN (
+      //         SELECT * FROM gajis
+      //         WHERE periode = '$periode'
+      //         ) AS pivot1 ON pivot1.pegawai_id = t1.id_pegawai
+      //         WHERE pivot1.pegawai_id IS NULL OR pivot1.pegawai_id = '$id'";
+      $sql = "SELECT tabel.*, gajis.pegawai_id FROM (
+                SELECT t1.* from pegawais t1
+                INNER JOIN jabatans j ON j.id_jabatan = t1.jabatan_id
+                LEFT JOIN (
+                      SELECT gajis.* FROM gajis
+                      INNER JOIN pegawais ON pegawais.id_pegawai = gajis.pegawai_id
+                      INNER JOIN jabatans on jabatans.id_jabatan = pegawais.jabatan_id
+                            WHERE periode = '$periode' AND pegawais.is_aktif = '1' AND jabatans.is_aktif = '1'
+                ) AS pivot1 ON pivot1.pegawai_id = t1.id_pegawai
+                WHERE t1.is_aktif = '1' AND j.is_aktif = '1'
+              ) AS tabel
+              LEFT JOIN gajis ON gajis.pegawai_id = tabel.id_pegawai
+              WHERE gajis.pegawai_id IS NULL OR gajis.pegawai_id = '$id'";
     }
     $data = DB::select($sql);
     return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
@@ -207,9 +230,10 @@ class GajiController extends Controller
             INNER JOIN pegawais p on p.id_pegawai =g.pegawai_id
             INNER JOIN jabatans j on j.id_jabatan = p.jabatan_id
             WHERE periode BETWEEN '$awal' AND '$akhir' and g.is_valid = '1'
+            AND p.is_aktif = '1' AND j.is_aktif='1'
             ";
-    if($id!=='all') {
-      $sql.= "AND g.pegawai_id = '$id'";
+    if ($id !== 'all') {
+      $sql .= "AND g.pegawai_id = '$id'";
     }
     $data = DB::select($sql);
     return $data;
@@ -230,18 +254,18 @@ class GajiController extends Controller
     $gaji = $this->getDataLaporan($id, $periode->awal, $periode->akhir);
     $awal = date("Y-m-d", substr($periode->awal, 0, 10));
     $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
-    return Excel::download(new exportGaji($gaji,$periode), 'gaji-laporan-dicetak-'.$awal.'-'.$akhir.'.xlsx');
+    return Excel::download(new exportGaji($gaji, $periode), 'gaji-laporan-dicetak-' . $awal . '-' . $akhir . '.xlsx');
   }
 
   public function exportSlip($id)
   {
-    $gaji = Gaji::with('pegawai','pegawai.jabatan','comment')->where('pegawai_id',$id)->get();
-    return Excel::download(new exportSlip($gaji), 'slip-gaji-dicetak-'.date('Y-m-d').'.xlsx');
+    $gaji = Gaji::with('pegawai', 'pegawai.jabatan', 'comment')->where('pegawai_id', $id)->get();
+    return Excel::download(new exportSlip($gaji), 'slip-gaji-dicetak-' . date('Y-m-d') . '.xlsx');
   }
 
   public function pegawai_slip(Request $request)
   {
-    $jabatanAll = Gaji::with('pegawai','pegawai.jabatan','comment')->where('pegawai_id',$request->id)->where('is_valid',1)->get();
+    $jabatanAll = Gaji::with('pegawai', 'pegawai.jabatan', 'comment')->where('pegawai_id', $request->id)->where('is_valid', 1)->get();
     return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
   }
 }

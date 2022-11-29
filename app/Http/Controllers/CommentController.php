@@ -18,7 +18,9 @@ class CommentController extends Controller
 
   public function index()
   {
-    $absen = Comment::with('gaji', 'gaji.pegawai.jabatan')->where('is_read',"1")->get();
+    $absen = Comment::with('gaji', 'gaji.pegawai.jabatan')
+      ->where('is_read', "1")
+      ->get();
     return response()->json(['msg' => 'get all absen', "data" => $absen, 'error' => []], 200);
   }
 
@@ -46,12 +48,12 @@ class CommentController extends Controller
       ];
       Comment::create($payload);
       $commentPrev = Comment::where('gaji_id', $request->gaji_id)
-      ->where('is_read', 0)
-      ->where('pegawai_id', '!=', $request->pegawai_id)->count();
-      if($commentPrev > 0) {
-        Comment::where('gaji_id',$request->gaji_id)
-        ->where('pegawai_id','!=',$request->pegawai_id)
-        ->update(['is_read'=>1]);
+        ->where('is_read', 0)
+        ->where('pegawai_id', '!=', $request->pegawai_id)->count();
+      if ($commentPrev > 0) {
+        Comment::where('gaji_id', $request->gaji_id)
+          ->where('pegawai_id', '!=', $request->pegawai_id)
+          ->update(['is_read' => 1]);
       }
       unset($payload['id_comment']);
       DB::commit();
@@ -97,6 +99,8 @@ class CommentController extends Controller
     $sql = "SELECT g.*, p.nama_pegawai, p.nik FROM gajis g
             INNER JOIN comments c ON c.gaji_id = g.id_gaji
             INNER JOIN pegawais p ON p.id_pegawai = g.pegawai_id
+            INNER JOIN jabatans j ON j.id_jabatan = p.jabatan_id
+            WHERE p.is_aktif = '1' AND j.is_aktif = '1'
             GROUP BY g.id_gaji;";
     $data = DB::select($sql);
 
