@@ -16,12 +16,14 @@ class PegawaiController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('auth:api',['except' => ['export']]);
+    $this->middleware('auth:api', ['except' => ['export']]);
   }
 
   public function index()
   {
-    $pegawaiAll = Pegawai::with('jabatan')->where('is_aktif',"1")->get();
+    $pegawaiAll = Pegawai::with('jabatan')
+      ->whereRelation('jabatan', 'is_aktif', "1")
+      ->where('is_aktif', "1")->get();
     return response()->json(['msg' => 'get all data', "data" => $pegawaiAll, 'error' => []], 200);
   }
 
@@ -72,8 +74,8 @@ class PegawaiController extends Controller
     try {
       $date = date('y') . date('m');
       $lastKode = Pegawai::select(DB::raw('MAX(id_pegawai) AS kode'))
-          ->where(DB::raw('SUBSTR(id_pegawai,2,4)'), $date)
-          ->first();
+        ->where(DB::raw('SUBSTR(id_pegawai,2,4)'), $date)
+        ->first();
       $newID = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'P', $date);
       $payload = [
         'id_pegawai' => $newID,
@@ -174,16 +176,16 @@ class PegawaiController extends Controller
       if ($request->foto) {
         $dataImage = $request->foto;
         if ($request->oldFoto !== null) {
-            $splitFoto = explode('=', $request->oldFoto);
-            if ($dataImage->getClientOriginalName() !== $splitFoto[1]) {
-                unlink('images/pegawai/' . $request->oldFoto);
-            }
+          $splitFoto = explode('=', $request->oldFoto);
+          if ($dataImage->getClientOriginalName() !== $splitFoto[1]) {
+            unlink('images/pegawai/' . $request->oldFoto);
+          }
         }
         $destinationPath = 'images/pegawai';
         $profileImage = $id . "=" . $dataImage->getClientOriginalName();
         $dataImage->move($destinationPath, $profileImage);
         $payload['foto'] = $profileImage;
-    }
+      }
 
       $pegawaiFind->update($payload);
       DB::commit();
@@ -215,12 +217,12 @@ class PegawaiController extends Controller
   public function getPegawaiNotHasUser(Request $request)
   {
     if ($request->act === 'save') {
-    $data = DB::select("SELECT pegawais.*
+      $data = DB::select("SELECT pegawais.*
     FROM pegawais
     LEFT JOIN users t2 ON t2.pegawai_id = pegawais.id_pegawai
     WHERE t2.pegawai_id IS NULL;");
     } else {
-    $data = DB::select("SELECT pegawais.*
+      $data = DB::select("SELECT pegawais.*
     FROM pegawais
     LEFT JOIN users t2 ON t2.pegawai_id = pegawais.id_pegawai
     WHERE t2.pegawai_id = '$request->id' or t2.pegawai_id IS NULL");

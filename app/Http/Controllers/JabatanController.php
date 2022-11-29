@@ -18,7 +18,7 @@ class JabatanController extends Controller
 
   public function index()
   {
-    $jabatanAll = Jabatan::all();
+    $jabatanAll = Jabatan::where('is_aktif',"1")->get();
     return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
   }
 
@@ -88,6 +88,24 @@ class JabatanController extends Controller
     } catch (Exception $e) {
       DB::rollBack();
       return response()->json(['msg' => 'fail created data jabatan', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function destroy($id)
+  {
+    $jabatanFind = Jabatan::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'is_aktif' => "0"
+      ];
+
+      $jabatanFind->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data jabatan', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data jabatan', "data" => [], 'error' => $e->getMessage()], 500);
     }
   }
 }

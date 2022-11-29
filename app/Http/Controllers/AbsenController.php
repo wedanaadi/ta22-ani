@@ -95,6 +95,20 @@ class AbsenController extends Controller
     }
   }
 
+  public function destroy($id)
+  {
+    $findAbsen = Absen::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $findAbsen->delete();
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data absen', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data absen', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function getPegawaiNotCuti(Request $request)
   {
     $now = $request->now;
@@ -105,20 +119,22 @@ class AbsenController extends Controller
                 RIGHT JOIN (
                   SELECT * FROM cutis
                 ) AS pv1 ON pv1.pegawai_id = absens.pegawai_id
-                WHERE (UNIX_TIMESTAMP(absens.tanggal) * 1000) >= '$now' OR (UNIX_TIMESTAMP(pv1.tanggal_mulai) * 1000) <= '$now' AND (UNIX_TIMESTAMP(pv1.tanggal_selesai) * 1000) >= '$now'
+                WHERE (UNIX_TIMESTAMP(absens.tanggal) * 1000) = '$now' OR (UNIX_TIMESTAMP(pv1.tanggal_mulai) * 1000) <= '$now'
+                AND (UNIX_TIMESTAMP(pv1.tanggal_selesai) * 1000) >= '$now'
               ) AS pv2 on pv2.pegawai_id = p.id_pegawai
-              WHERE pv2.pegawai_id IS NULL;";
+              WHERE pv2.pegawai_id IS NULL";
     } else {
       $id = $request->id;
       $sql = "SELECT * FROM pegawais p
               LEFT JOIN (
                 SELECT pv1.pegawai_id FROM absens
-                RIGHT JOIN (
+                LEFT JOIN (
                   SELECT * FROM cutis
                 ) AS pv1 ON pv1.pegawai_id = absens.pegawai_id
-                WHERE (UNIX_TIMESTAMP(pv1.tanggal_mulai) * 1000) <= '$now' AND (UNIX_TIMESTAMP(pv1.tanggal_selesai) * 1000) >= '$now'
+                WHERE (UNIX_TIMESTAMP(absens.tanggal) * 1000) = '$now' OR (UNIX_TIMESTAMP(pv1.tanggal_mulai) * 1000) <= '$now'
+                AND (UNIX_TIMESTAMP(pv1.tanggal_selesai) * 1000) >= '$now'
               ) AS pv2 on pv2.pegawai_id = p.id_pegawai
-              WHERE pv2.pegawai_id IS NULL;";
+              WHERE pv2.pegawai_id IS NULL";
     }
 
     $data = DB::select($sql);

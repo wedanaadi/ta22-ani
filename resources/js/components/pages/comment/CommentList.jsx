@@ -51,8 +51,8 @@ const CommentList = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "Nama comment", field: "nama_pegawai", sortable: true },
-    { name: "Periode Gaji", field: "periode", sortable: true },
+    { name: "Nama comment", field: "nama_pegawai", sortable: false },
+    { name: "Periode Gaji", field: "periode", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 

@@ -93,6 +93,20 @@ class CutiController extends Controller
     }
   }
 
+  public function destroy($id)
+  {
+    $cutiFind = Cuti::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $cutiFind->delete();
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data cuti', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data cuti', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function getDataLaporan($id, $awal, $akhir)
   {
     $sql = "SELECT c.*, p.nama_pegawai, p.nik, j.nama_jabatan FROM cutis c

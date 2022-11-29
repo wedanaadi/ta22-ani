@@ -62,19 +62,19 @@ const GajiPegawai = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "Periode", field: "periode", sortable: true },
-    { name: "NIK", field: "nik", sortable: true },
-    { name: "Nama", field: "nama_pegawai", sortable: true },
-    { name: "Jabatan", field: "nama_jabatan", sortable: true },
-    { name: "Status", field: "status_pegawai", sortable: true },
-    { name: "Gaji Pokok", field: "gaji_pokok", sortable: true },
-    { name: "Tunjangan", field: "tunjangan", sortable: true },
-    { name: "Bonus", field: "bonus", sortable: true },
-    { name: "Gaji per Hari", field: "gaji_harian", sortable: true },
-    { name: "Tunjangan per Hari", field: "tunjangan_harian", sortable: true },
-    { name: "Total Hadir", field: "total_hadir", sortable: true },
-    { name: "Potongan", field: "potongan", sortable: true },
-    { name: "Total Gaji", field: "total", sortable: true },
+    { name: "Periode", field: "periode", sortable: false },
+    { name: "NIK", field: "nik", sortable: false },
+    { name: "Nama", field: "nama_pegawai", sortable: false },
+    { name: "Jabatan", field: "nama_jabatan", sortable: false },
+    { name: "Status", field: "status_pegawai", sortable: false },
+    { name: "Gaji Pokok", field: "gaji_pokok", sortable: false },
+    { name: "Tunjangan", field: "tunjangan", sortable: false },
+    { name: "Bonus", field: "bonus", sortable: false },
+    { name: "Gaji per Hari", field: "gaji_harian", sortable: false },
+    { name: "Tunjangan per Hari", field: "tunjangan_harian", sortable: false },
+    { name: "Total Hadir", field: "total_hadir", sortable: false },
+    { name: "Potongan", field: "potongan", sortable: false },
+    { name: "Total Gaji", field: "total", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 
@@ -180,7 +180,7 @@ const GajiPegawai = () => {
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {gajisData.length > 0 &&
+                  {gajisData.length > 0 ? (
                     gajisData.map((gaji, index) => (
                       <tr key={gaji.id_gaji}>
                         <th scope="row">{index + 1}</th>
@@ -267,10 +267,16 @@ const GajiPegawai = () => {
                           </button>
                         </td>
                       </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={15}>{gajisData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={15}>
+                        {gajisData.length === 0 && !isLoad
+                          ? "Tidak Ada Data"
+                          : loader}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

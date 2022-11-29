@@ -116,8 +116,14 @@ const AbsenEdit = () => {
   const loadSelectAwait = () => {
     const selected = pegawais.filter(
       ({ value }) => value === localEditData.pegawai_id
-    );
-    setIdPegawai(selected[0]);
+      );
+      const tanggalEdit = new Date(localEditData.tanggal);
+      if(ConvertToEpoch(tanggalEdit) === ConvertToEpoch(tanggal)) {
+      setIdPegawai({ value: localEditData.pegawai_id, label: localEditData.pegawai.nama_pegawai })
+      // console.log('sama');
+    } else {
+      setIdPegawai(selected[0]);
+    }
   };
 
   useEffect(()=>{

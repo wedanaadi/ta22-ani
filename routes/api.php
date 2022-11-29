@@ -40,6 +40,7 @@ Route::middleware('api')->group(function () {
   Route::get('jabatan', [JabatanController::class, 'index']);
   Route::post('jabatan', [JabatanController::class, 'store']);
   Route::put('jabatan/{id}', [JabatanController::class, 'update']);
+  Route::delete('jabatan/{id}',[JabatanController::class, 'destroy']);
   // pegawai
   Route::get('pegawai', [PegawaiController::class, 'index']);
   Route::get('pegawai-user', [PegawaiController::class, 'getPegawaiNotHasUser']);
@@ -50,15 +51,18 @@ Route::middleware('api')->group(function () {
   Route::get('user', [UserController::class, 'index']);
   Route::post('user', [UserController::class, 'store']);
   Route::put('user/{id}', [UserController::class, 'update']);
+  Route::delete('user/{id}',[UserController::class, 'destroy']);
   // cuti
   Route::get('cuti', [CutiController::class, 'index']);
   Route::post('cuti', [CutiController::class, 'store']);
   Route::put('cuti/{id}', [CutiController::class, 'update']);
+  Route::delete('cuti/{id}',[CutiController::class, 'destroy']);
   // absen
   Route::get('absen', [AbsenController::class, 'index']);
   Route::get('pegawai-absen', [AbsenController::class, 'getPegawaiNotCuti']);
   Route::post('absen', [AbsenController::class, 'store']);
   Route::put('absen/{id}', [AbsenController::class, 'update']);
+  Route::delete('absen/{id}',[AbsenController::class, 'destroy']);
   // laporan
   Route::post('absen/import', [AbsenController::class, 'import']);
   Route::get('pegawai/export', [PegawaiController::class, 'export']);
@@ -79,10 +83,12 @@ Route::middleware('api')->group(function () {
   Route::post('gaji', [GajiController::class, 'store']);
   Route::put('gaji/{id}', [GajiController::class, 'update']);
   Route::put('validasi/{id}', [GajiController::class, 'validasi']);
+  Route::delete('gaji/{id}',[GajiController::class, 'destroy']);
   // comment
   Route::get('comment-list', [CommentController::class, 'getComment2']);
   Route::get('comment-by/{id}', [CommentController::class, 'getComment']);
   Route::get('comment', [CommentController::class, 'index']);
   Route::get('check/{id}', [CommentController::class, 'check']);
   Route::post('comment', [CommentController::class, 'store']);
+  Route::delete('comment/{id}',[CommentController::class, 'destroy']);
 });

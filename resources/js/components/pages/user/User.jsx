@@ -1,11 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import { toast, ToastContainer } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
 
 const User = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -123,8 +125,83 @@ const User = () => {
     }
   };
 
+  const confirm = (id) => {
+    confirmAlert({
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDelete(id),
+        },
+        {
+          label: "Cancel",
+          onClick: () => false,
+        },
+      ],
+    });
+  };
+
+  const handleDelete = async (id) => {
+    const notifDelete = toast.loading("Saving....");
+    try {
+      const { data: response } = await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/user/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      await getUsers();
+      toast.update(notifDelete, {
+        render: "Delete Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifDelete, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifDelete, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifDelete, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifDelete, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
+  };
+
   return (
     <div className="card">
+      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data User</h5>
         <Link to="add" className="btn btn-success float-end">
@@ -155,7 +232,7 @@ const User = () => {
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {userData.length > 0 &&
+                  {userData.length > 0 ? (
                     userData.map((user, index) => (
                       <tr key={user.id}>
                         <th scope="row">{index + 1}</th>
@@ -171,12 +248,26 @@ const User = () => {
                             <FontAwesomeIcon icon={faPencil} />
                             &nbsp; Edit
                           </button>
+                          &nbsp;
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => confirm(user.id)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                            &nbsp; Hapus
+                          </button>
                         </td>
                       </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={6}>{userData.length === 0 && !isLoading ? "Tidak Ada Data" : loader}</td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6}>
+                        {userData.length === 0 && !isLoading
+                          ? "Tidak Ada Data"
+                          : loader}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

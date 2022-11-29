@@ -73,9 +73,9 @@ const Sample = () => {
   };
 
   const fetch = async () => {
-    const pegawaiPromise = getCountPegawai();
-    const commentPromise = getCountComment();
-    const jabatanPromise = getCountJabatan();
+    getCountPegawai();
+    getCountComment();
+    getCountJabatan();
 
     // await pegawaiPromise
     // await commentPromise

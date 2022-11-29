@@ -3,6 +3,7 @@ import {
   faPlus,
   faPencil,
   faFileExcel,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
@@ -11,6 +12,8 @@ import { useToken } from "../../../hook/Token";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import ExcelAbsen from "./ExcelAbsen";
+import { confirmAlert } from "react-confirm-alert";
+import { toast, ToastContainer } from "react-toastify";
 
 const Absen = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -96,7 +99,10 @@ const Absen = () => {
     if (search) {
       computedAbsens = computedAbsens.filter(
         (data) =>
-          data.pegawai.nik.toString().toLowerCase().includes(search.toLowerCase()) ||
+          data.pegawai.nik
+            .toString()
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
           data.pegawai.nama_pegawai
             .toLowerCase()
             .includes(search.toLowerCase()) ||
@@ -141,9 +147,85 @@ const Absen = () => {
       .toString();
   };
 
+  const confirm = (id) => {
+    confirmAlert({
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDelete(id),
+        },
+        {
+          label: "Cancel",
+          onClick: () => false,
+        },
+      ],
+    });
+  };
+
+  const handleDelete = async (id) => {
+    const notifikasiDelete = toast.loading("Saving....");
+    try {
+      const { data: response } = await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/absen/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      console.log(response);
+      toast.update(notifikasiDelete, {
+        render: "Delete Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+      await getAbsens();
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifikasiDelete, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiDelete, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifikasiDelete, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiDelete, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
+  };
+
   return (
     <div className="card">
       <ExcelAbsen />
+      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Absen</h5>
         <div>
@@ -185,10 +267,10 @@ const Absen = () => {
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {absensData.length > 0 &&
+                  {absensData.length > 0 ? (
                     absensData.map((absen, index) => (
                       <tr key={absen.id_absen}>
-                        <th scope="row">{index + 1}</th>
+                        <th scope="row">{index+1}</th>
                         <td>{absen.pegawai.nik}</td>
                         <td>{absen.pegawai.nama_pegawai}</td>
                         <td>{absen.pegawai.jabatan.nama_jabatan}</td>
@@ -202,12 +284,26 @@ const Absen = () => {
                             <FontAwesomeIcon icon={faPencil} />
                             &nbsp; Edit
                           </button>
+                          &nbsp;
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => confirm(absen.id_absen)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                            &nbsp; Hapus
+                          </button>
                         </td>
                       </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={7}>{absensData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7}>
+                        {absensData.length === 0 && !isLoad
+                          ? "Tidak Ada Data"
+                          : loader}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

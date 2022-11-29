@@ -6,7 +6,7 @@ import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import {confirmAlert} from 'react-confirm-alert'
+import { confirmAlert } from "react-confirm-alert";
 import { toast, ToastContainer } from "react-toastify";
 
 const Pegawai = () => {
@@ -52,18 +52,18 @@ const Pegawai = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "NIK", field: "nik", sortable: true },
-    { name: "Nama Pegawai", field: "nama_pegawai", sortable: true },
-    { name: "Jabatan", field: "jabatan_id", sortable: true },
-    { name: "Tempat Lahir", field: "tempat_lahir", sortable: true },
-    { name: "Tanggal Lahir", field: "tanggal_lahir", sortable: true },
-    { name: "Jenis Kelamin", field: "jenis_kelamin", sortable: true },
-    { name: "Alamat", field: "alamat", sortable: true },
-    { name: "Agama", field: "agama", sortable: true },
-    { name: "Status Pernikahan", field: "status_pernikahan", sortable: true },
-    { name: "Pendidikan", field: "pendidikan", sortable: true },
-    { name: "Telepon", field: "no_telepon", sortable: true },
-    { name: "Status Pegawai", field: "status_pegawai", sortable: true },
+    { name: "NIK", field: "nik", sortable: false },
+    { name: "Nama Pegawai", field: "nama_pegawai", sortable: false },
+    { name: "Jabatan", field: "jabatan_id", sortable: false },
+    { name: "Tempat Lahir", field: "tempat_lahir", sortable: false },
+    { name: "Tanggal Lahir", field: "tanggal_lahir", sortable: false },
+    { name: "Jenis Kelamin", field: "jenis_kelamin", sortable: false },
+    { name: "Alamat", field: "alamat", sortable: false },
+    { name: "Agama", field: "agama", sortable: false },
+    { name: "Status Pernikahan", field: "status_pernikahan", sortable: false },
+    { name: "Pendidikan", field: "pendidikan", sortable: false },
+    { name: "Telepon", field: "no_telepon", sortable: false },
+    { name: "Status Pegawai", field: "status_pegawai", sortable: false },
     { name: "Foto", field: "foto", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
@@ -146,7 +146,7 @@ const Pegawai = () => {
         },
       ],
     });
-  }
+  };
 
   const handleDelete = async (id) => {
     const notifikasiSave = toast.loading("Saving....");
@@ -160,7 +160,7 @@ const Pegawai = () => {
           },
         }
       );
-      getPegawais()
+      getPegawais();
       toast.update(notifikasiSave, {
         render: "Delete Successfuly",
         type: "success",
@@ -203,7 +203,7 @@ const Pegawai = () => {
         });
       }
     }
-  }
+  };
 
   return (
     <div className="card">
@@ -238,7 +238,7 @@ const Pegawai = () => {
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {pegawaiData.length > 0 &&
+                  {pegawaiData.length > 0 ? (
                     pegawaiData.map((pegawai, index) => (
                       <tr key={pegawai.id_pegawai}>
                         <th scope="row">{index + 1}</th>
@@ -288,19 +288,21 @@ const Pegawai = () => {
                             className="btn btn-danger"
                             onClick={() => confirm(pegawai.id_pegawai)}
                           >
-                            <FontAwesomeIcon
-                              icon={faTrash}
-                            />
+                            <FontAwesomeIcon icon={faTrash} />
                             &nbsp; Hapus
                           </button>
                         </td>
                       </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={15}>
-                      {pegawaiData.length === 0 && !isLoading ? "Tidak Ada Data" : loader}
-                    </td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={15}>
+                        {pegawaiData.length === 0 && !isLoading
+                          ? "Tidak Ada Data"
+                          : loader}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

@@ -1,11 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import { confirmAlert } from "react-confirm-alert";
+import { toast, ToastContainer } from "react-toastify";
 
 const Cuti = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -50,10 +52,10 @@ const Cuti = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "Pegawai", field: "nama_pegawai", sortable: true },
+    { name: "Pegawai", field: "nama_pegawai", sortable: false },
     { name: "Tanggal Mulai", field: "tanggal_mulai", sortable: false },
     { name: "Tanggal Selesai", field: "tanggal_selesai", sortable: false },
-    { name: "Alasan", field: "alasan", sortable: true },
+    { name: "Alasan", field: "alasan", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 
@@ -120,8 +122,83 @@ const Cuti = () => {
     // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
   };
 
+  const confirm = (id) => {
+    confirmAlert({
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDelete(id),
+        },
+        {
+          label: "Cancel",
+          onClick: () => false,
+        },
+      ],
+    });
+  };
+
+  const handleDelete = async (id) => {
+    const notifikasiSave = toast.loading("Saving....");
+    try {
+      const { data: response } = await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/cuti/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      getCutis();
+      toast.update(notifikasiSave, {
+        render: "Delete Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifikasiSave, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiSave, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
+  };
+
   return (
     <div className="card">
+      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Cuti</h5>
         <Link to="add" className="btn btn-success float-end">
@@ -152,7 +229,7 @@ const Cuti = () => {
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {cutiData.length > 0 &&
+                  {cutiData.length > 0 ? (
                     cutiData.map((cuti, index) => (
                       <tr key={cuti.id_cuti}>
                         <th scope="row">{index + 1}</th>
@@ -168,12 +245,26 @@ const Cuti = () => {
                             <FontAwesomeIcon icon={faPencil} />
                             &nbsp; Edit
                           </button>
+                          &nbsp;
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => confirm(cuti.id_cuti)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                            &nbsp; Hapus
+                          </button>
                         </td>
                       </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={6}>{cutiData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6}>
+                        {cutiData.length === 0 && !isLoad
+                          ? "Tidak Ada Data"
+                          : loader}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

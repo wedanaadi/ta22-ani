@@ -1,10 +1,16 @@
-import { faArrowLeft, faComment } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faComment,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToken } from "../../../hook/Token";
 import Komentar from "../gaji/Komentar";
 import jwt_decode from "jwt-decode";
+import { confirmAlert } from "react-confirm-alert";
+import { toast, ToastContainer } from "react-toastify";
 
 const indexComment = () => {
   const navigasi = useNavigate();
@@ -74,9 +80,84 @@ const indexComment = () => {
       .toString();
   };
 
+  const confirm = (id) => {
+    confirmAlert({
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDelete(id),
+        },
+        {
+          label: "Cancel",
+          onClick: () => false,
+        },
+      ],
+    });
+  };
+
+  const handleDelete = async (id) => {
+    const notifDelete = toast.loading("Saving....");
+    try {
+      await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/comment/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      await getCommentGaji();
+      toast.update(notifDelete, {
+        render: "Delete Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifDelete, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifDelete, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifDelete, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifDelete, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
+  };
+
   return (
     <div className="card">
       <Komentar />
+      <ToastContainer />
       <div className="card-header bg-white d-sm-flex justify-content-between align-items-center">
         <h5 className="card-title">Comment</h5>
         <div>
@@ -90,7 +171,10 @@ const indexComment = () => {
             &nbsp; Buat Comments
           </Link>
           &nbsp;
-          <button onClick={()=>navigasi(-1)} className="btn btn-secondary float-end">
+          <button
+            onClick={() => navigasi(-1)}
+            className="btn btn-secondary float-end"
+          >
             <FontAwesomeIcon icon={faArrowLeft} />
             &nbsp; Kembali
           </button>
@@ -104,7 +188,16 @@ const indexComment = () => {
             ) : (
               comment.map((komentar) => (
                 <li className="timeline-item mb-5" key={komentar.id_comment}>
-                  <h5 className="fw-bold">{komentar.nama_pegawai}</h5>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="fw-bold">{komentar.nama_pegawai}</h5>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => confirm(komentar.id_comment)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                      &nbsp; Hapus
+                    </button>
+                  </div>
                   <p className="text-muted mb-2 fw-bold">
                     {convertToDate(komentar.created_at)}
                   </p>

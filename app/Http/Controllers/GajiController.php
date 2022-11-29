@@ -178,6 +178,20 @@ class GajiController extends Controller
     }
   }
 
+  public function destroy($id)
+  {
+    $gajiFind = Gaji::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $gajiFind->delete();
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data gaji', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data gaji', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function Validasi($id)
   {
     $gaji = Gaji::find($id);

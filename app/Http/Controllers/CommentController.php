@@ -62,6 +62,20 @@ class CommentController extends Controller
     }
   }
 
+  public function destroy($id)
+  {
+    $commentFind = Comment::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $commentFind->delete();
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data comment', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data comment', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function check($id)
   {
     $count = Comment::where('gaji_id', $id)->count();

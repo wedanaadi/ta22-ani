@@ -1,5 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPencil, faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faPencil,
+  faCheck,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
@@ -7,6 +12,8 @@ import { useToken } from "../../../hook/Token";
 import { NumericFormat } from "react-number-format";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import { confirmAlert } from "react-confirm-alert";
+import { toast, ToastContainer } from "react-toastify";
 
 const Gaji = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -61,16 +68,20 @@ const Gaji = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "Periode", field: "periode", sortable: true },
-    { name: "NIK", field: "nik", sortable: true },
-    { name: "Nama", field: "nama_pegawai", sortable: true },
-    { name: "Jabatan", field: "nama_jabatan", sortable: true },
-    { name: "Status", field: "status_pegawai", sortable: true },
-    { name: "Gaji Pokok", field: "gaji_pokok", sortable: true },
-    { name: "Tunjangan", field: "tunjangan", sortable: true },
-    { name: "Bonus", field: "bonus", sortable: true },
-    { name: "Total Gaji per Hari", field: "gaji_harian", sortable: true },
-    { name: "Total Tunjangan per Hari", field: "tunjangan_harian", sortable: true },
+    { name: "Periode", field: "periode", sortable: false },
+    { name: "NIK", field: "nik", sortable: false },
+    { name: "Nama", field: "nama_pegawai", sortable: false },
+    { name: "Jabatan", field: "nama_jabatan", sortable: false },
+    { name: "Status", field: "status_pegawai", sortable: false },
+    { name: "Gaji Pokok", field: "gaji_pokok", sortable: false },
+    { name: "Tunjangan", field: "tunjangan", sortable: false },
+    { name: "Bonus", field: "bonus", sortable: false },
+    { name: "Total Gaji per Hari", field: "gaji_harian", sortable: false },
+    {
+      name: "Total Tunjangan per Hari",
+      field: "tunjangan_harian",
+      sortable: true,
+    },
     { name: "Total Hadir", field: "total_hadir", sortable: true },
     { name: "Potongan", field: "potongan", sortable: true },
     { name: "Total Gaji Final", field: "total", sortable: true },
@@ -104,14 +115,16 @@ const Gaji = () => {
     if (search) {
       computedGajis = computedGajis.filter(
         (data) =>
-          data.pegawai.jabatan.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
+          data.pegawai.jabatan.nama_jabatan
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
           data.gaji_pokok.toString().includes(search.toLowerCase()) ||
           data.total_hadir.toString().includes(search.toLowerCase()) ||
           data.tunjangan.toString().includes(search.toLowerCase())
-          // String(data.gaji_pokok)
-          //   .toLowerCase()
-          //   .includes(search.toLowerCase()) ||
-          // String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
+        // String(data.gaji_pokok)
+        //   .toLowerCase()
+        //   .includes(search.toLowerCase()) ||
+        // String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -153,10 +166,20 @@ const Gaji = () => {
   const getRole = (gaji) => {
     if (dataLokal.role === 2) {
       return (
-        <button className="btn btn-warning" onClick={() => handleEdit(gaji)}>
-          <FontAwesomeIcon icon={faPencil} />
-          &nbsp; Edit
-        </button>
+        <>
+          <button className="btn btn-warning" onClick={() => handleEdit(gaji)}>
+            <FontAwesomeIcon icon={faPencil} />
+            &nbsp; Edit
+          </button>
+          &nbsp;
+          <button
+            className="btn btn-danger"
+            onClick={() => confirm(gaji.id_gaji)}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+            &nbsp; Hapus
+          </button>
+        </>
       );
     } else {
       return (
@@ -171,8 +194,84 @@ const Gaji = () => {
     }
   };
 
+  const confirm = (id) => {
+    confirmAlert({
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => handleDelete(id),
+        },
+        {
+          label: "Cancel",
+          onClick: () => false,
+        },
+      ],
+    });
+  };
+
+  const handleDelete = async (id) => {
+    const notifikasiDelete = toast.loading("Saving....");
+    try {
+      const { data: response } = await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/gaji/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      console.log(response);
+      toast.update(notifikasiDelete, {
+        render: "Delete Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+      await getGajis();
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifikasiDelete, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiDelete, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifikasiDelete, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiDelete, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
+  };
+
   return (
     <div className="card">
+      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Gaji</h5>
         {dataLokal.role === 2 ? (
@@ -207,7 +306,7 @@ const Gaji = () => {
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {gajisData.length > 0 &&
+                  {gajisData.length > 0 ? (
                     gajisData.map((gaji, index) => (
                       <tr key={gaji.id_gaji}>
                         <th scope="row">{index + 1}</th>
@@ -294,10 +393,16 @@ const Gaji = () => {
                           )}
                         </td>
                       </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={15}>{gajisData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={15}>
+                        {gajisData.length === 0 && !isLoad
+                          ? "Tidak Ada Data"
+                          : loader}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

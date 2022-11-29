@@ -120,6 +120,20 @@ class UserController extends Controller
     }
   }
 
+  public function destroy($id)
+  {
+    $userFind = User::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $userFind->delete();
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly delete data user', "data" => [], 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail delete data user', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function setting(Request $request)
   {
     $id_pegawai = $request->id_pegawai;
