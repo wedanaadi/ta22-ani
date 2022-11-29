@@ -138,10 +138,11 @@ const LapAbsen = () => {
     let computedCutis = absens;
 
     if (search) {
-      computedCutis = computedCutis.filter((data) =>
-        data.nama_pegawai.toLowerCase().includes(search.toLowerCase()) ||
-        data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
-        data.nik.toString().includes(search.toLowerCase())
+      computedCutis = computedCutis.filter(
+        (data) =>
+          data.nama_pegawai.toLowerCase().includes(search.toLowerCase()) ||
+          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
+          data.nik.toString().includes(search.toLowerCase())
       );
     }
 
@@ -231,14 +232,12 @@ const LapAbsen = () => {
                 className="btn btn-danger"
                 onClick={() =>
                   window.open(
-                    `${
-                      import.meta.env.VITE_BASE_URL
-                    }/absen/export?pegawai_id=${pegawai.value}&periode=${JSON.stringify(
-                      {
-                        awal: ConvertToEpoch(startDate),
-                        akhir: ConvertToEpoch(endDate),
-                      }
-                    )}`
+                    `${import.meta.env.VITE_BASE_URL}/absen/export?pegawai_id=${
+                      pegawai.value
+                    }&periode=${JSON.stringify({
+                      awal: ConvertToEpoch(startDate),
+                      akhir: ConvertToEpoch(endDate),
+                    })}`
                   )
                 }
               >
@@ -278,21 +277,27 @@ const LapAbsen = () => {
                         }
                       />
                       <tbody>
-                  {absensData.length > 0 &&
-                    absensData.map((absen, index) => (
-                      <tr key={absen.id_absen}>
-                        <th scope="row">{index + 1}</th>
-                        <td>{absen.nik}</td>
-                        <td>{absen.nama_pegawai}</td>
-                        <td>{absen.nama_jabatan}</td>
-                        <td>{convertDate(absen.tanggal)}</td>
-                        <td>{absen.keterangan}</td>
-                      </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={6}>{absensData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                  </tr>
-                </tbody>
+                        {absensData.length > 0 ? (
+                          absensData.map((absen, index) => (
+                            <tr key={absen.id_absen}>
+                              <th scope="row">{index + 1}</th>
+                              <td>{absen.nik}</td>
+                              <td>{absen.nama_pegawai}</td>
+                              <td>{absen.nama_jabatan}</td>
+                              <td>{convertDate(absen.tanggal)}</td>
+                              <td>{absen.keterangan}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={6}>
+                              {absensData.length === 0 && !isLoad
+                                ? "Tidak Ada Data"
+                                : loader}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
                     </table>
                   </div>
                   <div className="row">
@@ -313,7 +318,7 @@ const LapAbsen = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LapAbsen
+export default LapAbsen;

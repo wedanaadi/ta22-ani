@@ -198,7 +198,7 @@ const LapPeg = () => {
                         }
                       />
                       <tbody>
-                        {pegawaiData.length > 0 &&
+                        {pegawaiData.length > 0 ? (
                           pegawaiData.map((pegawai, index) => (
                             <tr key={pegawai.id_pegawai}>
                               <th scope="row">{index + 1}</th>
@@ -227,10 +227,12 @@ const LapPeg = () => {
                                   : "Pegawai Tetap"}
                               </td>
                             </tr>
-                          ))}
-                        <tr>
-                          <td colSpan={13}>{loader}</td>
-                        </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={13}>{loader}</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>

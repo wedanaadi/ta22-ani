@@ -109,7 +109,11 @@ const LapGaji = () => {
     { name: "Tunjangan", field: "tunjangan", sortable: true },
     { name: "Bonus", field: "bonus", sortable: true },
     { name: "Total Gaji per Hari", field: "gaji_harian", sortable: true },
-    { name: "Total Tunjangan per Hari", field: "tunjangan_harian", sortable: true },
+    {
+      name: "Total Tunjangan per Hari",
+      field: "tunjangan_harian",
+      sortable: true,
+    },
     { name: "Total Hadir", field: "total_hadir", sortable: true },
     { name: "Potongan", field: "potongan", sortable: true },
     { name: "Total Gaji Final", field: "total", sortable: true },
@@ -152,9 +156,10 @@ const LapGaji = () => {
     let computedCutis = cutis;
 
     if (search) {
-      computedCutis = computedCutis.filter((data) =>
-        data.nik.toString().toLowerCase().includes(search.toLowerCase()) ||
-        data.nama_pegawai.toLowerCase().includes(search.toLowerCase())
+      computedCutis = computedCutis.filter(
+        (data) =>
+          data.nik.toString().toLowerCase().includes(search.toLowerCase()) ||
+          data.nama_pegawai.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -238,14 +243,12 @@ const LapGaji = () => {
                 className="btn btn-danger"
                 onClick={() =>
                   window.open(
-                    `${
-                      import.meta.env.VITE_BASE_URL
-                    }/gaji/export?pegawai_id=${pegawai.value}&periode=${JSON.stringify(
-                      {
-                        awal: ConvertToEpoch(startDate),
-                        akhir: ConvertToEpoch(endDate),
-                      }
-                    )}`
+                    `${import.meta.env.VITE_BASE_URL}/gaji/export?pegawai_id=${
+                      pegawai.value
+                    }&periode=${JSON.stringify({
+                      awal: ConvertToEpoch(startDate),
+                      akhir: ConvertToEpoch(endDate),
+                    })}`
                   )
                 }
               >
@@ -285,89 +288,95 @@ const LapGaji = () => {
                         }
                       />
                       <tbody>
-                  {gajisData.length > 0 &&
-                    gajisData.map((gaji, index) => (
-                      <tr key={gaji.id_gaji}>
-                        <th scope="row">{index + 1}</th>
-                        <td>{convertDate(parseInt(gaji.periode))}</td>
-                        <td>{gaji.nik}</td>
-                        <td>{gaji.nama_pegawai}</td>
-                        <td>{gaji.nama_jabatan}</td>
-                        <td>
-                          {gaji.status_pegawai === 0
-                            ? "Pegawai Kontrak"
-                            : "Pegawai Tetap"}
-                        </td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.gaji_pokok}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.tunjangan}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.bonus}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.gaji_harian}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.tunjangan_harian}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                        <td>{gaji.total_hadir}</td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.potongan}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                        <td className="text-end">
-                          <NumericFormat
-                            displayType="text"
-                            value={gaji.total}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            allowNegative={false}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  <tr>
-                    <td colSpan={14}>{gajisData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                  </tr>
-                </tbody>
+                        {gajisData.length > 0 ? (
+                          gajisData.map((gaji, index) => (
+                            <tr key={gaji.id_gaji}>
+                              <th scope="row">{index + 1}</th>
+                              <td>{convertDate(parseInt(gaji.periode))}</td>
+                              <td>{gaji.nik}</td>
+                              <td>{gaji.nama_pegawai}</td>
+                              <td>{gaji.nama_jabatan}</td>
+                              <td>
+                                {gaji.status_pegawai === 0
+                                  ? "Pegawai Kontrak"
+                                  : "Pegawai Tetap"}
+                              </td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.gaji_pokok}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.tunjangan}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.bonus}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.gaji_harian}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.tunjangan_harian}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                              <td>{gaji.total_hadir}</td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.potongan}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                              <td className="text-end">
+                                <NumericFormat
+                                  displayType="text"
+                                  value={gaji.total}
+                                  thousandSeparator="."
+                                  decimalSeparator=","
+                                  allowNegative={false}
+                                />
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={14}>
+                              {gajisData.length === 0 && !isLoad
+                                ? "Tidak Ada Data"
+                                : loader}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
                     </table>
                   </div>
                   <div className="row">
@@ -388,7 +397,7 @@ const LapGaji = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LapGaji
+export default LapGaji;

@@ -234,14 +234,12 @@ const LapCuti = () => {
                 className="btn btn-danger"
                 onClick={() =>
                   window.open(
-                    `${
-                      import.meta.env.VITE_BASE_URL
-                    }/cuti/export?pegawai_id=${pegawai.value}&periode=${JSON.stringify(
-                      {
-                        awal: ConvertToEpoch(startDate),
-                        akhir: ConvertToEpoch(endDate),
-                      }
-                    )}`
+                    `${import.meta.env.VITE_BASE_URL}/cuti/export?pegawai_id=${
+                      pegawai.value
+                    }&periode=${JSON.stringify({
+                      awal: ConvertToEpoch(startDate),
+                      akhir: ConvertToEpoch(endDate),
+                    })}`
                   )
                 }
               >
@@ -281,7 +279,7 @@ const LapCuti = () => {
                         }
                       />
                       <tbody>
-                        {cutiData.length > 0 &&
+                        {cutiData.length > 0 ? (
                           cutiData.map((cuti, index) => (
                             <tr key={cuti.id_cuti}>
                               <th scope="row">{index + 1}</th>
@@ -290,10 +288,16 @@ const LapCuti = () => {
                               <td>{convertDate(cuti.tanggal_selesai)}</td>
                               <td>{cuti.alasan}</td>
                             </tr>
-                          ))}
-                        <tr>
-                          <td colSpan={5}>{cutiData.length === 0 && !isLoad ? "Tidak Ada Data" : loader}</td>
-                        </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={5}>
+                              {cutiData.length === 0 && !isLoad
+                                ? "Tidak Ada Data"
+                                : loader}
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
