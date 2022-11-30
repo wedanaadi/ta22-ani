@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthConsumer from "../../hook/Auth";
@@ -84,6 +84,17 @@ const Login = () => {
       }
     }
   };
+
+  const checkLogin = () => {
+    const isLogin = localStorage.getItem('isLogin');
+    if(isLogin==='true') {
+      navigasi('/');
+    }
+  }
+
+  useEffect(()=>{
+    checkLogin();
+  },[]);
 
   return (
     <div className="vh-100">
