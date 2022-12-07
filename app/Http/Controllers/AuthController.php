@@ -88,6 +88,9 @@ class AuthController extends Controller
   public function refresh(Request $request)
   {
     $getCookie = $request->cookie('rf_token');
+    if($getCookie == null) {
+      return response()->json(['error' => 'Unauthorized'], 401);
+    }
     $tokenParts = explode(".", $getCookie);
     $tokenHeader = base64_decode($tokenParts[0]);
     $tokenPayload = base64_decode($tokenParts[1]);

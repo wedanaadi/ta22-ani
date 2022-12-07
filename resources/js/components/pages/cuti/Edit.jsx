@@ -103,6 +103,7 @@ const CutiEdit = () => {
   //   return myEpoch;
   // };
 
+  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
@@ -110,6 +111,7 @@ const CutiEdit = () => {
       tanggal_selesai: tanggal_selesai,
       alasan,
       pegawai_id: pegawai_id.value,
+      is_aprove: dataLokal.role == 2 ? '1' : '0'
     };
 
     const notifikasiSave = toast.loading("Saving....");

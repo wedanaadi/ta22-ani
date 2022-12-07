@@ -97,7 +97,7 @@ class CommentController extends Controller
   public function getComment2()
   {
     $sql = "SELECT g.*, p.nama_pegawai, p.nik FROM gajis g
-            INNER JOIN comments c ON c.gaji_id = g.id_gaji
+            LEFT JOIN comments c ON c.gaji_id = g.id_gaji
             INNER JOIN pegawais p ON p.id_pegawai = g.pegawai_id
             INNER JOIN jabatans j ON j.id_jabatan = p.jabatan_id
             WHERE p.is_aktif = '1' AND j.is_aktif = '1'

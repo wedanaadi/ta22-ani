@@ -123,6 +123,7 @@ class AbsenController extends Controller
                   SELECT cutis.pegawai_id FROM cutis
                   WHERE (UNIX_TIMESTAMP(tanggal_mulai) * 1000) <= '$now'
                   AND (UNIX_TIMESTAMP(tanggal_selesai) * 1000) >= '$now'
+                  AND is_aprove = '1'
                 ) AS pvcuti ON pvcuti.pegawai_id = a.pegawai_id
                 WHERE pvcuti.pegawai_id IS NOT NULL OR (UNIX_TIMESTAMP(tanggal) * 1000) = '$now'
               ) AS tpv ON tpv.pegawai_id = p.id_pegawai
@@ -137,6 +138,7 @@ class AbsenController extends Controller
                   SELECT cutis.pegawai_id FROM cutis
                   WHERE (UNIX_TIMESTAMP(tanggal_mulai) * 1000) <= '$now'
                   AND (UNIX_TIMESTAMP(tanggal_selesai) * 1000) >= '$now'
+                  AND is_aprove = '1'
                 ) AS pvcuti ON pvcuti.pegawai_id = a.pegawai_id
                 WHERE pvcuti.pegawai_id IS NOT NULL OR (UNIX_TIMESTAMP(tanggal) * 1000) = '$now'
               ) AS tpv ON tpv.pegawai_id = p.id_pegawai
@@ -191,5 +193,15 @@ class AbsenController extends Controller
     $awal = date("Y-m-d", substr($periode->awal, 0, 10));
     $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
     return Excel::download(new ExportAbsen($cuti, $periode), 'absensi-laporan-' . $awal . '-' . $akhir . '.xlsx');
+  }
+
+  public function rekap(Request $request)
+  {
+
+  }
+
+  public function rekap_data($loop, $id)
+  {
+    # code...
   }
 }

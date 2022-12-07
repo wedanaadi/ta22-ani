@@ -139,6 +139,20 @@ const Sidebar = () => {
           <></>
         )}
 
+        {dataLokal.role === 3 ? (
+          <Link
+            to={`cutipegawai`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/cutipegawai" ? "active" : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Pengajuan Cuti
+          </Link>
+        ) : (
+          <></>
+        )}
+
         {dataLokal.role !== 4 ? (
           <Link
             to={`slip`}

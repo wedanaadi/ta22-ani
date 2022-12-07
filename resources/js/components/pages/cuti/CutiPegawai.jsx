@@ -16,7 +16,7 @@ import jwt_decode from "jwt-decode";
 import { confirmAlert } from "react-confirm-alert";
 import { toast, ToastContainer } from "react-toastify";
 
-const Cuti = () => {
+const CutiPegawai = () => {
   const { token, setToken, exp, setExp } = useToken();
   const [cutis, setCutis] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -232,7 +232,7 @@ const Cuti = () => {
     <div className="card">
       <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-        <h5 className="card-title">Data Cuti</h5>
+        <h5 className="card-title">Pegajuan Cuti</h5>
         <Link to="add" className="btn btn-success float-end">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Tambah Cuti
@@ -291,46 +291,23 @@ const Cuti = () => {
                           )}
                         </td>
                         <td>
-                          {parseInt(cuti.is_aprove) === 0 ? (
-                            <>
-                              <button
-                                className="btn btn-success"
-                                onClick={() =>
-                                  handleCuti(cuti.id_cuti, "approve")
-                                }
-                              >
-                                <FontAwesomeIcon icon={faCheck} />
-                                &nbsp; Setujui Cuti
-                              </button>{" "}
-                              <button
-                                className="btn btn-danger"
-                                onClick={() =>
-                                  handleCuti(cuti.id_cuti, "reject")
-                                }
-                              >
-                                <FontAwesomeIcon icon={faXmark} />
-                                &nbsp; Tolak Cuti
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                className="btn btn-warning"
-                                onClick={() => handleEdit(cuti)}
-                              >
-                                <FontAwesomeIcon icon={faPencil} />
-                                &nbsp; Edit
-                              </button>
-                              &nbsp;
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => confirm(cuti.id_cuti)}
-                              >
-                                <FontAwesomeIcon icon={faTrash} />
-                                &nbsp; Hapus
-                              </button>
-                            </>
-                          )}
+                          <>
+                            <button
+                              className="btn btn-warning"
+                              onClick={() => handleEdit(cuti)}
+                            >
+                              <FontAwesomeIcon icon={faPencil} />
+                              &nbsp; Edit
+                            </button>
+                            &nbsp;
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => confirm(cuti.id_cuti)}
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                              &nbsp; Hapus
+                            </button>
+                          </>
                         </td>
                       </tr>
                     ))
@@ -364,4 +341,4 @@ const Cuti = () => {
   );
 };
 
-export default Cuti;
+export default CutiPegawai;

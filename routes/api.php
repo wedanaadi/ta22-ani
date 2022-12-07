@@ -57,12 +57,14 @@ Route::middleware('api')->group(function () {
   Route::post('cuti', [CutiController::class, 'store']);
   Route::put('cuti/{id}', [CutiController::class, 'update']);
   Route::delete('cuti/{id}',[CutiController::class, 'destroy']);
+  Route::put('approve-reject/{id}', [CutiController::class, 'approveOrReject']);
   // absen
   Route::get('absen', [AbsenController::class, 'index']);
   Route::get('pegawai-absen', [AbsenController::class, 'getPegawaiNotCuti']);
   Route::post('absen', [AbsenController::class, 'store']);
   Route::put('absen/{id}', [AbsenController::class, 'update']);
   Route::delete('absen/{id}',[AbsenController::class, 'destroy']);
+  Route::get('rekap-absen',[AbsenController::class,'rekap']);
   // laporan
   Route::post('absen/import', [AbsenController::class, 'import']);
   Route::get('pegawai/export', [PegawaiController::class, 'export']);

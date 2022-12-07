@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 
-const CutiAdd = () => {
+const CutiAddPegawai = () => {
   const { token, setToken, exp, setExp } = useToken();
   const [tanggal_mulai, setTM] = useState(new Date());
   const [tanggal_selesai, setTS] = useState(new Date());
@@ -59,10 +59,25 @@ const CutiAdd = () => {
         },
       }
     );
-    const options = response.data.map((data) => {
-      return { value: data.id_pegawai, label: data.nama_pegawai };
+    const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
+    const options = response.data.reduce((filtered, data)=>{
+      if(data.id_pegawai == dataLokal.id) {
+        let value = [{ value: data.id_pegawai, label: data.nama_pegawai }]
+        filtered = value;
+      }
+      return filtered;
     });
+
+    // console.log(options);
     setPegawais(options);
+    setIdPegawai(options[0]);
+
+    // const options = response.data.map((data) => {
+    //   return { value: data.id_pegawai, label: data.nama_pegawai };
+    // });
+    // const selected = await options.filter(
+    //   ({ value }) => value === dataLokal.id
+    // );
   };
 
   useEffect(() => {
@@ -76,8 +91,9 @@ const CutiAdd = () => {
   //   return myEpoch;
   // };
 
-  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
+
   const handleSubmit = async (e) => {
+    const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
     e.preventDefault();
     const formData = {
       tanggal_mulai: tanggal_mulai,
@@ -108,7 +124,7 @@ const CutiAdd = () => {
         isLoading: false,
       });
       setTimeout(() => {
-        navigasi("/cuti");
+        navigasi("/cutipegawai");
       }, 500);
     } catch (error) {
       setErrors([]);
@@ -157,7 +173,7 @@ const CutiAdd = () => {
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
             <h5 className="card-title">Tambah Cuti</h5>
-            <Link to="/cuti" className="btn btn-secondary float-end">
+            <Link to="/cutipegawai" className="btn btn-secondary float-end">
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali
             </Link>
@@ -171,6 +187,7 @@ const CutiAdd = () => {
                   value={pegawai_id}
                   onChange={setIdPegawai}
                   options={pegawais}
+                  isDisabled={true}
                 />
                 {errors.pegawai_id?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
@@ -245,4 +262,4 @@ const CutiAdd = () => {
   )
 }
 
-export default CutiAdd
+export default CutiAddPegawai

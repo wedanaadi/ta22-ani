@@ -92,6 +92,7 @@ const GajiPegawai = () => {
       {
         params: {
           id: dataLokal.id,
+          role: dataLokal.role,
         },
         headers: {
           Authorization: `Bearer ${token}`,

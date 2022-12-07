@@ -16,6 +16,11 @@ const Home = () => {
   const [fotoLogin, setFotoLogin] = useState();
 
   const refreshToken = async () => {
+    // const localAuth = localStorage.getItem("isLogin");
+    // const act = localAuth === null ? false : true;
+    // if(!act) {
+    //   navigasi("/login");
+    // }
     try {
       const { data: response } = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/refresh`
@@ -33,7 +38,7 @@ const Home = () => {
   };
 
   const awalFetch = async () => {
-    await refreshToken();
+    refreshToken();
 
     setTimeout(() => {
       setPreload(false);
@@ -41,9 +46,9 @@ const Home = () => {
   };
 
   const setFoto = () => {
-    const dataLokal = JSON.parse(atob(localStorage.getItem('userLocal')));
-    setFotoLogin(dataLokal.foto)
-  }
+    const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
+    setFotoLogin(dataLokal.foto);
+  };
 
   useEffect(() => {
     awalFetch();
@@ -58,7 +63,11 @@ const Home = () => {
         <div className={sidebarOpen ? "d-flex toggled" : "d-flex"} id="wrapper">
           <Sidebar />
           <div id="page-content-wrapper">
-            <Header sidebarOpen={sidebarOpen} setSidebar={setSidebar} fotoLogin={fotoLogin} />
+            <Header
+              sidebarOpen={sidebarOpen}
+              setSidebar={setSidebar}
+              fotoLogin={fotoLogin}
+            />
             <main className="container-fluid px-4 py-4 min-vh-100">
               <Outlet />
             </main>

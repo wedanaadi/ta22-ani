@@ -32,6 +32,10 @@ import LapAbsen from "./components/pages/absen/LapAbsen";
 import LapGaji from "./components/pages/gaji/LapGaji";
 import LapPeg from "./components/pages/pegawai/LapPeg";
 import CommentList from "./components/pages/comment/CommentList";
+import CutiPegawai from "./components/pages/cuti/CutiPegawai";
+import CutiAddPegawai from "./components/pages/cuti/AddPegawai";
+import CutiEditPegawai from "./components/pages/cuti/EditPegawai";
+import Rekap from "./components/pages/absen/Rekap";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -109,6 +113,18 @@ const Routes = () => {
               element: <RequiredAuth><CutiEdit/></RequiredAuth>
             },
             {
+              path: "cutipegawai",
+              element: <RequiredAuth> <CutiPegawai/> </RequiredAuth>
+            },
+            {
+              path: "cutipegawai/add",
+              element: <RequiredAuth> <CutiAddPegawai/> </RequiredAuth>
+            },
+            {
+              path: "cutipegawai/edit",
+              element: <RequiredAuth> <CutiEditPegawai/> </RequiredAuth>
+            },
+            {
               path: "absen",
               element: <RequiredAuth><Absen/></RequiredAuth>
             },
@@ -163,6 +179,10 @@ const Routes = () => {
             {
               path: "comment/list",
               element: <RequiredAuth> <CommentList/> </RequiredAuth>
+            },
+            {
+              path: "rekap",
+              element: <RequiredAuth> <Rekap/> </RequiredAuth>
             },
           ],
         },

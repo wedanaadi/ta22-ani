@@ -19,12 +19,25 @@ class CutiController extends Controller
     $this->middleware('auth:api', ['except' => ['export']]);
   }
 
-  public function index()
+  public function index(Request $request)
   {
-    $user = Cuti::with('pegawai')
-      ->whereRelation('pegawai', 'is_aktif', "1")
-      ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
-      ->get();
+    if($request->role==2) {
+      $user = Cuti::with('pegawai')
+        ->whereRelation('pegawai', 'is_aktif', "1")
+        ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+        ->get();
+      } elseif($request->role==3){
+        $user = Cuti::with('pegawai')
+          ->whereRelation('pegawai', 'is_aktif', "1")
+          ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+          ->where('pegawai_id',$request->id)
+          ->get();
+      }else {
+        $user = Cuti::with('pegawai')
+          ->whereRelation('pegawai', 'is_aktif', "1")
+          ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+          ->get();
+    }
     return response()->json(['msg' => 'get all cuti', "data" => $user, 'error' => []], 200);
   }
 
@@ -52,6 +65,7 @@ class CutiController extends Controller
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
         'created_at' => round(microtime(true) * 1000),
+        'is_aprove' => $request->is_aprove,
       ];
       Cuti::create($payload);
       unset($payload['id_cuti']);
@@ -86,6 +100,24 @@ class CutiController extends Controller
         'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d'),
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
+        'is_aprove' => $request->is_aprove
+      ];
+      $cutiFind->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly updated data cuti', "data" => $payload, 'error' => []], 201);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail updated data cuti', "data" => [], 'error' => $e->getMessage()], 500);
+    }
+  }
+
+  public function approveOrReject(Request $request, $id)
+  {
+    $cutiFind = Cuti::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      $payload = [
+        'is_aprove' => $request->is_aprove
       ];
       $cutiFind->update($payload);
       DB::commit();

@@ -265,7 +265,15 @@ class GajiController extends Controller
 
   public function pegawai_slip(Request $request)
   {
-    $jabatanAll = Gaji::with('pegawai', 'pegawai.jabatan', 'comment')->where('pegawai_id', $request->id)->where('is_valid', 1)->get();
-    return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
+    if ($request->role == '1' or $request->role == '3') {
+      $jabatanAll = Gaji::with('pegawai', 'pegawai.jabatan', 'comment')
+        ->where('pegawai_id', $request->id)
+        ->where('is_valid', 1)->get();
+      return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
+    } else {
+      $jabatanAll = Gaji::with('pegawai', 'pegawai.jabatan', 'comment')
+        ->where('is_valid', 1)->get();
+      return response()->json(['msg' => 'get all data', "data" => $jabatanAll, 'error' => []], 200);
+    }
   }
 }
