@@ -1,24 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faPencil,
-  faTrash,
-  faCheck,
-  faCross,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
 import { useToken } from "../../../hook/Token";
+import { NumericFormat } from "react-number-format";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { confirmAlert } from "react-confirm-alert";
 import { toast, ToastContainer } from "react-toastify";
 
-const Cuti = () => {
+export default function List() {
   const { token, setToken, exp, setExp } = useToken();
-  const [cutis, setCutis] = useState([]);
+  const [lists, setLists] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -59,78 +53,66 @@ const Cuti = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "Pegawai", field: "nama_pegawai", sortable: false },
-    { name: "Tanggal Mulai", field: "tanggal_mulai", sortable: false },
-    { name: "Tanggal Selesai", field: "tanggal_selesai", sortable: false },
-    { name: "Alasan", field: "alasan", sortable: false },
-    { name: "Status", field: "status", sortable: false },
+    { name: "Gaji List", field: "nama_jabatan", sortable: false },
+    { name: "Gaji Pokok", field: "gaji_pokok", sortable: false },
+    { name: "Tunjangan", field: "tunjangan", sortable: false },
+    { name: "Jabatan", field: "nama_jabatan", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
-    getCutis();
+    getListGajis();
   }, []);
 
-  const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
-  const getCutis = async () => {
+  const getListGajis = async () => {
     showLoader();
     const { data: response } = await axiosJWT.get(
-      `${import.meta.env.VITE_BASE_URL}/cuti`,
+      `${import.meta.env.VITE_BASE_URL}/list-gaji`,
       {
-        params: {
-          id: dataLokal.id,
-          role: dataLokal.role,
-        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
-    setCutis(response.data);
+    setLists(response.data);
     hideLoader();
   };
 
-  const convertDate = (dateProps) => {
-    let date = new Date(dateProps);
-    return date
-      .toLocaleDateString("id-ID", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-      .toString();
-  };
-
-  const cutiData = useMemo(() => {
-    let computedCutis = cutis;
+  const listGajisData = useMemo(() => {
+    let computedListGajis = lists;
 
     if (search) {
-      computedCutis = computedCutis.filter((data) =>
-        data.pegawai.nama_pegawai.toLowerCase().includes(search.toLowerCase())
+      computedListGajis = computedListGajis.filter(
+        (data) =>
+          data.nama_jabatan.toLowerCase().includes(search.toLowerCase()) ||
+          String(data.gaji_pokok)
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+          String(data.tunjangan).toLowerCase().includes(search.toLowerCase())
       );
     }
 
-    setTotalItems(computedCutis.length);
+    setTotalItems(computedListGajis.length);
 
     //Sorting comments
     if (sorting.field) {
       const reversed = sorting.order === "asc" ? 1 : -1;
-      computedCutis = computedCutis.sort(
+      computedListGajis = computedListGajis.sort(
         (a, b) => reversed * a[sorting.field].localeCompare(b[sorting.field])
       );
     }
 
     //Current Page slice
-    return computedCutis.slice(
+    return computedListGajis.slice(
       (currentPage - 1) * ITEMS_PER_PAGE,
       (currentPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
     );
-  }, [cutis, currentPage, search, sorting]);
+  }, [lists, currentPage, search, sorting]);
 
-  const handleEdit = (row) => {
-    localStorage.setItem("cutiEdit", btoa(JSON.stringify(row)));
+  const handleEdit = async (row) => {
+    localStorage.setItem("listEdit", btoa(JSON.stringify(row)));
     navigasi("edit");
     // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
   };
@@ -156,7 +138,7 @@ const Cuti = () => {
     const notifikasiSave = toast.loading("Saving....");
     try {
       const { data: response } = await axiosJWT.delete(
-        `${import.meta.env.VITE_BASE_URL}/cuti/${id}`,
+        `${import.meta.env.VITE_BASE_URL}/list/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -164,7 +146,7 @@ const Cuti = () => {
           },
         }
       );
-      getCutis();
+      getListGajis();
       toast.update(notifikasiSave, {
         render: "Delete Successfuly",
         type: "success",
@@ -209,33 +191,14 @@ const Cuti = () => {
     }
   };
 
-  const handleCuti = async (cuti, type) => {
-    try {
-      const { data: response } = await axiosJWT.put(
-        `${import.meta.env.VITE_BASE_URL}/approve-reject/${cuti}`,
-        {
-          is_aprove: type === "approve" ? "1" : "2",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      navigasi(0);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className="card">
       <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-        <h5 className="card-title">Data Cuti</h5>
-        <Link to={`add`} className="btn btn-success float-end">
+        <h5 className="card-title">List Master Gaji</h5>
+        <Link to="add" className="btn btn-success float-end">
           <FontAwesomeIcon icon={faPlus} />
-          &nbsp; Tambah Cuti
+          &nbsp; Tambah Data
         </Link>
       </div>
       <div className="card-body">
@@ -255,89 +218,59 @@ const Cuti = () => {
             </div>
 
             <div className="table-responsive">
-              <table className="table table-striped table-bordered nowrap">
+              <table className="table table-striped table-bordered">
                 <TableHeader
                   headers={headers}
                   onSorting={(field, order) => setSorting({ field, order })}
                 />
                 <tbody>
-                  {cutiData.length > 0 ? (
-                    cutiData.map((cuti, index) => (
-                      <tr key={cuti.id_cuti}>
+                  {listGajisData.length > 0 ? (
+                    listGajisData.map((list, index) => (
+                      <tr key={list.id_master_gaji}>
                         <th scope="row">{index + 1}</th>
-                        <td>{cuti.pegawai.nama_pegawai}</td>
-                        <td>{convertDate(cuti.tanggal_mulai)}</td>
-                        <td>{convertDate(cuti.tanggal_selesai)}</td>
-                        <td>{cuti.alasan}</td>
-                        <td>
-                          {cuti.is_aprove == 0 ? (
-                            <>
-                              <span classname="badge text-bg-info">
-                                Menunggu
-                              </span>
-                            </>
-                          ) : cuti.is_aprove == 1 ? (
-                            <>
-                              <span className="badge text-bg-success">
-                                Diterima
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="badge text-bg-danger">
-                                Ditolak
-                              </span>
-                            </>
-                          )}
+                        <td>{list.nama_gaji}</td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={list.gaji_pokok}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
                         </td>
+                        <td className="text-end">
+                          <NumericFormat
+                            displayType="text"
+                            value={list.tunjangan}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                          />
+                        </td>
+                        <td>{list.jabatan.nama_jabatan}</td>
                         <td>
-                          {parseInt(cuti.is_aprove) === 0 ? (
-                            <>
-                              <button
-                                className="btn btn-success"
-                                onClick={() =>
-                                  handleCuti(cuti.id_cuti, "approve")
-                                }
-                              >
-                                <FontAwesomeIcon icon={faCheck} />
-                                &nbsp; Setujui Cuti
-                              </button>{" "}
-                              <button
-                                className="btn btn-danger"
-                                onClick={() =>
-                                  handleCuti(cuti.id_cuti, "reject")
-                                }
-                              >
-                                <FontAwesomeIcon icon={faXmark} />
-                                &nbsp; Tolak Cuti
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                className="btn btn-warning"
-                                onClick={() => handleEdit(cuti)}
-                              >
-                                <FontAwesomeIcon icon={faPencil} />
-                                &nbsp; Edit
-                              </button>
-                              &nbsp;
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => confirm(cuti.id_cuti)}
-                              >
-                                <FontAwesomeIcon icon={faTrash} />
-                                &nbsp; Hapus
-                              </button>
-                            </>
-                          )}
+                          <button
+                            className="btn btn-warning"
+                            onClick={() => handleEdit(list)}
+                          >
+                            <FontAwesomeIcon icon={faPencil} />
+                            &nbsp; Edit
+                          </button>
+                          &nbsp;
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => confirm(list.id_master_gaji)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                            &nbsp; Hapus
+                          </button>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6}>
-                        {cutiData.length === 0 && !isLoad
+                      <td colSpan={5}>
+                        {listGajisData.length === 0 && !isLoad
                           ? "Tidak Ada Data"
                           : loader}
                       </td>
@@ -361,7 +294,5 @@ const Cuti = () => {
         {/* end datatable */}
       </div>
     </div>
-  );
-};
-
-export default Cuti;
+  )
+}

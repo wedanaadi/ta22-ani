@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exports\ExportPegawai;
 use App\Libraries\Fungsi;
+use App\Models\Jabatan;
 use App\Models\Pegawai;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -170,7 +172,7 @@ class PegawaiController extends Controller
         'alamat' => $request->alamat,
         'agama' => $request->agama,
         'status' => $request->status,
-        'status_pegawai' => "0",
+        // 'status_pegawai' => "0",
         'pendidikan' => $request->pendidikan,
         'no_telepon' => $request->no_telepon,
         'jabatan_id' => $request->jabatan_id,
@@ -251,5 +253,33 @@ class PegawaiController extends Controller
   {
     $pegawaiAll = Pegawai::with('jabatan')->get();
     return Excel::download(new ExportPegawai($pegawaiAll), 'pegawai-laporan.xlsx');
+  }
+
+  public function kontrak(Request $request, $id)
+  {
+    $pegawaiFind = Pegawai::findOrFail($id);
+    DB::beginTransaction();
+    try {
+      if($request->type === 'new') {
+        $kb = Carbon::parse($pegawaiFind->kontrak_berakhir)->format('Y');
+        $fixDate = $kb.Carbon::now()->format('-m-d');
+        $jabatanTraining = Jabatan::where('nama_jabatan','Pegawai Kontrak')->select('id_jabatan')->firstOrFail();
+        $payload = [
+          'status_pegawai' => "1",
+          'kontrak_berakhir' => date('Y-m-d',strtotime(Carbon::parse($fixDate)->format('Y-m-d')."+1 years"))
+        ];
+      } else {
+        $payload = [
+          'kontrak_berakhir' => date('Y-m-d',strtotime(Carbon::parse($pegawaiFind->kontrak_berakhir)->format('Y-m-d')."+1 years"))
+        ];
+      }
+      return $payload;
+      $pegawaiFind->update($payload);
+      DB::commit();
+      return response()->json(['msg' => 'Successfuly updated data pegawai', "data" => $payload, 'error' => []], 200);
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['msg' => 'fail created data pegawai', "data" => [], 'error' => $e->getMessage()], 500);
+    }
   }
 }

@@ -1,22 +1,25 @@
-import { faArrowLeft, faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { NumericFormat } from "react-number-format";
 import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { NumericFormat } from "react-number-format";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { useToken } from "../../../hook/Token";
+import { faArrowLeft, faSave } from "@fortawesome/free-solid-svg-icons";
+import Select from "react-select";
 import jwt_decode from "jwt-decode";
 
-const Add = () => {
+export default function AddList() {
   const { token, setToken, exp, setExp } = useToken();
   const [nama_jabatan, setJabatan] = useState("");
+  const [nama_list, setList] = useState("");
   const [gaji_pokok, setGaPok] = useState(0);
   const [gaji_pokok_U, setGaPokU] = useState(0);
   const [tunjangan, setTunjangan] = useState(0);
   const [tunjangan_U, setTunjanganU] = useState(0);
   const [errors, setErrors] = useState([]);
   const [waiting, setWait] = useState(false);
+  const [jabatans, setJabatans] = useState([]);
   const navigasi = useNavigate();
 
   const axiosJWT = axios.create();
@@ -29,7 +32,6 @@ const Add = () => {
           const { data } = await axios.get(
             `${import.meta.env.VITE_BASE_URL}/refresh`
           );
-
           config.headers.Authorization = `Bearer ${data.access_token}`;
           setToken(data.access_token);
           const decode = jwt_decode(data.access_token);
@@ -49,17 +51,44 @@ const Add = () => {
     }
   );
 
+  const loadJabatan = async () => {
+    try {
+
+      const { data:response } = await axiosJWT.get(
+        `${import.meta.env.VITE_BASE_URL}/jabatan`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // console.log(response.data);
+      const options = response.data.map((data) => {
+        return { value: data.id_jabatan, label: data.nama_jabatan };
+      });
+      setJabatans(options);
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
+
+  useEffect(() => {
+    loadJabatan();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const notifikasiSave = toast.loading("Saving....");
     setWait(true);
     try {
       const { data: response } = await axiosJWT.post(
-        `${import.meta.env.VITE_BASE_URL}/jabatan`,
+        `${import.meta.env.VITE_BASE_URL}/list`,
         {
-          nama_jabatan,
-          // gaji_pokok: gaji_pokok_U,
-          // tunjangan: tunjangan_U,
+          nama_list,
+          gaji_pokok: gaji_pokok_U,
+          tunjangan: tunjangan_U,
+          nama_jabatan: nama_jabatan.value
         },
         {
           headers: {
@@ -74,7 +103,7 @@ const Add = () => {
         isLoading: false,
       });
       setTimeout(() => {
-        navigasi("/jabatan");
+        navigasi("/list");
       }, 500);
     } catch (error) {
       setErrors([]);
@@ -115,15 +144,14 @@ const Add = () => {
       }
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <ToastContainer />
       <div className="col-xs-12 col-md-6 col-lg-6">
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-            <h5 className="card-title">Tambah jabatan</h5>
-            <Link to="/jabatan" className="btn btn-secondary float-end">
+            <h5 className="card-title">Tambah List Gaji</h5>
+            <Link to="/list" className="btn btn-secondary float-end">
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp; Kembali
             </Link>
@@ -131,21 +159,21 @@ const Add = () => {
           <div className="card-body">
             <div className="mb-3">
               <label className="mb-3">
-                <strong>Nama Jabatan</strong>
+                <strong>Nama List Gaji</strong>
               </label>
               <input
                 type="text"
                 className="form-control"
-                value={nama_jabatan}
-                onChange={(e) => setJabatan(e.target.value)}
+                value={nama_list}
+                onChange={(e) => setList(e.target.value)}
               />
-              {errors.nama_jabatan?.map((msg, index) => (
+              {errors.nama_list?.map((msg, index) => (
                 <div className="invalid-feedback" key={index}>
                   {msg}
                 </div>
               ))}
             </div>
-            {/* <div className="mb-3">
+            <div className="mb-3">
               <label className="mb-3">
                 <strong>Gaji Pokok</strong>
               </label>
@@ -188,7 +216,22 @@ const Add = () => {
                   {msg}
                 </div>
               ))}
-            </div> */}
+            </div>
+            <div className="mb-3">
+              <label className="mb-3">
+                <strong>Jabatan</strong>
+              </label>
+              <Select
+                value={nama_jabatan}
+                onChange={setJabatan}
+                options={jabatans}
+              />
+              {errors.nama_jabatan?.map((msg, index) => (
+                <div className="invalid-feedback" key={index}>
+                  {msg}
+                </div>
+              ))}
+            </div>
           </div>
           <div className="card-footer d-sm-flex justify-content-between align-items-center bg-white">
             <div className="card-footer-link mb-4 mb-sm-0"></div>
@@ -204,6 +247,4 @@ const Add = () => {
       </div>
     </form>
   );
-};
-
-export default Add;
+}

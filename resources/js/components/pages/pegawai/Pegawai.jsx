@@ -1,5 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faPencil,
+  faTrash,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import { TableHeader, Search, Pagging } from "../../datatable";
 import useLoading from "../../Loading";
@@ -56,8 +61,6 @@ const Pegawai = () => {
     { name: "NIK", field: "nik", sortable: false },
     { name: "Nama Pegawai", field: "nama_pegawai", sortable: false },
     { name: "Jabatan", field: "jabatan_id", sortable: false },
-    { name: "Tanggal Bergabung", field: "tanggal_bergabung", sortable: false },
-    { name: "Kontrak Berakhir", field: "kontrak_berakhir", sortable: false },
     { name: "Tempat Lahir", field: "tempat_lahir", sortable: false },
     { name: "Tanggal Lahir", field: "tanggal_lahir", sortable: false },
     { name: "Jenis Kelamin", field: "jenis_kelamin", sortable: false },
@@ -67,6 +70,8 @@ const Pegawai = () => {
     { name: "Pendidikan", field: "pendidikan", sortable: false },
     { name: "Telepon", field: "no_telepon", sortable: false },
     { name: "Status Pegawai", field: "status_pegawai", sortable: false },
+    { name: "Tanggal Bergabung", field: "tanggal_bergabung", sortable: false },
+    { name: "Kontrak Berakhir", field: "kontrak_berakhir", sortable: false },
     { name: "Masa Kerja", field: "masa_kerja", sortable: false },
     { name: "Foto", field: "foto", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
@@ -218,29 +223,88 @@ const Pegawai = () => {
 
   const masaKerja = (bergabung) => {
     const epochBergabung = ConvertToEpoch(bergabung);
-    const epochNow = ConvertToEpoch(new Date())
-    const second = (epochNow-epochBergabung) / 1000;
-    const minute = second/60;
-    const hour = minute/60;
-    let day = hour/24;
-    let month = day/30;
-    const year = month/12;
+    const epochNow = ConvertToEpoch(new Date());
+    const second = (epochNow - epochBergabung) / 1000;
+    const minute = second / 60;
+    const hour = minute / 60;
+    let day = hour / 24;
+    let month = day / 30;
+    const year = month / 12;
     let format = "";
-    if(day >= 30) {
-      day = day - (floor(month) * 30)
+    if (day >= 30) {
+      day = day - floor(month) * 30;
     }
-    if(month > 11) {
-      month = month - (floor(year) * 12)
+    if (month > 11) {
+      month = month - floor(year) * 12;
     }
-    if(year >= 1) {
-      format+= `${floor(year)} tahun `;
+    if (year >= 1) {
+      format += `${floor(year)} tahun `;
     }
-    if(month >= 1) {
-      const difday =
-      format+= `${floor(month)} bulan `;
+    if (month >= 1) {
+      const difday = (format += `${floor(month)} bulan `);
     }
-    format+= `${floor(day)} hari`;
+    format += `${floor(day)} hari`;
     return format;
+  };
+
+  const handleKontrak = async (id, type) => {
+    const notifikasiKontrak = toast.loading("Processing....");
+    try {
+      await axiosJWT.put(
+        `${import.meta.env.VITE_BASE_URL}/kontrak-pegawai/${id}`,
+        {
+          type
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+          },
+        }
+      );
+      getPegawais();
+      toast.update(notifikasiKontrak, {
+        render: "Kontrak Updated Successfuly",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+    } catch (error) {
+      if (error?.response?.status === 422) {
+        toast.update(notifikasiKontrak, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiKontrak, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifikasiKontrak, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiKontrak, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
   };
 
   return (
@@ -283,8 +347,6 @@ const Pegawai = () => {
                         <td>{pegawai.nik}</td>
                         <td>{pegawai.nama_pegawai}</td>
                         <td>{pegawai.jabatan.nama_jabatan}</td>
-                        <td>{pegawai.tanggal_bergabung}</td>
-                        <td>{pegawai.kontrak_berakhir}</td>
                         <td>{pegawai.tempat_lahir}</td>
                         <td>{pegawai.tanggal_lahir}</td>
                         <td>
@@ -303,9 +365,11 @@ const Pegawai = () => {
                         <td>{pegawai.no_telepon}</td>
                         <td>
                           {pegawai.status_pegawai == 0
-                            ? "Pegawai Kontrak"
-                            : "Pegawai Tetap"}
+                            ? "Pegawai Traning"
+                            : "Pegawai Kontrak"}
                         </td>
+                        <td>{pegawai.tanggal_bergabung}</td>
+                        <td>{pegawai.kontrak_berakhir}</td>
                         <td>{masaKerja(pegawai.tanggal_bergabung)}</td>
                         <td>
                           <img
@@ -317,6 +381,32 @@ const Pegawai = () => {
                           />
                         </td>
                         <td>
+                          {pegawai.status_pegawai == 0 ? (
+                            <>
+                              <button
+                                className="btn btn-info"
+                                onClick={() =>
+                                  handleKontrak(pegawai.id_pegawai, "new")
+                                }
+                              >
+                                <FontAwesomeIcon icon={faCheck} />
+                                &nbsp; Jadikan Pegawai Kontrak
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                className="btn btn-info"
+                                onClick={() =>
+                                  handleKontrak(pegawai.id_pegawai, "ext")
+                                }
+                              >
+                                <FontAwesomeIcon icon={faCheck} />
+                                &nbsp; Perpanjang Kontrak
+                              </button>
+                            </>
+                          )}
+                          &nbsp;
                           <button
                             className="btn btn-warning"
                             onClick={() => handleEdit(pegawai)}

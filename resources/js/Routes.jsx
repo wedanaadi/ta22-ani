@@ -36,6 +36,9 @@ import CutiPegawai from "./components/pages/cuti/CutiPegawai";
 import CutiAddPegawai from "./components/pages/cuti/AddPegawai";
 import CutiEditPegawai from "./components/pages/cuti/EditPegawai";
 import Rekap from "./components/pages/absen/Rekap";
+import List from "./components/pages/list-gaji/List";
+import AddList from "./components/pages/list-gaji/Add";
+import EditList from "./components/pages/list-gaji/Edit";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -75,6 +78,18 @@ const Routes = () => {
             {
               path: "jabatan/edit",
               element: <RequiredAuth> <Edit/> </RequiredAuth>
+            },
+            {
+              path: "list",
+              element: <RequiredAuth><List /></RequiredAuth>
+            },
+            {
+              path: "list/add",
+              element: <RequiredAuth> <AddList/> </RequiredAuth>
+            },
+            {
+              path: "list/edit",
+              element: <RequiredAuth> <EditList/> </RequiredAuth>
             },
             {
               path: "pegawai",

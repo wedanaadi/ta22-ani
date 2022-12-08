@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Jabatan extends Model
+class BaseGaji extends Model
 {
   use HasFactory;
-  protected $table = 'jabatans';
+  protected $table = 'mastergajis';
   public $incrementing = false;
   public $timestamps = false;
   protected $guarded = [];
-  protected $primaryKey = 'id_jabatan';
+  protected $primaryKey = 'id_master_gaji';
   protected $keyType = 'string';
 
-  // protected $hidden = [
-  //   'id_jabatan',
-  // ];
+  function jabatan() {
+    return $this->belongsTo(Jabatan::class, 'jabatan_id', 'id_jabatan');
+  }
 }

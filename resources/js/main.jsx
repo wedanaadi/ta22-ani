@@ -14,11 +14,11 @@ import { BrowserRouter, HashRouter } from "react-router-dom";
 import { AuthProvider } from "./hook/Auth";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <HashRouter>
       <AuthProvider>
         <App />
       </AuthProvider>
     </HashRouter>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

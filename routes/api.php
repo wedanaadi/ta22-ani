@@ -6,6 +6,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\ListGajiController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -41,11 +42,17 @@ Route::middleware('api')->group(function () {
   Route::post('jabatan', [JabatanController::class, 'store']);
   Route::put('jabatan/{id}', [JabatanController::class, 'update']);
   Route::delete('jabatan/{id}',[JabatanController::class, 'destroy']);
+   // list Gaji
+   Route::get('list-gaji', [ListGajiController::class, 'index']);
+   Route::post('list', [ListGajiController::class, 'store']);
+   Route::put('list/{id}', [ListGajiController::class, 'update']);
+   Route::delete('list/{id}',[ListGajiController::class, 'destroy']);
   // pegawai
   Route::get('pegawai', [PegawaiController::class, 'index']);
   Route::get('pegawai-user', [PegawaiController::class, 'getPegawaiNotHasUser']);
   Route::post('pegawai', [PegawaiController::class, 'store']);
   Route::put('pegawai/{id}', [PegawaiController::class, 'update']);
+  Route::put('kontrak-pegawai/{id}', [PegawaiController::class, 'kontrak']);
   Route::delete('pegawai/{id}',[PegawaiController::class, 'destroy']);
   // user
   Route::get('user', [UserController::class, 'index']);
@@ -54,6 +61,7 @@ Route::middleware('api')->group(function () {
   Route::delete('user/{id}',[UserController::class, 'destroy']);
   // cuti
   Route::get('cuti', [CutiController::class, 'index']);
+  Route::get('cek-masakerja', [CutiController::class, 'masakerja']);
   Route::post('cuti', [CutiController::class, 'store']);
   Route::put('cuti/{id}', [CutiController::class, 'update']);
   Route::delete('cuti/{id}',[CutiController::class, 'destroy']);

@@ -27,12 +27,12 @@ class JabatanController extends Controller
     // return $request->all();
     $validator = Validator::make($request->all(),[
       'nama_jabatan' => 'required',
-      'gaji_pokok' => 'required|numeric|gt:0',
-      'tunjangan' => 'required|numeric|gt:0',
+      // 'gaji_pokok' => 'required|numeric|gt:0',
+      // 'tunjangan' => 'required|numeric',
     ],[
       'required' =>  'The :attribute can not empty',
-      'numeric' =>  'The :attribute must be numeric',
-      'gt' =>  'The :attribute must be greater than 0',
+      // 'numeric' =>  'The :attribute must be numeric',
+      // 'gt' =>  'The :attribute must be greater than 0',
     ]);
 
     if($validator->fails()) {
@@ -44,8 +44,8 @@ class JabatanController extends Controller
       $payload = [
         'id_jabatan' => Uuid::generate()->string,
         'nama_jabatan' => $request->nama_jabatan,
-        'gaji_pokok' => $request->gaji_pokok,
-        'tunjangan' => $request->tunjangan,
+        // 'gaji_pokok' => $request->gaji_pokok,
+        // 'tunjangan' => $request->tunjangan,
         'created_at' => round(microtime(true) * 1000),
       ];
       Jabatan::create($payload);
@@ -62,12 +62,12 @@ class JabatanController extends Controller
   {
     $validator = Validator::make($request->all(),[
       'nama_jabatan' => 'required',
-      'gaji_pokok' => 'required|numeric|gt:0',
-      'tunjangan' => 'required|numeric|gt:0',
+      // 'gaji_pokok' => 'required|numeric|gt:0',
+      // 'tunjangan' => 'required|numeric',
     ],[
       'required' =>  'The :attribute can not empty',
-      'numeric' =>  'The :attribute must be numeric',
-      'gt' =>  'The :attribute must be greater than 0',
+      // 'numeric' =>  'The :attribute must be numeric',
+      // 'gt' =>  'The :attribute must be greater than 0',
     ]);
 
     if($validator->fails()) {
@@ -79,8 +79,8 @@ class JabatanController extends Controller
     try {
       $payload = [
         'nama_jabatan' => $request->nama_jabatan,
-        'gaji_pokok' => $request->gaji_pokok,
-        'tunjangan' => $request->tunjangan,
+        // 'gaji_pokok' => $request->gaji_pokok,
+        // 'tunjangan' => $request->tunjangan,
       ];
       $jabatanFind->update($payload);
       DB::commit();

@@ -54,8 +54,8 @@ const Jabatan = () => {
   const headers = [
     { name: "No#", field: "id", sortable: false },
     { name: "Nama jabatan", field: "nama_jabatan", sortable: false },
-    { name: "Gaji Pokok", field: "gaji_pokok", sortable: false },
-    { name: "Tunjangan", field: "tunjangan", sortable: false },
+    // { name: "Gaji Pokok", field: "gaji_pokok", sortable: false },
+    // { name: "Tunjangan", field: "tunjangan", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
 
@@ -228,7 +228,7 @@ const Jabatan = () => {
                       <tr key={jabatan.id_jabatan}>
                         <th scope="row">{index + 1}</th>
                         <td>{jabatan.nama_jabatan}</td>
-                        <td className="text-end">
+                        {/* <td className="text-end">
                           <NumericFormat
                             displayType="text"
                             value={jabatan.gaji_pokok}
@@ -245,7 +245,7 @@ const Jabatan = () => {
                             decimalSeparator=","
                             allowNegative={false}
                           />
-                        </td>
+                        </td> */}
                         <td>
                           <button
                             className="btn btn-warning"

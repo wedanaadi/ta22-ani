@@ -53,10 +53,10 @@ const Edit = () => {
   const loadEdit = () => {
     const edit = JSON.parse(atob(localStorage.getItem('JabatanEdit')));
     setJabatan(edit.nama_jabatan);
-    setGaPok(edit.gaji_pokok);
-    setGaPokU(edit.gaji_pokok);
-    setTunjangan(edit.gaji_pokok);
-    setTunjanganU(edit.gaji_pokok);
+    // setGaPok(edit.gaji_pokok);
+    // setGaPokU(edit.gaji_pokok);
+    // setTunjangan(edit.tunjangan);
+    // setTunjanganU(edit.tunjangan);
     setId(edit.id_jabatan)
   }
 
@@ -73,8 +73,8 @@ const Edit = () => {
         `${import.meta.env.VITE_BASE_URL}/jabatan/${idEdit}`,
         {
           nama_jabatan,
-          gaji_pokok: gaji_pokok_U,
-          tunjangan: tunjangan_U,
+          // gaji_pokok: gaji_pokok_U,
+          // tunjangan: tunjangan_U,
         },
         {
           headers: {
@@ -88,7 +88,6 @@ const Edit = () => {
         type: "success",
         isLoading: false,
       });
-      localStorage.clear("jabatanEdit")
       setTimeout(() => {
         navigasi("/jabatan");
       }, 500);
@@ -161,7 +160,7 @@ const Edit = () => {
                 </div>
               ))}
             </div>
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label className="mb-3">
                 <strong>Gaji Pokok</strong>
               </label>
@@ -204,7 +203,7 @@ const Edit = () => {
                   {msg}
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
           <div className="card-footer d-sm-flex justify-content-between align-items-center bg-white">
             <div className="card-footer-link mb-4 mb-sm-0"></div>

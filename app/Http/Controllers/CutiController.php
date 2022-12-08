@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\exportCuti;
 use App\Models\Cuti;
+use App\Models\Pegawai;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -174,5 +175,22 @@ class CutiController extends Controller
     $awal = date("Y-m-d", substr($periode->awal, 0, 10));
     $akhir = date("Y-m-d", substr($periode->akhir, 0, 10));
     return Excel::download(new exportCuti($cuti, $periode), 'cuti-laporan-' . $awal . '-' . $akhir . '.xlsx');
+  }
+
+  public function masakerja(Request $request)
+  {
+    $pegawai = Pegawai::find($request->id);
+    $now = Carbon::now()->format('Y-m-d');
+    $bergabung = Carbon::parse($pegawai->tanggal_bergabung)->format('Y-m-d');
+    $diff = abs(strtotime($now) - strtotime($bergabung));
+    $years = floor($diff / (365*60*60*24));
+    $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+    $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+    if($years >= 1) {
+      $act = "allow";
+    } else {
+      $act = "notAllow";
+    }
+    return ['data' => $act];
   }
 }
