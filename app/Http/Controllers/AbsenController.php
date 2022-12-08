@@ -197,11 +197,36 @@ class AbsenController extends Controller
 
   public function rekap(Request $request)
   {
-
+    $last = date("t", strtotime($request->date));
+    $yearMonth = date("Y-m-", strtotime($request->date));
+    $data = $this->rekap_data($yearMonth, $last, $request->id);
+    // foreach ($data[0] as $key => $value) {
+    //   return $key;
+    // }
+    return response()->json(['msg' => 'Successfuly get data rekap absen', "data" => $data, 'error' => []], 200);
   }
 
-  public function rekap_data($loop, $id)
+  public function rekap_data($yearMonth, $lastday, $id)
   {
-    # code...
+    $nullquery = '';
+    $query1 = '';
+    for ($i = 1; $i <= $lastday; $i++) {
+			$date = date_create(date($yearMonth . $i));
+			$ftgl = date_format($date, "Ymd");
+			$query1 .= "IF(DATE_FORMAT(tanggal,'%Y%m%d')='$ftgl',keterangan,'Alpha') AS tgl_" . $i.",";
+      $nullquery .= "'Alpha' AS tgl_".$i.",";
+		}
+
+    $sql_utama = "SELECT pegawais.`nama_pegawai`, ".$query1." absens.`pegawai_id` FROM absens
+    INNER JOIN pegawais on pegawais.id_pegawai = absens.pegawai_id
+    WHERE pegawai_id = '$id'";
+    $count = Count(DB::select($sql_utama));
+    if($count == 0) {
+      $sql2 = "SELECT pegawais.`nama_pegawai`, ".$nullquery." pegawais.`id_pegawai` FROM pegawais
+                  WHERE id_pegawai = '$id'";
+      return DB::select($sql2);
+    } else {
+      return DB::select($sql_utama);
+    }
   }
 }
