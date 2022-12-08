@@ -23,6 +23,10 @@ const CutiAdd = () => {
     value: "tanggal",
     label: "Tanggal",
   });
+  const [keterangan, setKet] = useState({
+    value: "lainnya",
+    label: "Cuti Lainnya",
+  });
   const [dateRange, setDateRange] = useState([null, null]);
   const [startBulan, endBulan] = dateRange;
   const navigasi = useNavigate();
@@ -112,86 +116,87 @@ const CutiAdd = () => {
     return myEpoch;
   };
 
-  useEffect(()=>{
-    setTM(new Date())
-    setTS(new Date())
-    setDateRange([null, null])
-  },[aksi])
+  useEffect(() => {
+    setTM(new Date());
+    setTS(new Date());
+    setDateRange([null, null]);
+  }, [aksi]);
 
   const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
-      tanggal_mulai: aksi.value ==='tanggal' ? tanggal_mulai : dateRange[0],
-      tanggal_selesai: aksi.value ==='tanggal' ? tanggal_selesai: dateRange[1],
+      tanggal_mulai: aksi.value === "tanggal" ? tanggal_mulai : dateRange[0],
+      tanggal_selesai:
+        aksi.value === "tanggal" ? tanggal_selesai : dateRange[1],
       alasan,
       pegawai_id: pegawai_id.value,
       is_aprove: dataLokal.role == 2 ? "1" : "0",
-      aksi: aksi.value
+      type: aksi.value,
+      keterangan: keterangan.value,
     };
 
-    console.log(formData);
-    // const notifikasiSave = toast.loading("Saving....");
-    // setWait(true);
-    // try {
-    //   const { data: response } = await axiosJWT.post(
-    //     `${import.meta.env.VITE_BASE_URL}/cuti`,
-    //     formData,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //         Accept: `application/json`,
-    //         // "Content-Type": "multipart/form-data"
-    //       },
-    //     }
-    //   );
-    //   setWait(false);
-    //   toast.update(notifikasiSave, {
-    //     render: "Create Successfuly",
-    //     type: "success",
-    //     isLoading: false,
-    //   });
-    //   setTimeout(() => {
-    //     navigasi("/cuti");
-    //   }, 500);
-    // } catch (error) {
-    //   setErrors([]);
-    //   setWait(false);
-    //   if (error?.response?.status === 422) {
-    //     toast.update(notifikasiSave, {
-    //       render: "Error Validation",
-    //       type: "error",
-    //       isLoading: false,
-    //       autoClose: 1500,
-    //       theme: "light",
-    //     });
-    //     setErrors(error.response.data.error);
-    //   } else if (
-    //     error?.response?.status === 405 ||
-    //     error?.response?.status === 500
-    //   ) {
-    //     toast.update(notifikasiSave, {
-    //       render: error?.response?.data?.message,
-    //       type: "error",
-    //       isLoading: false,
-    //       autoClose: 1500,
-    //     });
-    //   } else if (error?.response?.status === 401) {
-    //     toast.update(notifikasiSave, {
-    //       render: error?.response?.data?.error,
-    //       type: "error",
-    //       isLoading: false,
-    //       autoClose: 1500,
-    //     });
-    //   } else {
-    //     toast.update(notifikasiSave, {
-    //       render: error?.message,
-    //       type: "error",
-    //       isLoading: false,
-    //       autoClose: 1500,
-    //     });
-    //   }
-    // }
+    const notifikasiSave = toast.loading("Saving....");
+    setWait(true);
+    try {
+      const { data: response } = await axiosJWT.post(
+        `${import.meta.env.VITE_BASE_URL}/cuti`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: `application/json`,
+            // "Content-Type": "multipart/form-data"
+          },
+        }
+      );
+      setWait(false);
+      toast.update(notifikasiSave, {
+        render: "Create Successfuly",
+        type: "success",
+        isLoading: false,
+      });
+      setTimeout(() => {
+        navigasi("/cuti");
+      }, 500);
+    } catch (error) {
+      setErrors([]);
+      setWait(false);
+      if (error?.response?.status === 422) {
+        toast.update(notifikasiSave, {
+          render: "Error Validation",
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+          theme: "light",
+        });
+        setErrors(error.response.data.error);
+      } else if (
+        error?.response?.status === 405 ||
+        error?.response?.status === 500
+      ) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else if (error?.response?.status === 401) {
+        toast.update(notifikasiSave, {
+          render: error?.response?.data?.error,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      } else {
+        toast.update(notifikasiSave, {
+          render: error?.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 1500,
+        });
+      }
+    }
   };
 
   const hitungBulan = (start, end) => {
@@ -211,7 +216,7 @@ const CutiAdd = () => {
     const [start, end] = dates;
     const jumlahBulan = hitungBulan(start, end);
     if (jumlahBulan > 3) {
-      setDateRange([new Date(), new Date()])
+      setDateRange([new Date(), new Date()]);
       alert("Maksimal 3 Bulan");
     }
   };
@@ -247,6 +252,33 @@ const CutiAdd = () => {
             {pegawai_id && isAllow ? (
               <>
                 <label className="mb-3">
+                  <strong>Keterangan Cuti</strong>
+                </label>
+                <Select
+                  className="mb-3"
+                  value={keterangan}
+                  onChange={setKet}
+                  options={[
+                    {
+                      value: "hamil",
+                      label: "Cuti Hamil",
+                    },
+                    {
+                      value: "Sakit",
+                      label: "Cuti Sakit",
+                    },
+                    {
+                      value: "lainnya",
+                      label: "Cuti Lainnya",
+                    },
+                  ]}
+                />
+                {errors.keterangan?.map((msg, index) => (
+                  <div className="invalid-feedback" key={index}>
+                    {msg}
+                  </div>
+                ))}
+                <label className="mb-3">
                   <strong>Tipe Cuti</strong>
                 </label>
                 <Select
@@ -257,6 +289,11 @@ const CutiAdd = () => {
                     { value: "tanggal", label: "Tanggal" },
                   ]}
                 />
+                {errors.type?.map((msg, index) => (
+                  <div className="invalid-feedback" key={index}>
+                    {msg}
+                  </div>
+                ))}
                 <hr />
                 {aksi.value === "tanggal" ? (
                   <>
@@ -309,6 +346,11 @@ const CutiAdd = () => {
                       onChange={(update) => onChangeBulanan(update)}
                       withPortal
                     />
+                    {errors.tanggal_mulai || errors.tanggal_selesai ? (
+                      <div className="invalid-feedback">Periode tanggal harus diisi</div>
+                    ) : (
+                      false
+                    )}
                   </>
                 )}
                 <div className="mb-3">

@@ -263,7 +263,6 @@ class PegawaiController extends Controller
       if($request->type === 'new') {
         $kb = Carbon::parse($pegawaiFind->kontrak_berakhir)->format('Y');
         $fixDate = $kb.Carbon::now()->format('-m-d');
-        $jabatanTraining = Jabatan::where('nama_jabatan','Pegawai Kontrak')->select('id_jabatan')->firstOrFail();
         $payload = [
           'status_pegawai' => "1",
           'kontrak_berakhir' => date('Y-m-d',strtotime(Carbon::parse($fixDate)->format('Y-m-d')."+1 years"))
@@ -273,7 +272,6 @@ class PegawaiController extends Controller
           'kontrak_berakhir' => date('Y-m-d',strtotime(Carbon::parse($pegawaiFind->kontrak_berakhir)->format('Y-m-d')."+1 years"))
         ];
       }
-      return $payload;
       $pegawaiFind->update($payload);
       DB::commit();
       return response()->json(['msg' => 'Successfuly updated data pegawai', "data" => $payload, 'error' => []], 200);
