@@ -186,6 +186,7 @@ const CutiEdit = () => {
       is_aprove: dataLokal.role == 2 ? "1" : "0",
       type: aksi.value,
       keterangan: keterangan.value,
+      role: dataLokal.role,
       oldDate
     };
 

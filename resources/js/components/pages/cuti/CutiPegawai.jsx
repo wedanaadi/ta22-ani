@@ -291,29 +291,33 @@ const CutiPegawai = () => {
                           )}
                         </td>
                         <td>
-                          <>
-                            <button
-                              className="btn btn-warning"
-                              onClick={() => handleEdit(cuti)}
-                            >
-                              <FontAwesomeIcon icon={faPencil} />
-                              &nbsp; Edit
-                            </button>
-                            &nbsp;
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => confirm(cuti.id_cuti)}
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
-                              &nbsp; Hapus
-                            </button>
-                          </>
+                          {cuti.is_aprove == "1" ? (
+                            false
+                          ) : (
+                            <>
+                              <button
+                                className="btn btn-warning"
+                                onClick={() => handleEdit(cuti)}
+                              >
+                                <FontAwesomeIcon icon={faPencil} />
+                                &nbsp; Edit
+                              </button>
+                              &nbsp;
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => confirm(cuti.id_cuti)}
+                              >
+                                <FontAwesomeIcon icon={faTrash} />
+                                &nbsp; Hapus
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={7}>
                         {cutiData.length === 0 && !isLoad
                           ? "Tidak Ada Data"
                           : loader}

@@ -134,6 +134,7 @@ const CutiAdd = () => {
       is_aprove: dataLokal.role == 2 ? "1" : "0",
       type: aksi.value,
       keterangan: keterangan.value,
+      role: dataLokal.role,
     };
 
     const notifikasiSave = toast.loading("Saving....");

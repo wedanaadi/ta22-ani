@@ -336,7 +336,7 @@ const Cuti = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={7}>
                         {cutiData.length === 0 && !isLoad
                           ? "Tidak Ada Data"
                           : loader}

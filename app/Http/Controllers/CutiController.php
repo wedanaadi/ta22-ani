@@ -88,7 +88,9 @@ class CutiController extends Controller
         ]);
       }
       Cuti::create($payload);
-      Absen::create($absen);
+      if($request->role == '2') {
+        Absen::create($absen);
+      }
       unset($payload['id_cuti']);
       DB::commit();
       return response()->json(['msg' => 'Successfuly created data cuti', "data" => $payload, 'error' => []], 201);
@@ -144,7 +146,9 @@ class CutiController extends Controller
         ]);
       }
       $cutiFind->update($payload);
-      Absen::create($absen);
+      if($request->role == '2') {
+        Absen::create($absen);
+      }
       DB::commit();
       return response()->json(['msg' => 'Successfuly updated data cuti', "data" => $payload, 'error' => []], 201);
     } catch (Exception $e) {
@@ -158,6 +162,21 @@ class CutiController extends Controller
     $cutiFind = Cuti::findOrFail($id);
     DB::beginTransaction();
     try {
+      if($request->is_aprove == '1') {
+        $allTgl = Fungsi::GetAllDate($cutiFind->tanggal_mulai, $cutiFind->tanggal_selesai);
+        $absen = [];
+        foreach ($allTgl as $v) {
+          array_push($absen, [
+            'id_absen' => Uuid::generate()->string,
+            'pegawai_id' => $cutiFind->pegawai_id,
+            'tanggal' => $v,
+            'keterangan' => $cutiFind->keterangan == 'Sakit' ? 'Sakit' : 'Ijin',
+            'created_at' => round(microtime(true) * 1000),
+            'index_cuti' => $id,
+          ]);
+        }
+        Absen::create($absen);
+      }
       $payload = [
         'is_aprove' => $request->is_aprove
       ];
