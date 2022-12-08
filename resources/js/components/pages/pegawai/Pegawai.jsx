@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { confirmAlert } from "react-confirm-alert";
 import { toast, ToastContainer } from "react-toastify";
+import { floor, round } from "lodash";
 
 const Pegawai = () => {
   const { token, setToken, exp, setExp } = useToken();
@@ -55,6 +56,8 @@ const Pegawai = () => {
     { name: "NIK", field: "nik", sortable: false },
     { name: "Nama Pegawai", field: "nama_pegawai", sortable: false },
     { name: "Jabatan", field: "jabatan_id", sortable: false },
+    { name: "Tanggal Bergabung", field: "tanggal_bergabung", sortable: false },
+    { name: "Kontrak Berakhir", field: "kontrak_berakhir", sortable: false },
     { name: "Tempat Lahir", field: "tempat_lahir", sortable: false },
     { name: "Tanggal Lahir", field: "tanggal_lahir", sortable: false },
     { name: "Jenis Kelamin", field: "jenis_kelamin", sortable: false },
@@ -64,6 +67,7 @@ const Pegawai = () => {
     { name: "Pendidikan", field: "pendidikan", sortable: false },
     { name: "Telepon", field: "no_telepon", sortable: false },
     { name: "Status Pegawai", field: "status_pegawai", sortable: false },
+    { name: "Masa Kerja", field: "masa_kerja", sortable: false },
     { name: "Foto", field: "foto", sortable: false },
     { name: "Aksi", field: "aksi", sortable: false },
   ];
@@ -205,6 +209,40 @@ const Pegawai = () => {
     }
   };
 
+  const ConvertToEpoch = (date) => {
+    let dateProps = new Date(date).setHours(0, 0, 0, 0);
+    let myDate = new Date(dateProps * 1000);
+    const myEpoch = myDate.getTime() / 1000.0;
+    return myEpoch;
+  };
+
+  const masaKerja = (bergabung) => {
+    const epochBergabung = ConvertToEpoch(bergabung);
+    const epochNow = ConvertToEpoch(new Date())
+    const second = (epochNow-epochBergabung) / 1000;
+    const minute = second/60;
+    const hour = minute/60;
+    let day = hour/24;
+    let month = day/30;
+    const year = month/12;
+    let format = "";
+    if(day >= 30) {
+      day = day - (floor(month) * 30)
+    }
+    if(month > 11) {
+      month = month - (floor(year) * 12)
+    }
+    if(year >= 1) {
+      format+= `${floor(year)} tahun `;
+    }
+    if(month >= 1) {
+      const difday =
+      format+= `${floor(month)} bulan `;
+    }
+    format+= `${floor(day)} hari`;
+    return format;
+  };
+
   return (
     <div className="card">
       <ToastContainer />
@@ -245,6 +283,8 @@ const Pegawai = () => {
                         <td>{pegawai.nik}</td>
                         <td>{pegawai.nama_pegawai}</td>
                         <td>{pegawai.jabatan.nama_jabatan}</td>
+                        <td>{pegawai.tanggal_bergabung}</td>
+                        <td>{pegawai.kontrak_berakhir}</td>
                         <td>{pegawai.tempat_lahir}</td>
                         <td>{pegawai.tanggal_lahir}</td>
                         <td>
@@ -266,6 +306,7 @@ const Pegawai = () => {
                             ? "Pegawai Kontrak"
                             : "Pegawai Tetap"}
                         </td>
+                        <td>{masaKerja(pegawai.tanggal_bergabung)}</td>
                         <td>
                           <img
                             height={56}

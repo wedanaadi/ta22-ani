@@ -42,7 +42,7 @@ class PegawaiController extends Controller
       'no_telepon',
       'foto',
       'jabatan_id',
-      'status_pegawai'
+      'tanggal_bergabung'
     ]);
     $validator = Validator::make($req, [
       'nik' => 'required|numeric',
@@ -54,7 +54,7 @@ class PegawaiController extends Controller
       'agama' => 'required',
       'status' => 'required',
       'pendidikan' => 'required',
-      'status_pegawai' => 'required',
+      'tanggal_bergabung' => 'required',
       'no_telepon' => 'required',
       'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
       'jabatan_id' => 'required'
@@ -83,15 +83,17 @@ class PegawaiController extends Controller
         'nama_pegawai' => $request->nama_pegawai,
         'tempat_lahir' => $request->tempat_lahir,
         'tanggal_lahir' => date('Y-m-d', strtotime($request->tanggal_lahir)),
+        'tanggal_bergabung' => date('Y-m-d', strtotime($request->tanggal_bergabung)),
         'jenis_kelamin' => $request->jenis_kelamin,
         'alamat' => $request->alamat,
         'agama' => $request->agama,
         'status' => $request->status,
-        'status_pegawai' => $request->status_pegawai,
+        'status_pegawai' => "0",
         'pendidikan' => $request->pendidikan,
         'no_telepon' => $request->no_telepon,
         'jabatan_id' => $request->jabatan_id,
         'created_at' => round(microtime(true) * 1000),
+        'kontrak_berakhir' => date('Y-m-d',strtotime($request->tanggal_bergabung."+1 years"))
       ];
 
       if ($request->foto) {
@@ -127,7 +129,7 @@ class PegawaiController extends Controller
       'no_telepon',
       'foto',
       'jabatan_id',
-      'status_pegawai'
+      'tanggal_bergabung'
     ]);
 
     $validator = Validator::make($req, [
@@ -141,7 +143,7 @@ class PegawaiController extends Controller
       'status' => 'required',
       'pendidikan' => 'required',
       'no_telepon' => 'required',
-      'status_pegawai' => 'required',
+      'tanggal_bergabung' => 'required',
       'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
       'jabatan_id' => 'required'
     ], [
@@ -163,14 +165,16 @@ class PegawaiController extends Controller
         'nik' => $request->nik,
         'tempat_lahir' => $request->tempat_lahir,
         'tanggal_lahir' => date('Y-m-d', strtotime($request->tanggal_lahir)),
+        'tanggal_bergabung' => date('Y-m-d', strtotime($request->tanggal_bergabung)),
         'jenis_kelamin' => $request->jenis_kelamin,
         'alamat' => $request->alamat,
         'agama' => $request->agama,
         'status' => $request->status,
-        'status_pegawai' => $request->status_pegawai,
+        'status_pegawai' => "0",
         'pendidikan' => $request->pendidikan,
         'no_telepon' => $request->no_telepon,
         'jabatan_id' => $request->jabatan_id,
+        'kontrak_berakhir' => date('Y-m-d',strtotime($request->tanggal_bergabung."+1 years"))
       ];
 
       if ($request->foto) {

@@ -16,6 +16,7 @@ const PegawaiEdit = () => {
   const [jabatan_id, setJabatan] = useState("");
   const [tempat_lahir, setTempat] = useState("");
   const [tanggal_lahir, setTL] = useState(new Date());
+  const [tanggal_bergabung, setTB] = useState(new Date());
   const [jenis_kelamin, setJK] = useState("");
   const [alamat, setAlamat] = useState("");
   const [agama, setAgama] = useState("");
@@ -28,8 +29,8 @@ const PegawaiEdit = () => {
   const [jabatans, setJabatans] = useState([]);
   const [errors, setErrors] = useState([]);
   const [waiting, setWait] = useState(false);
-  const [idEdit, setId] = useState("")
-  const [oldFoto, setOldFoto] = useState("")
+  const [idEdit, setId] = useState("");
+  const [oldFoto, setOldFoto] = useState("");
   const navigasi = useNavigate();
 
   const axiosJWT = axios.create();
@@ -63,14 +64,18 @@ const PegawaiEdit = () => {
   );
 
   const loadEdit = () => {
-    const edit = JSON.parse(atob(localStorage.getItem('PegawaiEdit')));
-    setPegawai(edit.nama_pegawai)
-    setAgama(edit.agama)
-    setAlamat(edit.alamat)
-    setTL(new Date(edit.tanggal_lahir))
-    setTempat(edit.tempat_lahir)
-    const jk = edit.jenis_kelamin === 'L' ? {value:'L', label:'Laki-Laki'} :  {value:'P', label:'Perempuan'}
-    setJK(jk)
+    const edit = JSON.parse(atob(localStorage.getItem("PegawaiEdit")));
+    setPegawai(edit.nama_pegawai);
+    setAgama(edit.agama);
+    setAlamat(edit.alamat);
+    setTL(new Date(edit.tanggal_lahir));
+    setTB(new Date(edit.tanggal_bergabung));
+    setTempat(edit.tempat_lahir);
+    const jk =
+      edit.jenis_kelamin === "L"
+        ? { value: "L", label: "Laki-Laki" }
+        : { value: "P", label: "Perempuan" };
+    setJK(jk);
     const agamaOption = [
       { value: "Hindu", label: "Hindu" },
       { value: "Islam", label: "Islam" },
@@ -79,18 +84,26 @@ const PegawaiEdit = () => {
       { value: "Protestan", label: "Protestan" },
       { value: "Konghuchu", label: "Konghuchu" },
     ];
-    const agamaSelected = agamaOption.filter(({value})=> value === edit.agama)
-    setAgama(agamaSelected[0])
-    const statusKawin = edit.status === 0 ? {value:0, label:'Belum Menikah'} :  {value:1, label:'Sudah Menikah'}
-    setStatus(statusKawin)
-    const statusPegawai = edit.status_pegawai === 0 ? {value:0, label:'Pegawai Kontrak'} :  {value:1, label:'Pegawai Tetap'}
-    setSP(statusPegawai)
-    setTelp(edit.no_telepon)
-    setPendidikan(edit.pendidikan)
-    setId(edit.id_pegawai)
-    setOldFoto(edit.foto)
-    setNIK(edit.nik)
-  }
+    const agamaSelected = agamaOption.filter(
+      ({ value }) => value === edit.agama
+    );
+    setAgama(agamaSelected[0]);
+    const statusKawin =
+      edit.status === 0
+        ? { value: 0, label: "Belum Menikah" }
+        : { value: 1, label: "Sudah Menikah" };
+    setStatus(statusKawin);
+    // const statusPegawai =
+    //   edit.status_pegawai === 0
+    //     ? { value: 0, label: "Pegawai Kontrak" }
+    //     : { value: 1, label: "Pegawai Tetap" };
+    // setSP(statusPegawai);
+    setTelp(edit.no_telepon);
+    setPendidikan(edit.pendidikan);
+    setId(edit.id_pegawai);
+    setOldFoto(edit.foto);
+    setNIK(edit.nik);
+  };
 
   const loadJabatan = async () => {
     const { data: response } = await axiosJWT.get(
@@ -108,18 +121,18 @@ const PegawaiEdit = () => {
   };
 
   const loadSelectAwait = () => {
-    const edit = JSON.parse(atob(localStorage.getItem('PegawaiEdit')));
-    const selected = jabatans.filter(({value})=> value === edit.jabatan_id)
-    setJabatan(selected[0])
-  }
+    const edit = JSON.parse(atob(localStorage.getItem("PegawaiEdit")));
+    const selected = jabatans.filter(({ value }) => value === edit.jabatan_id);
+    setJabatan(selected[0]);
+  };
 
   useEffect(() => {
-    loadSelectAwait()
+    loadSelectAwait();
   }, [jabatans]);
 
   useEffect(() => {
-    loadJabatan()
-    loadEdit()
+    loadJabatan();
+    loadEdit();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -132,15 +145,15 @@ const PegawaiEdit = () => {
       tanggal_lahir,
       jenis_kelamin: jenis_kelamin.value,
       alamat,
-      agama:agama.value,
-      status:status.value,
-      status_pegawai:status_pegawai.value,
+      agama: agama.value,
+      status: status.value,
+      tanggal_bergabung,
       pendidikan,
       no_telepon,
       foto,
       oldFoto,
-      _method:'PUT'
-    }
+      _method: "PUT",
+    };
     const notifikasiSave = toast.loading("Saving....");
     setWait(true);
     setErrors([]);
@@ -152,7 +165,7 @@ const PegawaiEdit = () => {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: `application/json`,
-            "Content-Type": "multipart/form-data"
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -207,7 +220,7 @@ const PegawaiEdit = () => {
   const handleFoto = (event) => {
     const file = event.target.files[0];
     setFoto(file);
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -380,7 +393,11 @@ const PegawaiEdit = () => {
                 <label className="mb-3">
                   <strong>Telepon</strong>
                 </label>
-                <input className="form-control" value={no_telepon} onChange={(e) =>setTelp(e.target.value)} />
+                <input
+                  className="form-control"
+                  value={no_telepon}
+                  onChange={(e) => setTelp(e.target.value)}
+                />
                 {errors.no_telepon?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
@@ -393,7 +410,11 @@ const PegawaiEdit = () => {
                 <label className="mb-3">
                   <strong>Pendidikan</strong>
                 </label>
-                <input className="form-control" value={pendidikan} onChange={(e) =>setPendidikan(e.target.value)} />
+                <input
+                  className="form-control"
+                  value={pendidikan}
+                  onChange={(e) => setPendidikan(e.target.value)}
+                />
                 {errors.pendidikan?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
@@ -404,17 +425,15 @@ const PegawaiEdit = () => {
             <div className="col-xs-12 col-md-3 col-lg-3">
               <div className="mb-3">
                 <label className="mb-3">
-                  <strong>Status Pegawai</strong>
+                  <strong>Tanggal Bergabung</strong>
                 </label>
-                <Select
-                  value={status_pegawai}
-                  onChange={setSP}
-                  options={[
-                    { value: 0, label: "Pegawai Kontrak" },
-                    { value: 1, label: "Pegawai Tetap" },
-                  ]}
+                <DatePicker
+                  dateFormat="yyyy-MM-dd"
+                  className="form-control"
+                  selected={tanggal_bergabung}
+                  onChange={(date) => setTB(date)}
                 />
-                {errors.status_pegawai?.map((msg, index) => (
+                {errors.tanggal_bergabung?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
                   </div>
@@ -426,7 +445,11 @@ const PegawaiEdit = () => {
                 <label className="mb-3">
                   <strong>Foto</strong>
                 </label>
-                <input type="file" onChange={handleFoto} className="form-control" />
+                <input
+                  type="file"
+                  onChange={handleFoto}
+                  className="form-control"
+                />
                 {errors.foto?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
@@ -439,7 +462,15 @@ const PegawaiEdit = () => {
                 <label className="mb-3">
                   <strong>Alamat</strong>
                 </label>
-                <textarea value={alamat} onChange={(e)=> setAlamat(e.target.value)} className="form-control" id="" rows="3">{alamat}</textarea>
+                <textarea
+                  value={alamat}
+                  onChange={(e) => setAlamat(e.target.value)}
+                  className="form-control"
+                  id=""
+                  rows="3"
+                >
+                  {alamat}
+                </textarea>
                 {errors.alamat?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
@@ -449,7 +480,14 @@ const PegawaiEdit = () => {
             </div>
             <div className="col-xs-12 col-md-6 col-lg-6">
               <div className="foto-content col-md-3 col-lg-3 float-end">
-              <img width={100} height={100} src={`${import.meta.env.VITE_PUBLIC}/images/pegawai/${oldFoto}`} alt={`${oldFoto}`} />
+                <img
+                  width={100}
+                  height={100}
+                  src={`${
+                    import.meta.env.VITE_PUBLIC
+                  }/images/pegawai/${oldFoto}`}
+                  alt={`${oldFoto}`}
+                />
               </div>
             </div>
           </div>
@@ -466,7 +504,7 @@ const PegawaiEdit = () => {
         </div>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default PegawaiEdit
+export default PegawaiEdit;

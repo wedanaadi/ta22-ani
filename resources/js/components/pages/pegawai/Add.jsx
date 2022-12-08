@@ -16,6 +16,7 @@ const PegawaiAdd = () => {
   const [jabatan_id, setJabatan] = useState("");
   const [tempat_lahir, setTempat] = useState("");
   const [tanggal_lahir, setTL] = useState(new Date());
+  const [tanggal_bergabung, setTB] = useState(new Date());
   const [jenis_kelamin, setJK] = useState("");
   const [alamat, setAlamat] = useState("");
   const [agama, setAgama] = useState("");
@@ -90,16 +91,17 @@ const PegawaiAdd = () => {
       jabatan_id: jabatan_id.value,
       tempat_lahir,
       tanggal_lahir,
+      tanggal_bergabung,
       jenis_kelamin: jenis_kelamin.value,
       alamat,
       agama:agama.value,
       status:status.value,
-      status_pegawai:status_pegawai.value,
+      // status_pegawai:status_pegawai.value,
       pendidikan,
       no_telepon,
       foto,
     }
-    console.log(formData);
+
     const notifikasiSave = toast.loading("Saving....");
     setWait(true);
     setErrors([]);
@@ -361,7 +363,7 @@ const PegawaiAdd = () => {
               </div>
             </div>
             <div className="col-xs-12 col-md-3 col-lg-3">
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label className="mb-3">
                   <strong>Status Pegawai</strong>
                 </label>
@@ -374,6 +376,22 @@ const PegawaiAdd = () => {
                   ]}
                 />
                 {errors.status_pegawai?.map((msg, index) => (
+                  <div className="invalid-feedback" key={index}>
+                    {msg}
+                  </div>
+                ))}
+              </div> */}
+              <div className="mb-3">
+                <label className="mb-3">
+                  <strong>Tanggal Bergabung</strong>
+                </label>
+                <DatePicker
+                  dateFormat="yyyy-MM-dd"
+                  className="form-control"
+                  selected={tanggal_bergabung}
+                  onChange={(date) => setTB(date)}
+                />
+                {errors.tanggal_bergabung?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
                   </div>
