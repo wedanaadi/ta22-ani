@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\exportGaji;
 use App\Exports\exportSlip;
+use App\Models\BaseGaji;
 use App\Models\Gaji;
 use App\Models\Pegawai;
 use Exception;
@@ -85,33 +86,71 @@ class GajiController extends Controller
     }
 
     $pegawaiId = $request->pegawai_id;
+    $pegawai = Pegawai::find($pegawaiId);
+    $status_pegawai = $pegawai->status_pegawai;
     $moth = json_decode($request->month);
     $dateAwal = $moth->awal;
     $dateAkhir = $moth->akhir;
+
     $sqlKehadiran = "select count(id_absen) as 'kehadiran' from absens
-    WHERE keterangan = 'Hadir' AND pegawai_id = '$pegawaiId'
-    AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir';";
-    $kehadiran = DB::select($sqlKehadiran)[0]->kehadiran;
+                      WHERE keterangan = 'Hadir' AND pegawai_id = '$pegawaiId'
+                      AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir';";
+    $kehadiranAbsen = DB::select($sqlKehadiran)[0]->kehadiran;
 
+    $sqlCuti = "select COUNT(cutis.id_cuti) as 'count', cutis.keterangan, absens.pegawai_id from absens
+                  INNER JOIN cutis on cutis.id_cuti = absens.index_cuti
+                  WHERE absens.pegawai_id = '$pegawaiId' AND
+                  (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' AND '$dateAkhir'";
+    $cutiData = DB::select($sqlCuti)[0];
     $dayOfMonth = date("t", substr($dateAwal, 0, 10));
+    $jumlah = (int)$cutiData->count === (int)$dayOfMonth ? (int)$cutiData->count - 4 : (int)$cutiData->count;
 
-    $pegawai = Pegawai::find($pegawaiId);
+    $jumlah_pokok = 0;
+    $jumlah_tunjangan = 0;
+    if ((int)$status_pegawai === 0) {
+      $jumlah_pokok =  $kehadiranAbsen + $jumlah;
+    } else {
+      $jumlah_pokok =  $kehadiranAbsen + $jumlah;
+      if($cutiData->keterangan === 'lahiran') {
+        $jumlah_tunjangan =  $kehadiranAbsen + $jumlah;
+      } else {
+        $jumlah_tunjangan =  $kehadiranAbsen;
+      }
+    }
+
+
+    $gaji_pokok = 0;
+    $tunjangan = 0;
+    $countListGaji = BaseGaji::where('jabatan_id',$pegawai->jabatan_id);
+    if($countListGaji->count() > 1) {
+      if((int)$status_pegawai === 0) {
+        $data = BaseGaji::find(4);
+      } else {
+        $data = BaseGaji::find(3);
+      }
+      $gaji_pokok = $data->gaji_pokok;
+      $tunjangan = $data->tunjangan;
+    } else {
+      $gaji_pokok = $countListGaji->first()->gaji_pokok;
+      $tunjangan = $countListGaji->first()->tunjangan;
+    }
 
     $data = [
       'atas' => [
         'nama' => $pegawai->nama_pegawai,
         'jabatan' => $pegawai->jabatan->nama_jabatan,
         'dayofmonth' => $dayOfMonth,
-        'kehadiran' => $kehadiran,
-        'offday' => $dayOfMonth - $kehadiran - 4,
-        'gaji_pokok' => $pegawai->jabatan->gaji_pokok,
-        'tunjangan' => $pegawai->jabatan->tunjangan,
+        'kehadiran' => $jumlah_pokok,
+        'offday' => $dayOfMonth - $jumlah_pokok - 4,
+        'gaji_pokok' => $gaji_pokok,
+        'tunjangan' => $tunjangan,
+        'status_pegawai' => $status_pegawai
       ],
       'bawah' => [
-        'gaji_pokok_harian' => $pegawai->jabatan->gaji_pokok / ($dayOfMonth - 4),
-        'tunjangan_harian' => $pegawai->jabatan->tunjangan / ($dayOfMonth - 4),
-        'total_pokok_harian' => ($pegawai->jabatan->gaji_pokok / ($dayOfMonth - 4)) * $kehadiran,
-        'total_tunjangan_harian' => ($pegawai->jabatan->tunjangan / ($dayOfMonth - 4)) * $kehadiran,
+        'gaji_pokok_harian' => $gaji_pokok / ($dayOfMonth - 4),
+        'tunjangan_harian' => $tunjangan / ($dayOfMonth - 4),
+        'total_pokok_harian' => ($gaji_pokok / ($dayOfMonth - 4)) * $jumlah_pokok,
+        'total_tunjangan_harian' => ($tunjangan / ($dayOfMonth - 4)) * $jumlah_tunjangan,
       ]
     ];
 

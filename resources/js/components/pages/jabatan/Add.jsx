@@ -51,7 +51,7 @@ const Add = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const notifikasiSave = toast.loading("Saving....");
+    const notifAddJabatan = toast.loading("Saving....");
     setWait(true);
     try {
       const { data: response } = await axiosJWT.post(
@@ -67,20 +67,19 @@ const Add = () => {
           },
         }
       );
-      setWait(false);
-      toast.update(notifikasiSave, {
+      toast.update(notifAddJabatan, {
         render: "Create Successfuly",
         type: "success",
         isLoading: false,
+        autoClose: 1500,
       });
-      setTimeout(() => {
-        navigasi("/jabatan");
-      }, 500);
+      setWait(false);
+      navigasi("/jabatan");
     } catch (error) {
       setErrors([]);
       setWait(false);
       if (error?.response?.status === 422) {
-        toast.update(notifikasiSave, {
+        toast.update(notifAddJabatan, {
           render: "Error Validation",
           type: "error",
           isLoading: false,
@@ -92,21 +91,21 @@ const Add = () => {
         error?.response?.status === 405 ||
         error?.response?.status === 500
       ) {
-        toast.update(notifikasiSave, {
+        toast.update(notifAddJabatan, {
           render: error?.response?.data?.message,
           type: "error",
           isLoading: false,
           autoClose: 1500,
         });
       } else if (error?.response?.status === 401) {
-        toast.update(notifikasiSave, {
+        toast.update(notifAddJabatan, {
           render: error?.response?.data?.error,
           type: "error",
           isLoading: false,
           autoClose: 1500,
         });
       } else {
-        toast.update(notifikasiSave, {
+        toast.update(notifAddJabatan, {
           render: error?.message,
           type: "error",
           isLoading: false,
@@ -118,7 +117,7 @@ const Add = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <div className="col-xs-12 col-md-6 col-lg-6">
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">

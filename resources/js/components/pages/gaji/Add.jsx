@@ -233,9 +233,7 @@ const AddGaji = () => {
         autoClose: 1500,
       });
       setVisible(false);
-      setTimeout(() => {
-        navigasi("/gaji");
-      }, 500);
+      navigasi("/gaji");
     } catch (error) {
       setWait(false);
       if (error?.response?.status === 422) {
@@ -268,7 +266,6 @@ const AddGaji = () => {
   return (
     <>
       <form onSubmit={handleGenerateGaji}>
-        <ToastContainer />
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
             <h5 className="card-title">Tambah Gaji</h5>

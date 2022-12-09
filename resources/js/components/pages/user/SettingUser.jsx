@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useToken } from "../../../hook/Token";
 import jwt_decode from "jwt-decode";
 
@@ -139,7 +139,6 @@ const SettingUser = () => {
           </div>
           <form onSubmit={handleSubmit} autoComplete="off">
             <div className="modal-body">
-              <ToastContainer />
               <div className="mb-3">
                 <label htmlFor="comment" className="form-label">
                   Username

@@ -127,7 +127,6 @@ const ExcelAbsen = () => {
           </div>
           <form onSubmit={handleLogin}>
             <div className="modal-body">
-              <ToastContainer />
               <div className="mb-3">
                 <label htmlFor="comment" className="form-label">
                   File

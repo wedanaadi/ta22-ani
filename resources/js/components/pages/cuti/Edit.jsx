@@ -28,7 +28,7 @@ const CutiEdit = () => {
     value: "lainnya",
     label: "Cuti Lainnya",
   });
-  const [oldDate, setOldDate] = useState([null,null]);
+  const [oldDate, setOldDate] = useState([null, null]);
   const [dateRange, setDateRange] = useState([null, null]);
   const [startBulan, endBulan] = dateRange;
   const navigasi = useNavigate();
@@ -88,8 +88,8 @@ const CutiEdit = () => {
   const loadEdit = () => {
     const optKeterangan = [
       {
-        value: "hamil",
-        label: "Cuti Hamil",
+        value: "lahiran",
+        label: "Cuti Lahiran",
       },
       {
         value: "Sakit",
@@ -100,17 +100,22 @@ const CutiEdit = () => {
         label: "Cuti Lainnya",
       },
     ];
-    const keteranganSet = optKeterangan.filter(({value})=> value === localEditData.keterangan)
+    const keteranganSet = optKeterangan.filter(
+      ({ value }) => value === localEditData.keterangan
+    );
     setKet(keteranganSet[0]);
     const optType = [
       { value: "bulan", label: "Bulanan" },
       { value: "tanggal", label: "Tanggal" },
     ];
-    const typeSet = optType.filter(({value}) => value === localEditData.type)
-    setAksi(typeSet[0]);;
+    const typeSet = optType.filter(({ value }) => value === localEditData.type);
+    setAksi(typeSet[0]);
     setAlasan(localEditData.alasan);
     setIdEdit(localEditData.id_cuti);
-    setOldDate([convertToDate(localEditData.tanggal_mulai),convertToDate(localEditData.tanggal_selesai)])
+    setOldDate([
+      convertToDate(localEditData.tanggal_mulai),
+      convertToDate(localEditData.tanggal_selesai),
+    ]);
     // setTS(new Date('2022-12-10'))
   };
 
@@ -172,6 +177,10 @@ const CutiEdit = () => {
     setTM(convertToDate(localEditData.tanggal_mulai));
     setTS(convertToDate(localEditData.tanggal_selesai));
     setDateRange([null, null]);
+    setDateRange([
+      convertToDate(localEditData.tanggal_mulai),
+      convertToDate(localEditData.tanggal_selesai),
+    ]);
   }, [aksi]);
 
   const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
@@ -187,7 +196,7 @@ const CutiEdit = () => {
       type: aksi.value,
       keterangan: keterangan.value,
       role: dataLokal.role,
-      oldDate
+      oldDate,
     };
 
     const notifikasiSave = toast.loading("Saving....");
@@ -209,10 +218,9 @@ const CutiEdit = () => {
         render: "Updated Successfuly",
         type: "success",
         isLoading: false,
+        autoClose: 1500,
       });
-      setTimeout(() => {
-        navigasi("/cuti");
-      }, 500);
+      navigasi("/cuti");
     } catch (error) {
       setErrors([]);
       setWait(false);
@@ -277,7 +285,6 @@ const CutiEdit = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ToastContainer />
       <div className="col-xs-12 col-md-6 col-lg-6">
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
@@ -314,8 +321,8 @@ const CutiEdit = () => {
                   onChange={setKet}
                   options={[
                     {
-                      value: "hamil",
-                      label: "Cuti Hamil",
+                      value: "lahiran",
+                      label: "Cuti Lahiran",
                     },
                     {
                       value: "Sakit",
@@ -392,20 +399,26 @@ const CutiEdit = () => {
                     </div>
                   </>
                 ) : (
-                  <>
+                  <div className="mb-3">
+                    <label className="mb-3">
+                      <strong>Periode</strong>
+                    </label>
                     <DatePicker
                       selectsRange={true}
                       startDate={startBulan}
                       endDate={endBulan}
+                      className="form-control"
                       onChange={(update) => onChangeBulanan(update)}
                       withPortal
                     />
                     {errors.tanggal_mulai || errors.tanggal_selesai ? (
-                      <div className="invalid-feedback">Periode tanggal harus diisi</div>
+                      <div className="invalid-feedback">
+                        Periode tanggal harus diisi
+                      </div>
                     ) : (
                       false
                     )}
-                  </>
+                  </div>
                 )}
                 <div className="mb-3">
                   <label className="mb-3">

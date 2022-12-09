@@ -192,7 +192,7 @@ const Jabatan = () => {
 
   return (
     <div className="card">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Jabatan</h5>
         <Link to="add" className="btn btn-success float-end">

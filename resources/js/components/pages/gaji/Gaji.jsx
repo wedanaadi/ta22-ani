@@ -271,7 +271,6 @@ const Gaji = () => {
 
   return (
     <div className="card">
-      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Gaji</h5>
         {dataLokal.role === 2 ? (

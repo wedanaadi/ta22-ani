@@ -225,7 +225,6 @@ const Absen = () => {
   return (
     <div className="card">
       <ExcelAbsen />
-      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data Absen</h5>
         <div>

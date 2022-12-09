@@ -169,10 +169,9 @@ const AbsenEdit = () => {
         render: "Update Successfuly",
         type: "success",
         isLoading: false,
+        autoClose: 1500,
       });
-      setTimeout(() => {
-        navigasi("/absen");
-      }, 500);
+      navigasi("/absen");
     } catch (error) {
       setErrors([]);
       setWait(false);
@@ -215,7 +214,6 @@ const AbsenEdit = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ToastContainer />
       <div className="col-xs-12 col-md- col-lg-6">
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">

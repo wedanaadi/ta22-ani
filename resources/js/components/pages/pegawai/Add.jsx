@@ -122,10 +122,9 @@ const PegawaiAdd = () => {
         render: "Create Successfuly",
         type: "success",
         isLoading: false,
+        autoClose: 1500,
       });
-      setTimeout(() => {
-        navigasi("/pegawai");
-      }, 500);
+      navigasi("/pegawai");
     } catch (error) {
       setWait(false);
       if (error?.response?.status === 422) {
@@ -172,7 +171,6 @@ const PegawaiAdd = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ToastContainer />
       <div className="card">
         <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
           <h5 className="card-title">Tambah Pegawai</h5>

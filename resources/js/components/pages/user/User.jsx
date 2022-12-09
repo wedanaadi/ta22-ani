@@ -201,7 +201,6 @@ const User = () => {
 
   return (
     <div className="card">
-      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">Data User</h5>
         <Link to="add" className="btn btn-success float-end">

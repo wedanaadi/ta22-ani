@@ -156,7 +156,6 @@ const indexComment = () => {
   return (
     <div className="card">
       <Komentar />
-      <ToastContainer />
       <div className="card-header bg-white d-sm-flex justify-content-between align-items-center">
         <h5 className="card-title">Comment</h5>
         <div>

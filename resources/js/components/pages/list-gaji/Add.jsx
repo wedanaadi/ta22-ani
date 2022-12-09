@@ -101,10 +101,9 @@ export default function AddList() {
         render: "Create Successfuly",
         type: "success",
         isLoading: false,
+        autoClose: 1500,
       });
-      setTimeout(() => {
-        navigasi("/list");
-      }, 500);
+      navigasi("/list");
     } catch (error) {
       setErrors([]);
       setWait(false);
@@ -146,7 +145,6 @@ export default function AddList() {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <ToastContainer />
       <div className="col-xs-12 col-md-6 col-lg-6">
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">

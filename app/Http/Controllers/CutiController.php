@@ -65,8 +65,8 @@ class CutiController extends Controller
     try {
       $payload = [
         'id_cuti' => Uuid::generate()->string,
-        'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d'),
-        'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d'),
+        'tanggal_mulai' => date("Y-m-d", strtotime($request->tanggal_mulai)),
+        'tanggal_selesai' => date("Y-m-d", strtotime($request->tanggal_selesai)),
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
         'created_at' => round(microtime(true) * 1000),
@@ -125,8 +125,8 @@ class CutiController extends Controller
         Absen::where('tanggal',$v)->where('pegawai_id',$request->pegawai_id)->delete();
       }
       $payload = [
-        'tanggal_mulai' => Carbon::parse($request->tanggal_mulai)->format('Y-m-d'),
-        'tanggal_selesai' => Carbon::parse($request->tanggal_selesai)->format('Y-m-d'),
+        'tanggal_mulai' => date("Y-m-d", strtotime($request->tanggal_mulai)),
+        'tanggal_selesai' => date("Y-m-d", strtotime($request->tanggal_selesai)),
         'alasan' => $request->alasan,
         'pegawai_id' => $request->pegawai_id,
         'is_aprove' => $request->is_aprove,

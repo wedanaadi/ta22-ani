@@ -166,10 +166,9 @@ const CutiAddPegawai = () => {
         render: "Create Successfuly",
         type: "success",
         isLoading: false,
+        autoClose: 1500,
       });
-      setTimeout(() => {
-        navigasi("/cutipegawai");
-      }, 500);
+      navigasi("/cutipegawai");
     } catch (error) {
       setErrors([]);
       setWait(false);
@@ -234,7 +233,6 @@ const CutiAddPegawai = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ToastContainer />
       <div className="col-xs-12 col-md-6 col-lg-6">
         <div className="card">
           <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
@@ -272,8 +270,8 @@ const CutiAddPegawai = () => {
                   onChange={setKet}
                   options={[
                     {
-                      value: "hamil",
-                      label: "Cuti Hamil",
+                      value: "lahiran",
+                      label: "Cuti Lahiran",
                     },
                     {
                       value: "Sakit",
@@ -350,20 +348,26 @@ const CutiAddPegawai = () => {
                     </div>
                   </>
                 ) : (
-                  <>
+                  <div className="mb-3">
+                    <label className="mb-3">
+                      <strong>Periode</strong>
+                    </label>
                     <DatePicker
                       selectsRange={true}
                       startDate={startBulan}
                       endDate={endBulan}
+                      className="form-control"
                       onChange={(update) => onChangeBulanan(update)}
                       withPortal
                     />
                     {errors.tanggal_mulai || errors.tanggal_selesai ? (
-                      <div className="invalid-feedback">Periode tanggal harus diisi</div>
+                      <div className="invalid-feedback">
+                        Periode tanggal harus diisi
+                      </div>
                     ) : (
                       false
                     )}
-                  </>
+                  </div>
                 )}
                 <div className="mb-3">
                   <label className="mb-3">

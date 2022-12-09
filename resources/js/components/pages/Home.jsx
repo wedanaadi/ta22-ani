@@ -7,6 +7,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useToken } from "../../hook/Token";
 import jwt_decode from "jwt-decode";
+import { ToastContainer } from "react-toastify";
 
 const Home = () => {
   const [sidebarOpen, setSidebar] = useState(false);
@@ -61,6 +62,7 @@ const Home = () => {
         <Preload />
       ) : (
         <div className={sidebarOpen ? "d-flex toggled" : "d-flex"} id="wrapper">
+          <ToastContainer />
           <Sidebar />
           <div id="page-content-wrapper">
             <Header

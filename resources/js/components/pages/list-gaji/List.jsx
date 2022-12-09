@@ -193,7 +193,6 @@ export default function List() {
 
   return (
     <div className="card">
-      <ToastContainer />
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">List Master Gaji</h5>
         <Link to="add" className="btn btn-success float-end">
