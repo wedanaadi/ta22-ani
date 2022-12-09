@@ -24,6 +24,7 @@ const AddGaji = () => {
   const [tunjangan_harian, setTunjanganHarian] = useState(0);
   const [totalGajiPokok, setTotalPokok] = useState(0);
   const [totalTunjangan, setTotalTunjangan] = useState(0);
+  const [kenaikan, setKenaikan] = useState(0);
   const [bonus, setBonus] = useState(0);
   const [bonusU, setBonusU] = useState(0);
   const [potongan, setPotongan] = useState(0);
@@ -108,7 +109,7 @@ const AddGaji = () => {
 
   useEffect(() => {
     loadPegawais();
-    setVisible(false)
+    setVisible(false);
   }, [month]);
 
   const handleChangeRaw = (date) => {
@@ -137,12 +138,13 @@ const AddGaji = () => {
         }
       );
 
-      const {data} = hitungGaji
+      const { data } = hitungGaji;
       setHitung(data);
       setPokokHarian(round(data?.bawah?.gaji_pokok_harian));
-      setTunjanganHarian(round(data?.bawah?.tunjangan_harian))
-      setTotalPokok(round(data?.bawah?.total_pokok_harian))
-      setTotalTunjangan(round(data?.bawah?.total_tunjangan_harian))
+      setTunjanganHarian(round(data?.bawah?.tunjangan_harian));
+      setTotalPokok(round(data?.bawah?.total_pokok_harian));
+      setTotalTunjangan(round(data?.bawah?.total_tunjangan_harian));
+      setKenaikan(round(data?.bawah?.total_kenaikan));
 
       setWait(false);
       toast.update(notifProses, {
@@ -192,12 +194,17 @@ const AddGaji = () => {
     // setVisible(!visible)
   };
 
-  useEffect(()=>{
-    setTotalFinal(parseInt(totalGajiPokok)+parseInt(totalTunjangan)+parseInt(bonusU) - parseInt(potonganU))
-  },[bonus,potongan, getHitung])
+  useEffect(() => {
+    setTotalFinal(
+      parseInt(totalGajiPokok) +
+        parseInt(totalTunjangan) +
+        parseInt(bonusU) -
+        parseInt(potonganU)
+    );
+  }, [bonus, potongan, getHitung]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setErrors([]);
     const notifSave = toast.loading("Saving....");
     setWait(true);
@@ -212,7 +219,7 @@ const AddGaji = () => {
       tunjangan: getHitung.atas.tunjangan,
       gaji_pokok_harian: totalGajiPokok,
       tunjangan_harian: totalTunjangan,
-    }
+    };
 
     try {
       const { data: response } = await axiosJWT.post(
@@ -334,7 +341,7 @@ const AddGaji = () => {
           <div className="card">
             <div className="card-body">
               <div className="row px-2">
-                <table className="table w-50 fw-bold">
+                <table className="table w-75 fw-bold">
                   <tbody>
                     <tr>
                       <td>Nama</td>
@@ -345,6 +352,15 @@ const AddGaji = () => {
                       <td>Jabatan</td>
                       <td>:</td>
                       <td>{getHitung?.atas?.jabatan}</td>
+                    </tr>
+                    <tr>
+                      <td>Status Pegawai</td>
+                      <td>:</td>
+                      <td>
+                        {getHitung?.atas?.status_pegawai == "0"
+                          ? "Pegawai Training"
+                          : "Pegawai Kontrak"}
+                      </td>
                     </tr>
                     <tr>
                       <td>Total Hari dalam 1 Bulan</td>
@@ -373,7 +389,27 @@ const AddGaji = () => {
                           thousandSeparator="."
                           decimalSeparator=","
                           allowNegative={false}
+                        />{" "}
+                        ({"Gaji Pokok: "}
+                        <NumericFormat
+                          displayType="text"
+                          value={
+                            getHitung?.atas?.gaji_pokok -
+                            getHitung?.bawah?.total_kenaikan
+                          }
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          allowNegative={false}
                         />
+                        &nbsp; + Total Kenaikan: &nbsp;
+                        <NumericFormat
+                          displayType="text"
+                          value={getHitung?.bawah?.total_kenaikan}
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          allowNegative={false}
+                        />
+                        )
                       </td>
                     </tr>
                     <tr>
@@ -389,6 +425,15 @@ const AddGaji = () => {
                         />
                       </td>
                     </tr>
+                    {getHitung?.atas?.status_pegawai == "0" ? (
+                      false
+                    ) : (
+                      <tr>
+                        <td>Jumlah Kenaikan Gaji</td>
+                        <td>:</td>
+                        <td>{`${getHitung?.atas?.pencapaian} kali`}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -417,6 +462,20 @@ const AddGaji = () => {
                       className="form-control"
                       displayType="input"
                       value={tunjangan_harian}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      allowNegative={false}
+                      disabled
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="mb-3">
+                      <strong>Kenaikan Gaji</strong>
+                    </label>
+                    <NumericFormat
+                      className="form-control"
+                      displayType="input"
+                      value={kenaikan}
                       thousandSeparator="."
                       decimalSeparator=","
                       allowNegative={false}

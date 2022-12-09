@@ -4,7 +4,7 @@ import { useToken } from "../../hook/Token";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faCommenting } from "@fortawesome/free-regular-svg-icons";
 
 const Sample = () => {
@@ -12,6 +12,7 @@ const Sample = () => {
   const [countPegawai, setCountPegawai] = useState(0);
   const [countJabatan, setCountJabatan] = useState(0);
   const [countComment, setCountComment] = useState(0);
+  const [profile, setProfile] = useState([]);
 
   const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
 
@@ -72,10 +73,23 @@ const Sample = () => {
     setCountComment(data.data.length);
   };
 
+  const getProfile = async () => {
+    const { data } = await axiosJWT.get(
+      `${import.meta.env.VITE_BASE_URL}/profile/${dataLokal.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setProfile(data.data[0]);
+  };
+
   const fetch = async () => {
     getCountPegawai();
     getCountComment();
     getCountJabatan();
+    getProfile();
 
     // await pegawaiPromise
     // await commentPromise
@@ -86,9 +100,58 @@ const Sample = () => {
     fetch();
   }, []);
 
+  const [collapse, setCollapse] = useState(false);
+
+  const handleCollapse = () => {
+    setCollapse(!collapse);
+  }
+
   // const navigasi = useNavigate();
   return (
     <div className="container-fluid px-4">
+      <div className="card">
+        <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
+          <h5 className="card-title">Profile</h5>
+          <button
+            className={`btn ${collapse ? 'btn-info': 'btn-primary'}`}
+            data-bs-toggle="collapse"
+            onClick={handleCollapse}
+          >
+            {
+              collapse ?
+              <FontAwesomeIcon icon={faMinus} />
+              :
+              <FontAwesomeIcon icon={faPlus} />
+            }
+          </button>
+        </div>
+        <div className={`card-body collapse ${collapse ? 'show': false}`} id="collapseExample">
+          <table className="w-75">
+            <tbody>
+            <tr>
+              <td>Nama</td>
+              <td>:</td>
+              <td>{profile?.nama_pegawai}</td>
+            </tr>
+            <tr>
+              <td>Jabatan</td>
+              <td>:</td>
+              <td>{profile?.jabatan?.nama_jabatan}</td>
+            </tr>
+            <tr>
+              <td>Tanggal Bergabung</td>
+              <td>:</td>
+              <td>{profile?.tanggal_bergabung}</td>
+            </tr>
+            <tr>
+              <td>Alamat</td>
+              <td>:</td>
+              <td>{profile?.alamat}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
       <div className="row g-3 my-2">
         <div className="col-md-3">
           <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">

@@ -42,6 +42,7 @@ import EditList from "./components/pages/list-gaji/Edit";
 import Kinerja from "./components/pages/kinerja/Kinerja";
 import KinerjaAdd from "./components/pages/kinerja/Add";
 import KinerjaEdit from "./components/pages/kinerja/Edit";
+import Kenaikan from "./components/pages/kenaikan/Kenaikan";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -213,6 +214,10 @@ const Routes = () => {
             {
               path: "rekap",
               element: <RequiredAuth> <Rekap/> </RequiredAuth>
+            },
+            {
+              path: "kenaikan",
+              element: <RequiredAuth> <Kenaikan/> </RequiredAuth>
             },
           ],
         },

@@ -218,7 +218,9 @@ const LapGaji = () => {
                   selectsStart
                   startDate={startDate}
                   endDate={endDate}
+                  className="form-control"
                 />
+                &nbsp;
                 <DatePicker
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
@@ -226,6 +228,7 @@ const LapGaji = () => {
                   startDate={startDate}
                   endDate={endDate}
                   minDate={startDate}
+                  className="form-control"
                 />
               </div>
             </div>

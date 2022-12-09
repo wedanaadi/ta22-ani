@@ -6,6 +6,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\KenaikanController;
 use App\Http\Controllers\KinerjaController;
 use App\Http\Controllers\ListGajiController;
 use App\Http\Controllers\PegawaiController;
@@ -109,4 +110,8 @@ Route::middleware('api')->group(function () {
   Route::put('kinerja/{id}', [KinerjaController::class, 'update']);
   Route::put('status-kinerja/{id}', [KinerjaController::class, 'updateStatus']);
   Route::delete('kinerja/{id}',[KinerjaController::class, 'destroy']);
+  // kenaikan
+  Route::get('kenaikan', [KenaikanController::class, 'index']);
+  Route::post('kenaikan', [KenaikanController::class, 'store']);
+  Route::get('profile/{id}', [PegawaiController::class, 'profile']);
 });

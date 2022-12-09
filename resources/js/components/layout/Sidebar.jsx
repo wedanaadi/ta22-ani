@@ -46,6 +46,19 @@ const Sidebar = () => {
 
         {dataLokal.role === 2 ? (
           <>
+          <Link
+              to={`/list`}
+              className={`list-group-item list-group-item-action bg-transparent second-text ${
+                location.pathname === "/list" ||
+                location.pathname === "/list/add" ||
+                location.pathname === "/list/edit"
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <FontAwesomeIcon icon={faCircle} className="me-2" />
+              List Gaji Jabatan
+            </Link>
             <Link
               to={`/jabatan`}
               className={`list-group-item list-group-item-action bg-transparent second-text ${
@@ -104,6 +117,35 @@ const Sidebar = () => {
         )}
 
         {dataLokal.role === 2 || dataLokal.role === 4 ? (
+          <>
+          <Link
+            to={`/kinerja`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/kinerja" ||
+              location.pathname === "/kinerja/add" ||
+              location.pathname === "/kinerja/slip" ||
+              location.pathname === "/kinerja/edit"
+                ? "active"
+                : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Kinerja
+          </Link>
+          <Link
+            to={`/kenaikan`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/kenaikan" ||
+              location.pathname === "/kenaikan/add" ||
+              location.pathname === "/kenaikan/slip" ||
+              location.pathname === "/kenaikan/edit"
+                ? "active"
+                : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Kenaikan Gaji
+          </Link>
           <Link
             to={`/gaji`}
             className={`list-group-item list-group-item-action bg-transparent second-text ${
@@ -118,6 +160,7 @@ const Sidebar = () => {
             <FontAwesomeIcon icon={faCircle} className="me-2" />
             Gaji
           </Link>
+          </>
         ) : (
           <></>
         )}
@@ -148,6 +191,20 @@ const Sidebar = () => {
           >
             <FontAwesomeIcon icon={faCircle} className="me-2" />
             Pengajuan Cuti
+          </Link>
+        ) : (
+          <></>
+        )}
+
+        {dataLokal.role !== 4 ? (
+          <Link
+            to={`rekap`}
+            className={`list-group-item list-group-item-action bg-transparent second-text ${
+              location.pathname === "/rekap" ? "active" : ""
+            }`}
+          >
+            <FontAwesomeIcon icon={faCircle} className="me-2" />
+            Rekap Absen
           </Link>
         ) : (
           <></>

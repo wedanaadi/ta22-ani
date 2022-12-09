@@ -115,6 +115,7 @@ const Rekap = () => {
                   onChange={(date) => setPeriode(date)}
                   dateFormat="MM/yyyy"
                   showMonthYearPicker
+                  className="form-control"
                 />
               </div>
             </div>

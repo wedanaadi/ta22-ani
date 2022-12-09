@@ -6,6 +6,7 @@ use App\Exports\exportGaji;
 use App\Exports\exportSlip;
 use App\Models\BaseGaji;
 use App\Models\Gaji;
+use App\Models\Kenaikan;
 use App\Models\Pegawai;
 use Exception;
 use Illuminate\Http\Request;
@@ -128,7 +129,6 @@ class GajiController extends Controller
       }
     }
 
-
     $gaji_pokok = 0;
     $tunjangan = 0;
     $countListGaji = BaseGaji::where('jabatan_id',$pegawai->jabatan_id);
@@ -145,6 +145,11 @@ class GajiController extends Controller
       $tunjangan = $countListGaji->first()->tunjangan;
     }
 
+    $achievement = Kenaikan::where('pegawai_id',$pegawaiId)->where('is_status','1')->get()->count();
+    if($achievement>0) {
+      $gaji_pokok += (int)$achievement * 100000;
+    }
+
     $data = [
       'atas' => [
         'nama' => $pegawai->nama_pegawai,
@@ -154,13 +159,15 @@ class GajiController extends Controller
         'offday' => $dayOfMonth - $jumlah_pokok - 4,
         'gaji_pokok' => $gaji_pokok,
         'tunjangan' => $tunjangan,
-        'status_pegawai' => $status_pegawai
+        'status_pegawai' => $status_pegawai,
+        'pencapaian' => $achievement
       ],
       'bawah' => [
         'gaji_pokok_harian' => $gaji_pokok / ($dayOfMonth - 4),
         'tunjangan_harian' => $tunjangan / ($dayOfMonth - 4),
         'total_pokok_harian' => ($gaji_pokok / ($dayOfMonth - 4)) * $jumlah_pokok,
         'total_tunjangan_harian' => ($tunjangan / ($dayOfMonth - 4)) * $jumlah_tunjangan,
+        'total_kenaikan' => (int)$achievement * 100000
       ]
     ];
 

@@ -29,6 +29,7 @@ const EditGaji = () => {
   const [potongan, setPotongan] = useState(0);
   const [potonganU, setPotonganU] = useState(0);
   const [totalFinal, setTotalFinal] = useState(0);
+  const [kenaikan, setKenaikan] = useState(0);
   const [getHitung, setHitung] = useState([]);
   const navigasi = useNavigate();
 
@@ -170,6 +171,7 @@ const EditGaji = () => {
       setTunjanganHarian(round(data?.bawah?.tunjangan_harian));
       setTotalPokok(round(data?.bawah?.total_pokok_harian));
       setTotalTunjangan(round(data?.bawah?.total_tunjangan_harian));
+      setKenaikan(round(data?.bawah?.total_kenaikan));
 
       setWait(false);
       toast.update(notifProses, {
@@ -378,6 +380,15 @@ const EditGaji = () => {
                       <td>{getHitung?.atas?.jabatan}</td>
                     </tr>
                     <tr>
+                      <td>Status Pegawai</td>
+                      <td>:</td>
+                      <td>
+                        {getHitung?.atas?.status_pegawai == "0"
+                          ? "Pegawai Training"
+                          : "Pegawai Kontrak"}
+                      </td>
+                    </tr>
+                    <tr>
                       <td>Total Hari dalam 1 Bulan</td>
                       <td>:</td>
                       <td>{`${getHitung?.atas?.dayofmonth - 4} days ( ${
@@ -404,7 +415,27 @@ const EditGaji = () => {
                           thousandSeparator="."
                           decimalSeparator=","
                           allowNegative={false}
+                        />{" "}
+                        ({"Gaji Pokok: "}
+                        <NumericFormat
+                          displayType="text"
+                          value={
+                            getHitung?.atas?.gaji_pokok -
+                            getHitung?.bawah?.total_kenaikan
+                          }
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          allowNegative={false}
                         />
+                        &nbsp; + Total Kenaikan: &nbsp;
+                        <NumericFormat
+                          displayType="text"
+                          value={getHitung?.bawah?.total_kenaikan}
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          allowNegative={false}
+                        />
+                        )
                       </td>
                     </tr>
                     <tr>
@@ -420,6 +451,15 @@ const EditGaji = () => {
                         />
                       </td>
                     </tr>
+                    {getHitung?.atas?.status_pegawai == "0" ? (
+                      false
+                    ) : (
+                      <tr>
+                        <td>Jumlah Kenaikan Gaji</td>
+                        <td>:</td>
+                        <td>{`${getHitung?.atas?.pencapaian} kali`}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -448,6 +488,20 @@ const EditGaji = () => {
                       className="form-control"
                       displayType="input"
                       value={tunjangan_harian}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      allowNegative={false}
+                      disabled
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="mb-3">
+                      <strong>Kenaikan Gaji</strong>
+                    </label>
+                    <NumericFormat
+                      className="form-control"
+                      displayType="input"
+                      value={kenaikan}
                       thousandSeparator="."
                       decimalSeparator=","
                       allowNegative={false}

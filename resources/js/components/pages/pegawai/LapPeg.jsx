@@ -9,6 +9,7 @@ import useLoading from "../../Loading";
 import { Pagging, Search, TableHeader } from "../../datatable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import { floor } from "lodash";
 
 const LapPeg = () => {
   const [pegawais, setPegawais] = useState([]);
@@ -76,10 +77,21 @@ const LapPeg = () => {
 
   const headers = [
     { name: "No#", field: "id", sortable: false },
-    { name: "Pegawai", field: "nama_pegawai", sortable: true },
-    { name: "Tanggal Mulai", field: "tanggal_mulai", sortable: false },
-    { name: "Tanggal Selesai", field: "tanggal_selesai", sortable: false },
-    { name: "Alasan", field: "alasan", sortable: true },
+    { name: "NIK", field: "nik", sortable: false },
+    { name: "Nama Pegawai", field: "nama_pegawai", sortable: false },
+    { name: "Jabatan", field: "jabatan_id", sortable: false },
+    { name: "Tempat Lahir", field: "tempat_lahir", sortable: false },
+    { name: "Tanggal Lahir", field: "tanggal_lahir", sortable: false },
+    { name: "Jenis Kelamin", field: "jenis_kelamin", sortable: false },
+    { name: "Alamat", field: "alamat", sortable: false },
+    { name: "Agama", field: "agama", sortable: false },
+    { name: "Status Pernikahan", field: "status_pernikahan", sortable: false },
+    { name: "Pendidikan", field: "pendidikan", sortable: false },
+    { name: "Telepon", field: "no_telepon", sortable: false },
+    { name: "Status Pegawai", field: "status_pegawai", sortable: false },
+    { name: "Tanggal Bergabung", field: "tanggal_bergabung", sortable: false },
+    { name: "Kontrak Berakhir", field: "kontrak_berakhir", sortable: false },
+    { name: "Masa Kerja", field: "masa_kerja", sortable: false },
   ];
 
   const ITEMS_PER_PAGE = 10;
@@ -139,6 +151,35 @@ const LapPeg = () => {
         day: "numeric",
       })
       .toString();
+  };
+
+  const masaKerja = (bergabung) => {
+    const epochBergabung = ConvertToEpoch(bergabung);
+    const epochNow = ConvertToEpoch(new Date());
+    const second = (epochNow - epochBergabung) / 1000;
+    const minute = second / 60;
+    const hour = minute / 60;
+    let day = hour / 24;
+    let month = day / 30;
+    const year = month / 12;
+    let format = "";
+    if (day >= 30) {
+      day = day - floor(month) * 30;
+    }
+    if (month > 11) {
+      month = month - floor(year) * 12;
+    }
+
+    if (year >= 1) {
+      format += `${floor(year)} tahun `;
+    }
+    if (month >= 1) {
+      const difday = (format += `${floor(month)} bulan `);
+    }
+    if(day > 0) {
+      format += `${floor(day)} hari`;
+    }
+    return format;
   };
 
   return (
@@ -223,9 +264,12 @@ const LapPeg = () => {
                               <td>{pegawai.no_telepon}</td>
                               <td>
                                 {pegawai.status_pegawai == 0
-                                  ? "Pegawai Kontrak"
-                                  : "Pegawai Tetap"}
+                                  ? "Pegawai Training"
+                                  : "Pegawai Kontrak"}
                               </td>
+                              <td>{pegawai.tanggal_bergabung}</td>
+                              <td>{pegawai.kontrak_berakhir}</td>
+                              <td>{masaKerja(pegawai.tanggal_bergabung)}</td>
                             </tr>
                           ))
                         ) : (

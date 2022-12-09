@@ -25,8 +25,16 @@ class PegawaiController extends Controller
   {
     $pegawaiAll = Pegawai::with('jabatan')
       ->whereRelation('jabatan', 'is_aktif', "1")
-      ->where('is_aktif', "1")->get();
+      ->where('is_aktif', "1")->first();
     return response()->json(['msg' => 'get all data', "data" => $pegawaiAll, 'error' => []], 200);
+  }
+
+  public function profile($id)
+  {
+    $find = Pegawai::with('jabatan')
+      ->whereRelation('jabatan', 'is_aktif', "1")
+      ->where('id_pegawai', $id)->get();
+    return response()->json(['msg' => 'get profile', "data" => $find, 'error' => []], 200);
   }
 
   public function store(Request $request)
