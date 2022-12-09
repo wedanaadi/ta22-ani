@@ -156,7 +156,7 @@ const GajiPegawai = () => {
   return (
     <div className="card">
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-        <h5 className="card-title">Data Gaji</h5>
+        <h5 className="card-title">Data Slip Gaji</h5>
       </div>
       <div className="card-body">
         {/* datatable */}

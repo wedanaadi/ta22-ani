@@ -1,20 +1,22 @@
-import axios from "axios";
-import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import { useToken } from "../../../hook/Token";
-import jwt_decode from 'jwt-decode'
+import axios from 'axios';
+import React, { useRef, useState } from 'react'
+import { useToken } from '../../../hook/Token';
+import jwt_decode from 'jwt-decode';
+import { toast } from 'react-toastify';
+import Select from "react-select";
+import { useNavigate } from 'react-router-dom';
 
-const Komentar = () => {
+export default function StatusModal({idKinerja}) {
   const closeModal = useRef(null);
-  const [comment, setComment] = useState("");
+  const [status, setStatus] = useState({value:1, label:"Tercapai"});
   const { token, setToken, exp, setExp } = useToken();
   const [errors, setErrors] = useState([]);
   const [waiting, setWait] = useState(false);
-
   const navigasi = useNavigate()
-
-  const localEditData = JSON.parse(atob(localStorage.getItem("gajiEdit")));
+  const optStatus = [
+    {value:1, label:"Tercapai"},
+    {value:2, label:"Tidak Tercapai"},
+  ]
 
   const axiosJWT = axios.create();
 
@@ -46,20 +48,17 @@ const Komentar = () => {
     }
   );
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("save");
     setErrors([]);
     const notifProses = toast.loading("Processing....");
     setWait(true);
     try {
       const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
-      const { data: response } = await axiosJWT.post(
-        `${import.meta.env.VITE_BASE_URL}/comment`,
+      const { data: response } = await axiosJWT.put(
+        `${import.meta.env.VITE_BASE_URL}/status-kinerja/${idKinerja}`,
         {
-          comment,
-          gaji_id: localEditData.id_gaji,
-          pegawai_id: dataLokal.id
+          status: status.value
         },
         {
           headers: {
@@ -110,16 +109,16 @@ const Komentar = () => {
   return (
     <div
       className="modal fade"
-      id="commentModal"
+      id="statusModal"
       tabIndex="-1"
-      aria-labelledby="commentMdLabel"
+      aria-labelledby="statusMdLabel"
       aria-hidden="true"
     >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5" id="commentMdLabel">
-              Tambah Komentar
+            <h1 className="modal-title fs-5" id="statusMdLabel">
+              Ubah Status
             </h1>
             <button
               type="button"
@@ -129,20 +128,18 @@ const Komentar = () => {
               ref={closeModal}
             ></button>
           </div>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit}>
             <div className="modal-body">
               <div className="mb-3">
-                <label htmlFor="comment" className="form-label">
-                  Komentar
+                <label htmlFor="status" className="form-label">
+                  Status
                 </label>
-                <textarea
-                  value={comment}
-                  className="form-control"
-                  cols="30"
-                  rows="10"
-                  onChange={(e) => setComment(e.target.value)}
-                ></textarea>
-                {errors.comment?.map((msg, index) => (
+                <Select
+                  value={status}
+                  onChange={setStatus}
+                  options={optStatus}
+                />
+                {errors.status?.map((msg, index) => (
                   <div className="invalid-feedback" key={index}>
                     {msg}
                   </div>
@@ -158,7 +155,5 @@ const Komentar = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default Komentar;
+  )
+}

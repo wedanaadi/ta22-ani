@@ -92,15 +92,25 @@ class GajiController extends Controller
     $dateAwal = $moth->awal;
     $dateAkhir = $moth->akhir;
 
-    $sqlKehadiran = "select count(id_absen) as 'kehadiran' from absens
+    $sqlHadir = "select count(id_absen) as 'kehadiran' from absens
                       WHERE keterangan = 'Hadir' AND pegawai_id = '$pegawaiId'
-                      AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir';";
-    $kehadiranAbsen = DB::select($sqlKehadiran)[0]->kehadiran;
+                      AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir' AND index_cuti='0';";
+    $hadirAbsen = DB::select($sqlHadir)[0]->kehadiran;
+    $sqlIjin = "select count(id_absen) as 'kehadiran' from absens
+                      WHERE keterangan = 'Ijin' AND pegawai_id = '$pegawaiId'
+                      AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir' AND index_cuti='0';";
+    $ijinAbsen = DB::select($sqlIjin)[0]->kehadiran;
+    $sqlSakit = "select count(id_absen) as 'kehadiran' from absens
+                      WHERE keterangan = 'Sakit' AND pegawai_id = '$pegawaiId'
+                      AND (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' and '$dateAkhir' AND index_cuti='0';";
+    $sakitAbsen = DB::select($sqlSakit)[0]->kehadiran;
+
+    $kehadiranAbsen = (int)$hadirAbsen + (int)$ijinAbsen + (int)$sakitAbsen;
 
     $sqlCuti = "select COUNT(cutis.id_cuti) as 'count', cutis.keterangan, absens.pegawai_id from absens
                   INNER JOIN cutis on cutis.id_cuti = absens.index_cuti
                   WHERE absens.pegawai_id = '$pegawaiId' AND
-                  (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' AND '$dateAkhir'";
+                  (UNIX_TIMESTAMP(tanggal) * 1000) BETWEEN '$dateAwal' AND '$dateAkhir' AND is_aprove = '1'";
     $cutiData = DB::select($sqlCuti)[0];
     $dayOfMonth = date("t", substr($dateAwal, 0, 10));
     $jumlah = (int)$cutiData->count === (int)$dayOfMonth ? (int)$cutiData->count - 4 : (int)$cutiData->count;

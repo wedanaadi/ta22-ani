@@ -39,6 +39,9 @@ import Rekap from "./components/pages/absen/Rekap";
 import List from "./components/pages/list-gaji/List";
 import AddList from "./components/pages/list-gaji/Add";
 import EditList from "./components/pages/list-gaji/Edit";
+import Kinerja from "./components/pages/kinerja/Kinerja";
+import KinerjaAdd from "./components/pages/kinerja/Add";
+import KinerjaEdit from "./components/pages/kinerja/Edit";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -114,6 +117,18 @@ const Routes = () => {
             {
               path: "user/edit",
               element: <RequiredAuth><UserEdit/></RequiredAuth>
+            },
+            {
+              path: "kinerja",
+              element: <RequiredAuth> <Kinerja/> </RequiredAuth>
+            },
+            {
+              path: "kinerja/add",
+              element: <RequiredAuth><KinerjaAdd/> </RequiredAuth>
+            },
+            {
+              path: "kinerja/edit",
+              element: <RequiredAuth><KinerjaEdit/></RequiredAuth>
             },
             {
               path: "cuti",

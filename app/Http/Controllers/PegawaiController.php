@@ -236,6 +236,26 @@ class PegawaiController extends Controller
     return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
   }
 
+  public function getPegawaiForKinerja(Request $request)
+  {
+    $role = $request->role;
+    if((int)$role === 2) {
+      $sql = "SELECT * FROM pegawais
+              INNER JOIN users on users.`pegawai_id` = pegawais.`id_pegawai`
+              INNER JOIN jabatans on jabatans.`id_jabatan` = pegawais.`jabatan_id`
+              WHERE users.`hak_akses` = '3' OR users.`hak_akses` = '1'
+              AND jabatans.`is_aktif` = '1' AND pegawais.`is_aktif` = '1'";
+    } else {
+      $sql = "SELECT * FROM pegawais
+              INNER JOIN users on users.`pegawai_id` = pegawais.`id_pegawai`
+              INNER JOIN jabatans on jabatans.`id_jabatan` = pegawais.`jabatan_id`
+              WHERE users.`hak_akses` = '2' AND jabatans.`is_aktif` = '1'
+              AND pegawais.`is_aktif` = '1'";
+    }
+    $data = DB::select($sql);
+    return response()->json(['msg' => 'Get pegawai Not Has User', "data" => $data, 'error' => []], 200);
+  }
+
   public function getDataLaporan()
   {
     return Pegawai::with('jabatan')

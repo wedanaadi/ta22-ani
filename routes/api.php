@@ -6,6 +6,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\KinerjaController;
 use App\Http\Controllers\ListGajiController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\UserController;
@@ -50,6 +51,7 @@ Route::middleware('api')->group(function () {
   // pegawai
   Route::get('pegawai', [PegawaiController::class, 'index']);
   Route::get('pegawai-user', [PegawaiController::class, 'getPegawaiNotHasUser']);
+  Route::get('pegawai-kinerja', [PegawaiController::class, 'getPegawaiForKinerja']);
   Route::post('pegawai', [PegawaiController::class, 'store']);
   Route::put('pegawai/{id}', [PegawaiController::class, 'update']);
   Route::put('kontrak-pegawai/{id}', [PegawaiController::class, 'kontrak']);
@@ -101,4 +103,10 @@ Route::middleware('api')->group(function () {
   Route::get('check/{id}', [CommentController::class, 'check']);
   Route::post('comment', [CommentController::class, 'store']);
   Route::delete('comment/{id}',[CommentController::class, 'destroy']);
+  // kinerja
+  Route::get('kinerja', [KinerjaController::class, 'index']);
+  Route::post('kinerja', [KinerjaController::class, 'store']);
+  Route::put('kinerja/{id}', [KinerjaController::class, 'update']);
+  Route::put('status-kinerja/{id}', [KinerjaController::class, 'updateStatus']);
+  Route::delete('kinerja/{id}',[KinerjaController::class, 'destroy']);
 });
