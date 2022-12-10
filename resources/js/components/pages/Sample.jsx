@@ -4,7 +4,12 @@ import { useToken } from "../../hook/Token";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMinus,
+  faPlus,
+  faUserPlus,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import { faCommenting } from "@fortawesome/free-regular-svg-icons";
 
 const Sample = () => {
@@ -82,7 +87,18 @@ const Sample = () => {
         },
       }
     );
-    setProfile(data.data[0]);
+    setProfile(data.data);
+  };
+
+  const convertDate = (dateProps) => {
+    let date = new Date(dateProps);
+    return date
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      .toString();
   };
 
   const fetch = async () => {
@@ -101,10 +117,13 @@ const Sample = () => {
   }, []);
 
   const [collapse, setCollapse] = useState(false);
+  const [collapseWaiting, setCollapseWait] = useState(false);
 
   const handleCollapse = () => {
+    setCollapseWait(true);
     setCollapse(!collapse);
-  }
+    setCollapseWait(false);
+  };
 
   // const navigasi = useNavigate();
   return (
@@ -113,41 +132,50 @@ const Sample = () => {
         <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
           <h5 className="card-title">Profile</h5>
           <button
-            className={`btn ${collapse ? 'btn-info': 'btn-primary'}`}
+            className={`btn ${collapse ? "btn-info" : "btn-primary"}`}
             data-bs-toggle="collapse"
             onClick={handleCollapse}
           >
-            {
-              collapse ?
+            {collapse ? (
               <FontAwesomeIcon icon={faMinus} />
-              :
+            ) : (
               <FontAwesomeIcon icon={faPlus} />
-            }
+            )}
           </button>
         </div>
-        <div className={`card-body collapse ${collapse ? 'show': false}`} id="collapseExample">
+        <div
+          className={`card-body collapse ${
+            collapseWaiting ? "collapsing" : collapse ? "show" : ""
+          }`}
+          id="collapseExample"
+        >
           <table className="w-75">
             <tbody>
-            <tr>
-              <td>Nama</td>
-              <td>:</td>
-              <td>{profile?.nama_pegawai}</td>
-            </tr>
-            <tr>
-              <td>Jabatan</td>
-              <td>:</td>
-              <td>{profile?.jabatan?.nama_jabatan}</td>
-            </tr>
-            <tr>
-              <td>Tanggal Bergabung</td>
-              <td>:</td>
-              <td>{profile?.tanggal_bergabung}</td>
-            </tr>
-            <tr>
-              <td>Alamat</td>
-              <td>:</td>
-              <td>{profile?.alamat}</td>
-            </tr>
+              <tr>
+                <td>Nama</td>
+                <td>:</td>
+                <td>{profile?.nama_pegawai}</td>
+              </tr>
+              <tr>
+                <td>Jabatan</td>
+                <td>:</td>
+                <td>{profile?.jabatan?.nama_jabatan}</td>
+              </tr>
+              <tr>
+                <td>Tanggal Lahir</td>
+                <td>:</td>
+                <td>{convertDate(profile?.tanggal_lahir)}</td>
+              </tr>
+              <tr>
+                <td>Tanggal Bergabung</td>
+                <td>:</td>
+                <td>{convertDate(profile?.tanggal_bergabung)}</td>
+              </tr>
+              <tr>
+                <td>Alamat</td>
+                <td>:</td>
+                <td>{profile?.alamat}</td>
+              </tr>
             </tbody>
           </table>
         </div>

@@ -1,21 +1,19 @@
 import axios from "axios";
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useToken } from "../../../hook/Token";
 import useLoading from "../../Loading";
 import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faTrophy,
-  faThumbsDown,
-  faSearch,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { Pagging, Search, TableHeader } from "../../datatable";
 import { confirmAlert } from "react-confirm-alert";
 import { toast } from "react-toastify";
-import { floor } from "lodash";
+import StatusModal from "./StatusModal";
 
-export default function Kenaikan() {
+export default function KinerjaPegawai() {
   const { token, setToken, exp, setExp } = useToken();
   const [kinerjas, setKinerja] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -24,6 +22,7 @@ export default function Kenaikan() {
   const [sorting, setSorting] = useState({ field: "", order: "" });
   const [loader, showLoader, hideLoader, isLoad] = useLoading();
   const navigasi = useNavigate();
+  const {id:idPegawai} = useParams();
 
   const axiosJWT = axios.create();
 
@@ -59,26 +58,23 @@ export default function Kenaikan() {
   const headers = [
     { name: "No#", field: "id", sortable: false },
     { name: "Nama Pegawai", field: "nama_jabatan", sortable: false },
-    { name: "Tahun Kenaikan", field: "tahun", sortable: false },
-    { name: "Masa Kerja", field: "masa", sortable: false },
-    { name: "Aksi", field: "aksi", sortable: false },
+    { name: "Periode", field: "bulan", sortable: false },
+    { name: "Deskripsi", field: "desc", sortable: false },
+    { name: "Status", field: "status", sortable: false },
+    // { name: "Aksi", field: "aksi", sortable: false },
   ];
 
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
-    getKenaikan();
+    getKinerja();
   }, []);
 
-  const getKenaikan = async () => {
+  const getKinerja = async () => {
     showLoader();
-    const dataLokal = JSON.parse(atob(localStorage.getItem("userLocal")));
     const { data: response } = await axiosJWT.get(
-      `${import.meta.env.VITE_BASE_URL}/kenaikan`,
+      `${import.meta.env.VITE_BASE_URL}/kinerja-pegawai/${idPegawai}`,
       {
-        params: {
-          role: dataLokal.role
-        },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,15 +112,20 @@ export default function Kenaikan() {
     );
   }, [kinerjas, currentPage, search, sorting]);
 
+  const handleEdit = async (row) => {
+    localStorage.setItem("kinerjaEdit", btoa(JSON.stringify(row)));
+    navigasi("edit");
+    // console.log(JSON.parse(atob(localStorage.getItem('JabatanEdit'))));
+  };
 
-  const confirm = (id, status) => {
+  const confirm = (id) => {
     confirmAlert({
-      title: "Konfirmasi",
-      message: "Yakin melakukan ini ?",
+      title: "Hapus Data",
+      message: "Yakin melakukan ini.",
       buttons: [
         {
           label: "Yes",
-          onClick: () => handleDelete(id, status),
+          onClick: () => handleDelete(id),
         },
         {
           label: "Cancel",
@@ -134,16 +135,11 @@ export default function Kenaikan() {
     });
   };
 
-  const handleDelete = async (data, status) => {
+  const handleDelete = async (id) => {
     const notifikasiSave = toast.loading("Saving....");
     try {
-      const { data: response } = await axiosJWT.post(
-        `${import.meta.env.VITE_BASE_URL}/kenaikan`,
-        {
-          status,
-          id: data.id_pegawai,
-          tahun: data.tahun
-        },
+      const { data: response } = await axiosJWT.delete(
+        `${import.meta.env.VITE_BASE_URL}/kinerja/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -151,9 +147,9 @@ export default function Kenaikan() {
           },
         }
       );
-      getKenaikan();
+      getKinerja();
       toast.update(notifikasiSave, {
-        render: "Successfuly",
+        render: "Delete Successfuly",
         type: "success",
         isLoading: false,
         autoClose: 1500,
@@ -196,10 +192,33 @@ export default function Kenaikan() {
     }
   };
 
+  const convertDate = (dateProps) => {
+    let date = new Date(dateProps);
+    return date
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        // day: "numeric",
+      })
+      .toString();
+  };
+
+  const [modal, setModal] = useState(null);
+  const handleStatus = (id) => {
+    setModal(id);
+  };
+
   return (
     <div className="card">
+      <Suspense fallbasck={""}>
+        <StatusModal idKinerja={modal} />
+      </Suspense>
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
-        <h5 className="card-title">Rekomendasi Kenaikan Gaji Pegawai</h5>
+        <h5 className="card-title">Data Kinerja Pegawai</h5>
+        <Link to="/kenaikan" className="btn btn-secondary float-end">
+          <FontAwesomeIcon icon={faArrowLeft} />
+          &nbsp; Kembali
+        </Link>
       </div>
       <div className="card-body">
         {/* datatable */}
@@ -225,35 +244,20 @@ export default function Kenaikan() {
                 />
                 <tbody>
                   {kinerjasData.length > 0 ? (
-                    kinerjasData.map((kenaikan, index) => (
-                      <tr key={index}>
+                    kinerjasData.map((kinerja, index) => (
+                      <tr key={kinerja.id_kinerjas}>
                         <th scope="row">{index + 1}</th>
-                        <td>{kenaikan.nama_pegawai}</td>
-                        <td>{kenaikan.tahun}</td>
-                        <td>{floor(kenaikan.masa_kerja)} Tahun</td>
+                        <td>{kinerja.nama_pegawai}</td>
+                        <td>{convertDate(kinerja.periode)}</td>
+                        <td>{kinerja.desc}</td>
                         <td>
-                          <Link to={`/kinerja/${kenaikan.id_pegawai}`}
-                            className="btn btn-success"
-                          >
-                            <FontAwesomeIcon icon={faSearch} />
-                            &nbsp; Lihat Kinerja
-                          </Link>
-                          &nbsp;
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => confirm(kenaikan, '1')}
-                          >
-                            <FontAwesomeIcon icon={faTrophy} />
-                            &nbsp; Beri Kenaikan
-                          </button>
-                          &nbsp;
-                          <button
-                            className="btn btn-info"
-                            onClick={() => confirm(kenaikan, '0')}
-                          >
-                            <FontAwesomeIcon icon={faThumbsDown} />
-                            &nbsp; Tolak Kenaikan
-                          </button>
+                          {kinerja.status == "0" ? (
+                            <>On Process</>
+                          ) : kinerja.status == "1" ? (
+                            <>Tercapai</>
+                          ) : (
+                            <>Tidak Tercapai</>
+                          )}
                         </td>
                       </tr>
                     ))

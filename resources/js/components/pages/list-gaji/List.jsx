@@ -195,10 +195,10 @@ export default function List() {
     <div className="card">
       <div className="card-header d-sm-flex justify-content-between align-items-center bg-white">
         <h5 className="card-title">List Master Gaji</h5>
-        <Link to="add" className="btn btn-success float-end">
+        {/* <Link to="add" className="btn btn-success float-end">
           <FontAwesomeIcon icon={faPlus} />
           &nbsp; Tambah Data
-        </Link>
+        </Link> */}
       </div>
       <div className="card-body">
         {/* datatable */}
@@ -255,20 +255,20 @@ export default function List() {
                             <FontAwesomeIcon icon={faPencil} />
                             &nbsp; Edit
                           </button>
-                          &nbsp;
+                          {/* &nbsp;
                           <button
                             className="btn btn-danger"
                             onClick={() => confirm(list.id_master_gaji)}
                           >
                             <FontAwesomeIcon icon={faTrash} />
                             &nbsp; Hapus
-                          </button>
+                          </button> */}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5}>
+                      <td colSpan={6}>
                         {listGajisData.length === 0 && !isLoad
                           ? "Tidak Ada Data"
                           : loader}

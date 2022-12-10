@@ -221,6 +221,17 @@ const Pegawai = () => {
     return myEpoch;
   };
 
+  const convertDate = (dateProps) => {
+    let date = new Date(dateProps);
+    return date
+      .toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      .toString();
+  };
+
   const masaKerja = (bergabung) => {
     const epochBergabung = ConvertToEpoch(bergabung);
     const epochNow = ConvertToEpoch(new Date());
@@ -347,7 +358,7 @@ const Pegawai = () => {
                         <td>{pegawai.nama_pegawai}</td>
                         <td>{pegawai.jabatan.nama_jabatan}</td>
                         <td>{pegawai.tempat_lahir}</td>
-                        <td>{pegawai.tanggal_lahir}</td>
+                        <td>{convertDate(pegawai.tanggal_lahir)}</td>
                         <td>
                           {pegawai.jenis_kelamin == "L"
                             ? "Laki-Laki"
@@ -367,8 +378,8 @@ const Pegawai = () => {
                             ? "Pegawai Traning"
                             : "Pegawai Kontrak"}
                         </td>
-                        <td>{pegawai.tanggal_bergabung}</td>
-                        <td>{pegawai.kontrak_berakhir}</td>
+                        <td>{convertDate(pegawai.tanggal_bergabung)}</td>
+                        <td>{convertDate(pegawai.kontrak_berakhir)}</td>
                         <td>{masaKerja(pegawai.tanggal_bergabung)}</td>
                         <td>
                           <img

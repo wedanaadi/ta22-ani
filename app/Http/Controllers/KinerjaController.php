@@ -36,6 +36,27 @@ class KinerjaController extends Controller
     return response()->json(['msg' => 'get all data', "data" => $kinerja, 'error' => []], 200);
   }
 
+  public function show($id)
+  {
+    $kinerja = [];
+    $data = Kinerja::with('pegawai')
+      ->whereRelation('pegawai', 'is_aktif', "1")
+      ->whereRelation('pegawai.jabatan', 'is_aktif', "1")
+      ->where('pegawai_id',$id)
+      ->get();
+    foreach ($data as $d) {
+      $kinerja[] = [
+        'id_kinerjas' => $d['id_kinerjas'],
+        'pegawai_id' => $d['pegawai_id'],
+        'nama_pegawai' => $d['pegawai']['nama_pegawai'],
+        'periode' => $d['periode'],
+        'status' => $d['status'],
+        'desc' => $d['desc'],
+      ];
+    }
+    return response()->json(['msg' => 'get all data', "data" => $kinerja, 'error' => []], 200);
+  }
+
   public function store(Request $request)
   {
     // return $request->all();

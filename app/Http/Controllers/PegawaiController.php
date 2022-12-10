@@ -24,8 +24,8 @@ class PegawaiController extends Controller
   public function index()
   {
     $pegawaiAll = Pegawai::with('jabatan')
-      ->whereRelation('jabatan', 'is_aktif', "1")
-      ->where('is_aktif', "1")->first();
+    ->whereRelation('jabatan', 'is_aktif', "1")
+    ->where('is_aktif', "1")->get();
     return response()->json(['msg' => 'get all data', "data" => $pegawaiAll, 'error' => []], 200);
   }
 
@@ -33,7 +33,7 @@ class PegawaiController extends Controller
   {
     $find = Pegawai::with('jabatan')
       ->whereRelation('jabatan', 'is_aktif', "1")
-      ->where('id_pegawai', $id)->get();
+      ->where('id_pegawai', $id)->first();
     return response()->json(['msg' => 'get profile', "data" => $find, 'error' => []], 200);
   }
 

@@ -106,6 +106,7 @@ Route::middleware('api')->group(function () {
   Route::delete('comment/{id}',[CommentController::class, 'destroy']);
   // kinerja
   Route::get('kinerja', [KinerjaController::class, 'index']);
+  Route::get('kinerja-pegawai/{id}', [KinerjaController::class, 'show']);
   Route::post('kinerja', [KinerjaController::class, 'store']);
   Route::put('kinerja/{id}', [KinerjaController::class, 'update']);
   Route::put('status-kinerja/{id}', [KinerjaController::class, 'updateStatus']);

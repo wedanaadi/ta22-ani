@@ -43,6 +43,7 @@ import Kinerja from "./components/pages/kinerja/Kinerja";
 import KinerjaAdd from "./components/pages/kinerja/Add";
 import KinerjaEdit from "./components/pages/kinerja/Edit";
 import Kenaikan from "./components/pages/kenaikan/Kenaikan";
+import KinerjaPegawai from "./components/pages/kinerja/KinerjaPegawai";
 
 const Routes = () => {
   const routes = useRoutes([
@@ -122,6 +123,10 @@ const Routes = () => {
             {
               path: "kinerja",
               element: <RequiredAuth> <Kinerja/> </RequiredAuth>
+            },
+            {
+              path: "kinerja/:id",
+              element: <RequiredAuth> <KinerjaPegawai/> </RequiredAuth>
             },
             {
               path: "kinerja/add",
